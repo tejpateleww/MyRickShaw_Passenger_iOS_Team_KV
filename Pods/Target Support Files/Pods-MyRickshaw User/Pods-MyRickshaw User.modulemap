@@ -1,0 +1,6 @@
+framework module Pods_MyRickshaw_User {
+  umbrella header "Pods-MyRickshaw User-umbrella.h"
+
+  export *
+  module * { export * }
+}

@@ -332,7 +332,7 @@ public enum NVActivityIndicatorType: Int {
 /// Activity indicator view with nice animations
 public final class NVActivityIndicatorView: UIView {
     /// Default type. Default value is .BallSpinFadeLoader.
-    public static var DEFAULT_TYPE: NVActivityIndicatorType = .ballRotate
+    public static var DEFAULT_TYPE: NVActivityIndicatorType = .ballClipRotateMultiple //.ballRotate
 
     /// Default color of activity indicator. Default value is UIColor.white.
     public static var DEFAULT_COLOR = UIColor.init(red: 255/255, green: 163/255, blue: 0, alpha: 1.0)

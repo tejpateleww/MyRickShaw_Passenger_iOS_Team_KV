@@ -33,10 +33,10 @@ PODS:
   - FirebaseAnalytics (4.0.5):
     - FirebaseCore (~> 4.0)
     - FirebaseInstanceID (~> 2.0)
-    - GoogleToolboxForMac/NSData+zlib (~> 2.1)
+    - "GoogleToolboxForMac/NSData+zlib (~> 2.1)"
     - nanopb (~> 0.3)
   - FirebaseCore (4.0.12):
-    - GoogleToolboxForMac/NSData+zlib (~> 2.1)
+    - "GoogleToolboxForMac/NSData+zlib (~> 2.1)"
   - FirebaseInstanceID (2.0.7)
   - FirebaseMessaging (2.0.7):
     - FirebaseAnalytics (~> 4.0)
@@ -55,7 +55,7 @@ PODS:
   - GoogleToolboxForMac/Defines (2.1.3)
   - GoogleToolboxForMac/Logger (2.1.3):
     - GoogleToolboxForMac/Defines (= 2.1.3)
-  - GoogleToolboxForMac/NSData+zlib (2.1.3):
+  - "GoogleToolboxForMac/NSData+zlib (2.1.3)":
     - GoogleToolboxForMac/Defines (= 2.1.3)
   - IQKeyboardManagerSwift (5.0.6)
   - M13Checkbox (3.2.1)
@@ -76,6 +76,9 @@ PODS:
   - Socket.IO-Client-Swift (12.1.2):
     - Starscream (~> 2.1.1)
   - Starscream (2.1.1)
+  - SwiftMessages (6.0.0):
+    - SwiftMessages/App (= 6.0.0)
+  - SwiftMessages/App (6.0.0)
   - TransitionButton (0.3.0)
 
 DEPENDENCIES:
@@ -99,7 +102,39 @@ DEPENDENCIES:
   - SDWebImage (~> 4.0)
   - SideMenuController
   - Socket.IO-Client-Swift
+  - SwiftMessages
   - TransitionButton
+
+SPEC REPOS:
+  https://github.com/cocoapods/specs.git:
+    - ACFloatingTextfield-Swift
+    - Alamofire
+    - CardIO
+    - CHIPageControl
+    - Crashlytics
+    - CreditCardForm
+    - Fabric
+    - Firebase
+    - FirebaseAnalytics
+    - FirebaseCore
+    - FirebaseInstanceID
+    - FirebaseMessaging
+    - FormTextField
+    - GoogleMaps
+    - GooglePlaces
+    - GoogleToolboxForMac
+    - IQKeyboardManagerSwift
+    - M13Checkbox
+    - nanopb
+    - NVActivityIndicatorView
+    - Protobuf
+    - Pulsator
+    - SDWebImage
+    - SideMenuController
+    - Socket.IO-Client-Swift
+    - Starscream
+    - SwiftMessages
+    - TransitionButton
 
 EXTERNAL SOURCES:
   DOAlertController:
@@ -139,8 +174,9 @@ SPEC CHECKSUMS:
   SideMenuController: b463d2b3aa58e2afe57f57a07938fa9a647894ca
   Socket.IO-Client-Swift: ba3cb1c4bf0a6ca90080406a2c22685c25ad1f60
   Starscream: 142bd8ef24592d985daee9fa48c936070b85b15f
+  SwiftMessages: da7c981256a65b3e58022d9027a36584cf4eccf5
   TransitionButton: 0bf7e5ffe80030f9d10d57983a04acf2f511998a
 
-PODFILE CHECKSUM: 9263138bbfa31b810aa569edfa388f8f7f0d9f9c
+PODFILE CHECKSUM: b7d272132099541d7e9778a30ad2a1383415e684
 
-COCOAPODS: 1.3.1
+COCOAPODS: 1.5.3

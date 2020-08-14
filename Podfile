@@ -1,7 +1,7 @@
 # Uncomment the next line to define a global platform for your project
  platform :ios, '9.0'
 
-target 'PickNGo User' do
+target 'MyRickshaw User' do
   # Comment the next line if you're not using Swift and don't want to use dynamic frameworks
   use_frameworks!
   pod 'ACFloatingTextfield-Swift'
@@ -31,4 +31,7 @@ target 'PickNGo User' do
   pod 'DOAlertController', :git => 'https://github.com/okmr-d/DOAlertController.git', :branch => 'master'
   # Pods for TickTok User
 
+  pod 'SwiftMessages'
+  
+  
 end

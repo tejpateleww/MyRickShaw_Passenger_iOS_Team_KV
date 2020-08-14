@@ -59,6 +59,11 @@
 			<key>orderHint</key>
 			<integer>12</integer>
 		</dict>
+		<key>Pods-MyRickshaw User.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>13</integer>
+		</dict>
 		<key>Pods-PickNGo User.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
