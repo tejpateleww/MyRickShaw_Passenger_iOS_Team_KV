@@ -106,7 +106,7 @@ class MTRipple: UIView {
     @objc func incrementSize1()
     {
         self.view1.alpha = 1
-        self.bringSubview(toFront: self.view1)
+        self.bringSubviewToFront(self.view1)
         UIView.animate(withDuration: self.time, delay: 0.0, options: .allowUserInteraction , animations: {
             self.view1.frame = CGRect(x: 1, y: 1, width: self.frame.size.width-2, height: self.frame.size.height-2)
             self.img1.frame = CGRect(x: 1, y: 1, width: self.frame.size.width-2, height: self.frame.size.height-2)
@@ -127,7 +127,7 @@ class MTRipple: UIView {
     @objc func incrementSize2()
     {
         self.view2.alpha = 1
-        self.bringSubview(toFront: self.view2)
+        self.bringSubviewToFront(self.view2)
         UIView.animate(withDuration: self.time, delay: 0.0, options: .allowUserInteraction , animations: {
             self.view2.frame = CGRect(x: 1, y: 1, width: self.frame.size.width-2, height: self.frame.size.height-2)
             self.img2.frame = CGRect(x: 1, y: 1, width: self.frame.size.width-2, height: self.frame.size.height-2)
@@ -148,7 +148,7 @@ class MTRipple: UIView {
     @objc func incrementSize3()
     {
         self.view3.alpha = 1
-        self.bringSubview(toFront: self.view3)
+        self.bringSubviewToFront(self.view3)
         UIView.animate(withDuration: self.time, delay: 0.0, options: .allowUserInteraction , animations: {
             self.view3.frame = CGRect(x: 1, y: 1, width: self.frame.size.width-2, height: self.frame.size.height-2)
             self.img3.frame = CGRect(x: 1, y: 1, width: self.frame.size.width-2, height: self.frame.size.height-2)
@@ -169,7 +169,7 @@ class MTRipple: UIView {
     @objc func incrementSize4()
     {
         self.view4.alpha = 1
-        self.bringSubview(toFront: self.view4)
+        self.bringSubviewToFront(self.view4)
         UIView.animate(withDuration: self.time, delay: 0.0, options: .allowUserInteraction , animations: {
             self.view4.frame = CGRect(x: 1, y: 1, width: self.frame.size.width-2, height: self.frame.size.height-2)
             self.img4.frame = CGRect(x: 1, y: 1, width: self.frame.size.width-2, height: self.frame.size.height-2)
@@ -191,7 +191,7 @@ class MTRipple: UIView {
     func incrementSize5()
     {
         self.view5.alpha = 1
-        self.bringSubview(toFront: self.view5)
+        self.bringSubviewToFront(self.view5)
         UIView.animate(withDuration: self.time, delay: 0.0, options: .allowUserInteraction , animations: {
             self.view5.frame = CGRect(x: 1, y: 1, width: self.frame.size.width-2, height: self.frame.size.height-2)
             self.img5.frame = CGRect(x: 1, y: 1, width: self.frame.size.width-2, height: self.frame.size.height-2)

@@ -68,8 +68,8 @@ class ChatViewController: UIViewController ,UINavigationControllerDelegate, UITe
         
         SingletonClass.sharedInstance.strChatingNowBookingId = strBookingId
         
-        IQKeyboardManager.sharedManager().enableAutoToolbar = false
-        IQKeyboardManager.sharedManager().enable = false
+        IQKeyboardManager.shared.enableAutoToolbar = false
+        IQKeyboardManager.shared.enable = false
         
 //        (((self.navigationController?.childViewControllers[1] as! CustomSideMenuViewController).childViewControllers.first as! UINavigationController).childViewControllers.first as! HomeViewController).socket
         
@@ -134,8 +134,8 @@ class ChatViewController: UIViewController ,UINavigationControllerDelegate, UITe
         
         setupKeyboard(true)
         self.deregisterFromKeyboardNotifications()
-        IQKeyboardManager.sharedManager().enableAutoToolbar = true
-        IQKeyboardManager.sharedManager().enable = true
+        IQKeyboardManager.shared.enableAutoToolbar = true
+        IQKeyboardManager.shared.enable = true
     }
     
     override func viewDidLayoutSubviews() {
@@ -184,15 +184,15 @@ class ChatViewController: UIViewController ,UINavigationControllerDelegate, UITe
     
     func registerForKeyboardNotifications(){
         //Adding notifies on keyboard appearing
-        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWasShown(notification:)), name: NSNotification.Name.UIKeyboardWillShow, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillBeHidden(notification:)), name: NSNotification.Name.UIKeyboardWillHide, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWasShown(notification:)), name: UIResponder.keyboardWillShowNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillBeHidden(notification:)), name: UIResponder.keyboardWillHideNotification, object: nil)
     }
     
     @objc func keyboardWasShown(notification: NSNotification){
         //Need to calculate keyboard exact size due to Apple suggestions
         
         var info = notification.userInfo!
-        let keyboardSize = (info[UIKeyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue.size
+        let keyboardSize = (info[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue.size
         conVwMessageBottom.constant = keyboardSize!.height
         self.view.animateConstraintWithDuration()
         
@@ -208,8 +208,8 @@ class ChatViewController: UIViewController ,UINavigationControllerDelegate, UITe
     func deregisterFromKeyboardNotifications(){
         //Removing notifies on keyboard appearing
         
-        NotificationCenter.default.removeObserver(self, name: NSNotification.Name.UIKeyboardWillShow, object: nil)
-        NotificationCenter.default.removeObserver(self, name: NSNotification.Name.UIKeyboardWillHide, object: nil)
+        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillShowNotification, object: nil)
+        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillHideNotification, object: nil)
     }
     
     func textFieldDidEndEditing(_ textField: UITextField) {

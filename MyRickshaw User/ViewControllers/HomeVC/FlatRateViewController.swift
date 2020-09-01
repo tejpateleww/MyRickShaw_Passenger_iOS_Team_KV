@@ -49,7 +49,7 @@ class FlatRateViewController: UIViewController {
             homeVC.btnPointToPoint.setTitleColor(UIColor.white, for: .normal)
             homeVC.strServiceType = ServiceType.PointToPoint.rawValue
         }
-        else if let homeVC = self.navigationController?.childViewControllers.first as? HomeViewController {
+        else if let homeVC = self.navigationController?.children.first as? HomeViewController {
             homeVC.btnFlatRate.setTitleColor(UIColor.black, for: .normal)
             homeVC.btnPointToPoint.setTitleColor(UIColor.white, for: .normal)
             homeVC.strServiceType = ServiceType.PointToPoint.rawValue

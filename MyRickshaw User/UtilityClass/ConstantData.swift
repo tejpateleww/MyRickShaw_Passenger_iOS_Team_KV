@@ -15,7 +15,7 @@ let themeGrayColor: UIColor = UIColor.init(red: 114/255, green: 114/255, blue: 1
 //let ThemeYellowColor : UIColor = UIColor.init(hex: "F9B330")
 
 var aryCarListConstant = ["Max Van", "Waiheke Express", "Budget Taxi", "Car X4", "Van X6", "Van X9", "TM Card Holder (TM)", "Baby Seat (BS)", "Hoist Van (HV)"]
-
+let appDelegate = (UIApplication.shared.delegate as! AppDelegate)
 let currencySign = "$"
 let appName = "My Rickshaw"
 let helpLineNumber = "911"
@@ -25,7 +25,7 @@ var aboutUs = String()
 struct WebserviceURLs {
     
     
-    static let kBaseURL                                 = "http://rickshaw.co.nz/web/Passenger_Api/" // "http://52.14.34.50/web/Passenger_Api/"
+    static let kBaseURL                                 = "http://18.189.177.63/web/Passenger_Api/"//"http://rickshaw.co.nz/web/Passenger_Api/" // "http://52.14.34.50/web/Passenger_Api/"
     static let kInit                                    = "Init/"   // 1.0.1/AndroidPassenger
     static let kOtpForRegister                          = "OtpForRegister"
     static let kDriverRegister                          = "Register"
@@ -34,7 +34,7 @@ struct WebserviceURLs {
     static let kUpdateProfile                           = "UpdateProfile"
     static let kForgotPassword                          = "ForgotPassword" 
     static let kDriver                                  = "Driver"
-    static let kImageBaseURL                            = "http://rickshaw.co.nz/web/" // "http://52.14.34.50/web/"
+    static let kImageBaseURL                            = "http://18.189.177.63/web/"//"http://rickshaw.co.nz/web/" // "http://52.14.34.50/web/"
     
     
  
@@ -88,14 +88,17 @@ struct WebserviceURLs {
     static let kPastBooking                             = "PastBooking/"
     static let kUpcomingBooking                         = "UpcomingBooking/"
     static let kOngoingBooking                          = "OngoingBooking/"
-
+    static let kCreditAccountRequest                    = "CreditAccountRequest/"
+    static let kPayCreditAccount                        = "CreditAccountPayment/"
+    static let kCreditHistory                           = "CreditHistory/"
+    static let kCreditAccountPaymentHistory             = "CreditAccountPaymentHistory/"
 //    https://pickngolk.info/web/Passenger_Api/OtpForRegister
     
 }
 
 struct SocketData {
     
-    static let kBaseURL                                     = "http://52.14.34.50:8080" // "https://pickngolk.info:8081" // "http://54.255.222.125:8080/" // "https://pickngolk.info:8081"
+    static let kBaseURL                                     = "http://18.189.177.63:8080"//"http://52.14.34.50:8080" // "https://pickngolk.info:8081" // "http://54.255.222.125:8080/" // "https://pickngolk.info:8081"
     static let kNearByDriverList                            = "NearByDriverListIOS"
     static let kUpdatePassengerLatLong                      = "UpdatePassengerLatLong"
     static let kAcceptBookingRequestNotification            = "AcceptBookingRequestNotification"

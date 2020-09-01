@@ -41,14 +41,16 @@ class SingletonClass: NSObject {
     
     var strCurrentBalance = Double()
     var walletHistoryData = [[String:AnyObject]]()
-    
+    var creditHistoryData = [String:Any]()
+
     var strQRCodeForSendMoney = String()
     var isSendMoneySuccessFully = Bool()
     
     
     var isFromTopUP = Bool()
     var isFromTransferToBank = Bool()
-    
+    var isFromCredit = Bool()
+
     var isTiCKPayFromSideMenu = Bool()
     var firstRequestIsAccepted = Bool()
     

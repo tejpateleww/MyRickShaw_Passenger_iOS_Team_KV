@@ -14,7 +14,7 @@ import UIKit
 }
 
 class WalletCardsVC: UIViewController, UITableViewDataSource, UITableViewDelegate, AddCadsDelegate {
-
+    
     
     weak var delegateForTopUp: SelectCardDelegate!
     weak var delegateForTransferToBank: SelectBankCardDelegate!
@@ -25,13 +25,26 @@ class WalletCardsVC: UIViewController, UITableViewDataSource, UITableViewDelegat
         let refreshControl = UIRefreshControl()
         refreshControl.addTarget(self, action:
             #selector(self.handleRefresh(_:)),
-                                 for: UIControlEvents.valueChanged)
+                                 for: UIControl.Event.valueChanged)
         refreshControl.tintColor = themeYellowColor
         
         return refreshControl
     }()
     
-   
+    @IBOutlet weak var viewHeaderHeightConstant: NSLayoutConstraint!
+    
+    func setHeaderForIphoneX() {
+        
+        if UIDevice().userInterfaceIdiom == .phone {
+            switch UIScreen.main.nativeBounds.height {
+            case 2436,1792:
+                
+                viewHeaderHeightConstant.constant = 80
+            default:
+                print("Height of device is \(UIScreen.main.nativeBounds.height)")
+            }
+        }
+    }
     
     //-------------------------------------------------------------
     // MARK: - Base Methods
@@ -41,7 +54,7 @@ class WalletCardsVC: UIViewController, UITableViewDataSource, UITableViewDelegat
         super.loadView()
         
         if SingletonClass.sharedInstance.isCardsVCFirstTimeLoad {
-//            webserviceOFGetAllCards()
+            //            webserviceOFGetAllCards()
             
             if SingletonClass.sharedInstance.CardsVCHaveAryData.count != 0 {
                 aryData = SingletonClass.sharedInstance.CardsVCHaveAryData
@@ -72,10 +85,10 @@ class WalletCardsVC: UIViewController, UITableViewDataSource, UITableViewDelegat
         tableView.tableFooterView = UIView()
         
         self.tableView.addSubview(self.refreshControl)
+        self.setHeaderForIphoneX()
         
-       
     }
-
+    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
@@ -83,11 +96,11 @@ class WalletCardsVC: UIViewController, UITableViewDataSource, UITableViewDelegat
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-         
-         
+        
+        
     }
     
-   
+    
     func setImageColorOfImage(name: String) -> UIImage {
         
         var imageView = UIImageView()
@@ -137,7 +150,7 @@ class WalletCardsVC: UIViewController, UITableViewDataSource, UITableViewDelegat
         if indexPath.section == 0 {
             
             let dictData = aryData[indexPath.row] as [String:AnyObject]
-//["Expiry": 02/20,"CardNum2": xxxx xxxx xxxx 4242,"Id": 64,"Type": visa,"Alias":,"CardNum": 4242424242424242]
+            //["Expiry": 02/20,"CardNum2": xxxx xxxx xxxx 4242,"Id": 64,"Type": visa,"Alias":,"CardNum": 4242424242424242]
             cell.lblCardType.text = "Credit Card"
             
             let expiryDate = (dictData["Expiry"] as! String).split(separator: "/")
@@ -149,17 +162,17 @@ class WalletCardsVC: UIViewController, UITableViewDataSource, UITableViewDelegat
             cell.viewCards.layer.cornerRadius = 5
             cell.viewCards.layer.masksToBounds = true
             cell.viewCards.layoutIfNeeded()
-//            cell.viewCards.dropShadowToCardView(color: .gray, opacity: 1, offSet: CGSize(width: -1, height: 1), radius: 5, scale: true)
+            //            cell.viewCards.dropShadowToCardView(color: .gray, opacity: 1, offSet: CGSize(width: -1, height: 1), radius: 5, scale: true)
             
             let type = dictData["Type"] as! String
             
             cell.imgCardIcon.image = UIImage(named: setCreditCardImage(str: type))
-
-//                cell.viewCards.backgroundColor = UIColor.orange
-                cell.lblBankName.text = dictData["Alias"] as? String
-                cell.lblCardNumber.text = dictData["CardNum2"] as? String
-//                cell.imgCardIcon.image = UIImage(named: "MasterCard")
-                cell.lblCardNumber.addCharactersSpacing(2)
+            
+            //                cell.viewCards.backgroundColor = UIColor.orange
+            cell.lblBankName.text = dictData["Alias"] as? String
+            cell.lblCardNumber.text = dictData["CardNum2"] as? String
+            //                cell.imgCardIcon.image = UIImage(named: "MasterCard")
+            cell.lblCardNumber.addCharactersSpacing(2)
             
             if type == "discover" || type == "mastercard" {
                 // orange
@@ -175,7 +188,7 @@ class WalletCardsVC: UIViewController, UITableViewDataSource, UITableViewDelegat
             
             let colorTop =  UIColor(red: 78/255, green: 202/255, blue:237, alpha: 1.0).cgColor
             let colorMiddle =  UIColor(red: 187/255, green: 241/255, blue: 239/255, alpha: 0.5).cgColor
-//            let colorBottom = UIColor(red: 64/255, green: 43/255, blue: 6/255, alpha: 0.8).cgColor
+            //            let colorBottom = UIColor(red: 64/255, green: 43/255, blue: 6/255, alpha: 0.8).cgColor
             
             let gradientLayer = CAGradientLayer()
             gradientLayer.colors = [colorTop, colorMiddle]
@@ -184,28 +197,28 @@ class WalletCardsVC: UIViewController, UITableViewDataSource, UITableViewDelegat
             cell.viewCards.layer.insertSublayer(gradientLayer, at: 0)
             
             
-         /*
-          //   visa , mastercard , amex , diners , discover , jcb , other
+            /*
+             //   visa , mastercard , amex , diners , discover , jcb , other
              
-            if (indexPath.row % 2) == 0 {
-                cell.viewCards.backgroundColor = UIColor.orange
-                cell.lblCardNumber.text = "**** **** **** 1081"
-                cell.imgCardIcon.image = UIImage(named: "MasterCard")
-            }
-            else {
-                cell.viewCards.backgroundColor = UIColor.init(red: 0, green: 145/255, blue: 147/255, alpha: 1.0)
-                cell.lblCardNumber.text = "**** **** **** 9964"
-                cell.imgCardIcon.image = UIImage(named: "Visa")
-                
-            }
-          */
+             if (indexPath.row % 2) == 0 {
+             cell.viewCards.backgroundColor = UIColor.orange
+             cell.lblCardNumber.text = "**** **** **** 1081"
+             cell.imgCardIcon.image = UIImage(named: "MasterCard")
+             }
+             else {
+             cell.viewCards.backgroundColor = UIColor.init(red: 0, green: 145/255, blue: 147/255, alpha: 1.0)
+             cell.lblCardNumber.text = "**** **** **** 9964"
+             cell.imgCardIcon.image = UIImage(named: "Visa")
+             
+             }
+             */
             
             return cell
         }
         else {
             
-//            let img = UIImage(named: "iconArrowGrey")
-//            cell2.btnArrow.image = img?.maskWithColor(color: themeYellowColor)
+            //            let img = UIImage(named: "iconArrowGrey")
+            //            cell2.btnArrow.image = img?.maskWithColor(color: themeYellowColor)
             return cell2
         }
     }
@@ -214,7 +227,7 @@ class WalletCardsVC: UIViewController, UITableViewDataSource, UITableViewDelegat
         
         
         if indexPath.section == 0 {
-         
+            
             let selectedData = aryData[indexPath.row] as [String:AnyObject]
             
             print("selectedData : \(selectedData)")
@@ -228,6 +241,13 @@ class WalletCardsVC: UIViewController, UITableViewDataSource, UITableViewDelegat
                 delegateForTransferToBank.didSelectBankCard(dictData: selectedData)
                 SingletonClass.sharedInstance.isFromTransferToBank = false
                 self.navigationController?.popViewController(animated: true)
+            }
+            else  if SingletonClass.sharedInstance.isFromCredit
+            {
+                delegateForTopUp.didSelectCard(dictData: selectedData)
+                SingletonClass.sharedInstance.isFromCredit = false
+                self.navigationController?.popViewController(animated: true)
+                
             }
             
         }
@@ -250,7 +270,7 @@ class WalletCardsVC: UIViewController, UITableViewDataSource, UITableViewDelegat
         }
     }
     
-    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
+    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         
         let selectedData = aryData[indexPath.row] as [String:AnyObject]
         
@@ -266,7 +286,7 @@ class WalletCardsVC: UIViewController, UITableViewDataSource, UITableViewDelegat
         }
         
     }
-   
+    
     
     //-------------------------------------------------------------
     // MARK: - Actions
@@ -277,7 +297,7 @@ class WalletCardsVC: UIViewController, UITableViewDataSource, UITableViewDelegat
         self.navigationController?.popViewController(animated: true)
         
     }
-
+    
     @IBAction func btnAddCards(_ sender: UIButton) {
         
         let next = self.storyboard?.instantiateViewController(withIdentifier: "WalletAddCardsViewController") as! WalletAddCardsViewController
@@ -355,16 +375,16 @@ class WalletCardsVC: UIViewController, UITableViewDataSource, UITableViewDelegat
         
     }
     
-   
+    
     //-------------------------------------------------------------
     // MARK: - Webservice Methods For All Cards
     //-------------------------------------------------------------
     
     func webserviceOFGetAllCards() {
- 
-        webserviceForCardList(SingletonClass.sharedInstance.strPassengerID as AnyObject) { (result, status) in
         
-       
+        webserviceForCardList(SingletonClass.sharedInstance.strPassengerID as AnyObject) { (result, status) in
+            
+            
             if (status) {
                 print(result)
                 
@@ -387,7 +407,7 @@ class WalletCardsVC: UIViewController, UITableViewDataSource, UITableViewDelegat
             else {
                 
                 print(result)
-             
+                
                 
                 if let res = result as? String {
                     UtilityClass.setCustomAlert(title: appName, message: res) { (index, title) in
@@ -403,7 +423,7 @@ class WalletCardsVC: UIViewController, UITableViewDataSource, UITableViewDelegat
                 }
             }
         }
-
+        
     }
     
     //-------------------------------------------------------------
@@ -413,13 +433,13 @@ class WalletCardsVC: UIViewController, UITableViewDataSource, UITableViewDelegat
     
     
     func webserviceForRemoveCardFromWallet(cardId : String) {
-      
+        
         
         var params = String()
         params = "\(SingletonClass.sharedInstance.strPassengerID)/\(cardId)"
-
-        webserviceForRemoveCard(params as AnyObject) { (result, status) in
         
+        webserviceForRemoveCard(params as AnyObject) { (result, status) in
+            
             if (status) {
                 print(result)
                 
@@ -432,17 +452,17 @@ class WalletCardsVC: UIViewController, UITableViewDataSource, UITableViewDelegat
                 
                 // Post notification
                 NotificationCenter.default.post(name: NSNotification.Name(rawValue: "CardListReload"), object: nil)
-
+                
                 
                 if SingletonClass.sharedInstance.CardsVCHaveAryData.count == 0 {
-             
+                    
                     self.navigationController?.popViewController(animated: true)
                 }
                 
                 
                 self.tableView.reloadData()
                 
-        
+                
                 UtilityClass.setCustomAlert(title: "Removed", message: (result as! NSDictionary).object(forKey: "message") as! String) { (index, title) in
                 }
             }
@@ -463,7 +483,7 @@ class WalletCardsVC: UIViewController, UITableViewDataSource, UITableViewDelegat
                 }
             }
         }
-
+        
     }
     
     

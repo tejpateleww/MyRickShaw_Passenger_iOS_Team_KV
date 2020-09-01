@@ -58,9 +58,9 @@ extension UIImage {
 //-------------------------------------------------------------
 
 extension UIApplication {
-    var statusBarView: UIView? {
-        return value(forKey: "statusBar") as? UIView
-    }
+//    var statusBarView: UIView? {
+//        return value(forKey: "statusBar") as? UIView
+//    }
 }
 
 //-------------------------------------------------------------
@@ -80,7 +80,7 @@ extension UILabel {
 
 extension NSMutableAttributedString {
     func bold(_ text: String, _ fontSize: CGFloat) -> NSMutableAttributedString {
-        let attrs: [NSAttributedStringKey: Any] = [.font: UIFont(name: "AvenirNext-Medium", size: fontSize)!]
+        let attrs: [NSAttributedString.Key: Any] = [.font: UIFont(name: "AvenirNext-Medium", size: fontSize)!]
         let boldString = NSMutableAttributedString(string:text, attributes: attrs)
         append(boldString)
         
@@ -165,7 +165,7 @@ extension String {
 extension UILabel {
     func addCharactersSpacing(_ value: CGFloat = 1.15) {
         if let textString = text {
-            let attrs: [NSAttributedStringKey : Any] = [.kern: value]
+            let attrs: [NSAttributedString.Key : Any] = [.kern: value]
             attributedText = NSAttributedString(string: textString, attributes: attrs)
         }
     }

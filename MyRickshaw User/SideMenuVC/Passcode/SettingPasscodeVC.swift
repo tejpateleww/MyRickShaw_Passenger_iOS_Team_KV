@@ -214,7 +214,8 @@ class SettingPasscodeVC: ParentViewController, checkSwitchIsOnOrOff {
                     hView.lblHeaderTitle.text = strHeaderTitle
                 }
             default:
-                print("unknown")
+                print("Height of device is \(UIScreen.main.nativeBounds.height)")
+                
             }
         }
         
@@ -228,7 +229,8 @@ class SettingPasscodeVC: ParentViewController, checkSwitchIsOnOrOff {
                     hView.lblHeaderTitle.text = strHeaderTitle
                 }
             default:
-                print("unknown")
+                print("Height of device is \(UIScreen.main.nativeBounds.height)")
+                
             }
         }
     }

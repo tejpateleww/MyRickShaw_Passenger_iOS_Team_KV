@@ -27,7 +27,7 @@ class UpCommingVC: UIViewController, UITableViewDataSource, UITableViewDelegate 
         let refreshControl = UIRefreshControl()
         refreshControl.addTarget(self, action:
             #selector(self.handleRefresh(_:)),
-                                 for: UIControlEvents.valueChanged)
+                                 for: UIControl.Event.valueChanged)
         refreshControl.tintColor = themeYellowColor
         
         return refreshControl
@@ -183,8 +183,8 @@ class UpCommingVC: UIViewController, UITableViewDataSource, UITableViewDelegate 
         let bookingID = sender.tag
         
         
-        let socketData = ((self.navigationController?.childViewControllers[1] as! CustomSideMenuViewController).childViewControllers[0].childViewControllers[0] as! HomeViewController).socket
-        let showTopView = ((self.navigationController?.childViewControllers[1] as! CustomSideMenuViewController).childViewControllers[0].childViewControllers[0] as! HomeViewController)
+        let socketData = ((self.navigationController?.children[1] as! CustomSideMenuViewController).children[0].children[0] as! HomeViewController).socket
+        let showTopView = ((self.navigationController?.children[1] as! CustomSideMenuViewController).children[0].children[0] as! HomeViewController)
         
         if (SingletonClass.sharedInstance.isTripContinue) {
             

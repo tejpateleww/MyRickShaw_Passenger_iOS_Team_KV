@@ -121,7 +121,7 @@ class ParentViewController: UIViewController, HeaderViewDelegate {
             
             let application:UIApplication = UIApplication.shared
             if (application.canOpenURL(phoneCallURL)) {
-                application.open(phoneCallURL, options: [:], completionHandler: nil)
+                application.open(phoneCallURL, options: convertToUIApplicationOpenExternalURLOptionsKeyDictionary([:]), completionHandler: nil)
             }
         }
     }
@@ -167,7 +167,7 @@ class ParentViewController: UIViewController, HeaderViewDelegate {
     
     func createHeaderView() {
         
-       UIApplication.shared.statusBarView?.backgroundColor = UIColor.clear
+//       UIApplication.shared.statusBarView?.backgroundColor = UIColor.clear
          
         
         let screenRect: CGRect = UIScreen.main.bounds
@@ -196,7 +196,7 @@ class ParentViewController: UIViewController, HeaderViewDelegate {
                 }
                 
             default:
-                print("unknown")
+                print("Height of device is \(UIScreen.main.nativeBounds.height)")
             }
         }
         
@@ -223,3 +223,8 @@ class ParentViewController: UIViewController, HeaderViewDelegate {
     
 }
 
+
+// Helper function inserted by Swift 4.2 migrator.
+fileprivate func convertToUIApplicationOpenExternalURLOptionsKeyDictionary(_ input: [String: Any]) -> [UIApplication.OpenExternalURLOptionsKey: Any] {
+	return Dictionary(uniqueKeysWithValues: input.map { key, value in (UIApplication.OpenExternalURLOptionsKey(rawValue: key), value)})
+}

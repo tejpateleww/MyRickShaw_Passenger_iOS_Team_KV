@@ -129,7 +129,7 @@ func sendImage(_ dictParams: [String:AnyObject], image1: UIImage, nsURL: String,
     
     Alamofire.upload(multipartFormData: { (multipartFormData) in
         
-        if let imageData1 = UIImageJPEGRepresentation(image1, 0.6) {
+        if let imageData1 = image1.jpegData(compressionQuality: 0.6) {
         
             multipartFormData.append(imageData1, withName: "Image", fileName: "image.png", mimeType: "image/png")
         }
@@ -230,10 +230,10 @@ func postTwoImageMethod(_ dictParams: [String:AnyObject], image1: UIImage, image
     
     Alamofire.upload(multipartFormData: { (multipartFormData) in
         
-        if let imageData1 = UIImageJPEGRepresentation(image1, 0.6) {
+        if let imageData1 = image1.jpegData(compressionQuality: 0.6) {
             multipartFormData.append(imageData1, withName: "Image", fileName: "image.png", mimeType: "image/png")
         }
-        if let imageData2 = UIImageJPEGRepresentation(image2, 0.6) {
+        if let imageData2 = image2.jpegData(compressionQuality: 0.6) {
             multipartFormData.append(imageData2, withName: "Passport", fileName: "image.png", mimeType: "image/png")
         }
         

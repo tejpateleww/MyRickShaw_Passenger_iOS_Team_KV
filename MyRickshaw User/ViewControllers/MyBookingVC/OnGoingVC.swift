@@ -28,7 +28,7 @@ class OnGoingVC: UIViewController, UITableViewDataSource, UITableViewDelegate {
         let refreshControl = UIRefreshControl()
         refreshControl.addTarget(self, action:
             #selector(self.handleRefresh(_:)),
-                                 for: UIControlEvents.valueChanged)
+                                 for: UIControl.Event.valueChanged)
         refreshControl.tintColor = themeYellowColor
         
         return refreshControl

@@ -126,7 +126,7 @@ extension HomeViewController {
         // Socket Accepted
         self.socket.on(SocketData.kAcceptBookingRequestNotification, callback: { (data, ack) in
             print("AcceptBooking data is \(data)")
-            
+            self.txtDestinationLocation.text = ""
             
             //            self.socket.off(SocketData.kAcceptBookingRequestNotification)
             
@@ -328,9 +328,22 @@ extension HomeViewController {
             SingletonClass.sharedInstance.isTripContinue = false
             self.aryCompleterTripData = data
             
+           
+//            SingletonClass.sharedInstance.creditHistoryData["AvailableCreditLimit"] = "\(Int(data["AvailableCreditLimit"]))"
             if let getInfoFromData = data as? [[String:AnyObject]] {
                 
                 if let infoData = getInfoFromData[0] as? [String:AnyObject] {
+                    
+                    if let AvailableCredit = infoData["AvailableCreditLimit"] as? Int
+                    {
+                        SingletonClass.sharedInstance.creditHistoryData["AvailableCreditLimit"] = "\(AvailableCredit)"
+                    }
+                    else if let AvailableCredit = infoData["AvailableCreditLimit"] as? String
+                    {
+                        SingletonClass.sharedInstance.creditHistoryData["AvailableCreditLimit"] = AvailableCredit
+                    }
+                    
+                    
                     if let bookingInfo = infoData["Info"] as? [[String:AnyObject]] {
                         var bookingIdIs = String()
                         if let nowBookingID: Int = (bookingInfo[0])["Id"] as? Int {
@@ -753,7 +766,7 @@ extension HomeViewController {
                         
                         let alert = UIAlertController(title: appName,
                                                       message: "Book Now cars not available. Please click OK to Book Later.",
-                                                      preferredStyle: UIAlertControllerStyle.alert)
+                                                      preferredStyle: UIAlertController.Style.alert)
                         
                         
                         alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { (action) in

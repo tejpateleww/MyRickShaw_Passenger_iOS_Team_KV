@@ -21,6 +21,7 @@ class WalletTopUpVC: ParentViewController, SelectCardDelegate {
     var strCardId = String()
     var strAmt = String()
     weak var delegate: delegateForUpdateCurrentBalance?
+    var isFromCredit = Bool()
     
     //-------------------------------------------------------------
     // MARK: - Base Methods
@@ -35,6 +36,17 @@ class WalletTopUpVC: ParentViewController, SelectCardDelegate {
         btnAddFunds.layer.cornerRadius = 5
         btnAddFunds.layer.masksToBounds = true
         
+        
+        if(isFromCredit)
+        {
+            txtAmount.isUserInteractionEnabled = false
+            
+            let intTotalCredit = Int(UtilityClass.returnValueForCredit(key: "CreditLimit")) ?? 0
+
+            let intCreditAvailable = Int(UtilityClass.returnValueForCredit(key: "AvailableCreditLimit")) ?? 0
+
+            txtAmount.text = "\(intTotalCredit - intCreditAvailable)"
+        }
 //        txtAmount.becomeFirstResponder()
         // Do any additional setup after loading the view.
     }
@@ -76,17 +88,26 @@ class WalletTopUpVC: ParentViewController, SelectCardDelegate {
     @IBAction func btnAddFunds(_ sender: UIButton) {
         
         if strCardId == "" {
- 
+            
             UtilityClass.setCustomAlert(title: appName, message: "Please select card") { (index, title) in
             }
         }
         else if txtAmount.text == "" {
-     
+            
             UtilityClass.setCustomAlert(title: appName, message: "Please enter amount") { (index, title) in
             }
         }
         else {
-            webserviceOFTopUp()
+            
+            
+            if(isFromCredit)
+            {
+                webserviceForCreditTopUp()
+            }
+            else
+            {
+                webserviceOFTopUp()
+            }
         }
         
     }
@@ -110,7 +131,7 @@ class WalletTopUpVC: ParentViewController, SelectCardDelegate {
             let removal1: [Character] = insertcurrencySymboleInCharacter    // ["!"," "]
             
             // turn the string into an Array
-            let unfilteredCharacters1 = unfiltered1.characters
+            let unfilteredCharacters1 = unfiltered1
             
             // return an Array without the removal Characters
             let filteredCharacters1 = unfilteredCharacters1.filter { !removal1.contains($0) }
@@ -121,9 +142,9 @@ class WalletTopUpVC: ParentViewController, SelectCardDelegate {
             print(filtered1) // => "yeah"
             
             // combined to a single line
-            print(String(unfiltered1.characters.filter { !removal1.contains($0) })) // => "yuahl"
+            print(String(unfiltered1.filter { !removal1.contains($0) })) // => "yuahl"
             
-            txtAmount.text = "\(currencySign)\(String(unfiltered1.characters.filter { !removal1.contains($0) }))"
+            txtAmount.text = "\(currencySign)\(String(unfiltered1.filter { !removal1.contains($0) }))"
             
             
             let space = " "
@@ -140,7 +161,7 @@ class WalletTopUpVC: ParentViewController, SelectCardDelegate {
             let removal: [Character] = currencySymboleInCharacter    // ["!"," "]
             
             // turn the string into an Array
-            let unfilteredCharacters = unfiltered.characters
+            let unfilteredCharacters = unfiltered
             
             // return an Array without the removal Characters
             let filteredCharacters = unfilteredCharacters.filter { !removal.contains($0) }
@@ -151,9 +172,9 @@ class WalletTopUpVC: ParentViewController, SelectCardDelegate {
             print(filtered) // => "yeah"
             
             // combined to a single line
-            print(String(unfiltered.characters.filter { !removal.contains($0) })) // => "yuahl"
+            print(String(unfiltered.filter { !removal.contains($0) })) // => "yuahl"
             
-            strAmt = String(unfiltered.characters.filter { !removal.contains($0) })
+            strAmt = String(unfiltered.filter { !removal.contains($0) })
             print("amount : \(strAmt)")
             
         }
@@ -237,6 +258,69 @@ class WalletTopUpVC: ParentViewController, SelectCardDelegate {
         
         
     }
+    
+    
+
+        //-------------------------------------------------------------
+        // MARK: - Webservice Methods For Credit TOP UP
+        //-------------------------------------------------------------
+        
+        func webserviceForCreditTopUp() {
+            
+    //        PassengerId,Amount,CardId
+            
+            var dictParam = [String:AnyObject]()
+     
+            strAmt = strAmt.trimmingCharacters(in: .whitespacesAndNewlines)
+            
+            dictParam["PassengerId"] = SingletonClass.sharedInstance.strPassengerID as AnyObject
+            dictParam["CardId"] = strCardId as AnyObject
+ 
+            webserviceForPaymentInCredit(dictParam as AnyObject) { (result, status) in
+            
+            
+                if (status) {
+                    print(result)
+                    
+                    SingletonClass.sharedInstance.strCurrentBalance = ((result as! NSDictionary).object(forKey: "walletBalance") as AnyObject).doubleValue
+                    
+                    UtilityClass.setCustomAlert(title: appName, message: (result as! NSDictionary).object(forKey: "message") as! String) { (index, title) in
+                        
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 1, execute: {
+                            
+                            if self.delegate != nil {
+                                self.delegate?.didUpdateCurrentBalance!()
+                            }
+                            
+                            self.navigationController?.popViewController(animated: true)
+                        })
+                        
+                    }
+                    
+                }
+                else {
+                    print(result)
+                    
+                    self.txtAmount.text = ""
+                    
+                    if let res = result as? String {
+                        UtilityClass.setCustomAlert(title: appName, message: res) { (index, title) in
+                        }
+                    }
+                    else if let resDict = result as? NSDictionary {
+                        UtilityClass.setCustomAlert(title: appName, message: resDict.object(forKey: "message") as! String) { (index, title) in
+                        }
+                    }
+                    else if let resAry = result as? NSArray {
+                        UtilityClass.setCustomAlert(title: appName, message: (resAry.object(at: 0) as! NSDictionary).object(forKey: "message") as! String) { (index, title) in
+                        }
+                    }
+                    
+                }
+            }
+            
+            
+        }
 
 }
 

@@ -9,6 +9,17 @@
 import UIKit
 
 class WalletViewController: UIViewController, UIScrollViewDelegate {
+    
+    
+    
+    //-------------------------------------------------------------
+    // MARK: - Outlets
+    //-------------------------------------------------------------
+    
+    @IBOutlet weak var lblCurrentBalance: UILabel!
+    @IBOutlet weak var lblCreditBalance: UILabel!
+    
+    @IBOutlet weak var lblCreditExpiryDate: UILabel!
 
     
     //-------------------------------------------------------------
@@ -17,64 +28,46 @@ class WalletViewController: UIViewController, UIScrollViewDelegate {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-//        viewTop.layer.cornerRadius = 5
-//        viewTop.layer.masksToBounds = true
-//
-//        viewOptions.layer.cornerRadius = 5
-//        viewOptions.layer.masksToBounds = true
-        
-//        scrollObj.delegate = self
-//        scrollObj.isScrollEnabled = false
-        
-//        bPaySelected()
-        
         webserviceOfTransactionHistory()
-
+        
         
     }
-
+    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         
     }
     
-    func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
-        let pageNumber = round(scrollView.contentOffset.x / scrollView.frame.size.width)
-      
-        
-    }
-        
+    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
-//         bPaySelected()
-        
         self.lblCurrentBalance.text = "\(currencySign) \(SingletonClass.sharedInstance.strCurrentBalance)"
         
+        
+        let naviagate = UtilityClass.returnValueForCredit(key: "IsRequestCreditAccount")
+        
+        if(naviagate == "0" || naviagate == "3")
+        {
+            self.lblCreditBalance.text = ""
+            
+        }
+        else if (naviagate == "1" )
+        {
+            self.lblCreditBalance.text = "Pending"
+            
+        }
+        else if (naviagate == "2" )
+        {
+            self.lblCreditBalance.text = "\(currencySign)\(SingletonClass.sharedInstance.creditHistoryData["AvailableCreditLimit"] as? String ?? "")"
+            self.lblCreditExpiryDate.text = "Exp. date : \(UtilityClass.returnValueForCredit(key: "CreditAccountExpDate"))"
+
+        }
+        
+        
+
     }
     
-    //-------------------------------------------------------------
-    // MARK: - Outlets
-    //-------------------------------------------------------------
-    
-    
-    @IBOutlet weak var scrollObj: UIScrollView!
-    
-    
-//    @IBOutlet weak var pageCtrl: UIPageControl!
-    
-    @IBOutlet weak var viewTop: UIView!
-    @IBOutlet weak var viewOptions: UIView!
-    
-    @IBOutlet weak var lblCurrentBalance: UILabel!
-    @IBOutlet weak var imgBpay: UIImageView!
-    @IBOutlet weak var imgTravel: UIImageView!
-    @IBOutlet weak var imgEntertainment: UIImageView!
-    
-    @IBOutlet weak var lblBpay: UILabel!
-    @IBOutlet weak var lblTravel: UILabel!
-    @IBOutlet weak var lblEntertainment: UILabel!
     
     //-------------------------------------------------------------
     // MARK: - Actions
@@ -89,7 +82,7 @@ class WalletViewController: UIViewController, UIScrollViewDelegate {
             }
         }
         
-//        self.navigationController?.popToRootViewController(animated: true)
+        //        self.navigationController?.popToRootViewController(animated: true)
     }
     
     @IBOutlet weak var btnCall: UIButton!
@@ -115,7 +108,7 @@ class WalletViewController: UIViewController, UIScrollViewDelegate {
             
             let application:UIApplication = UIApplication.shared
             if (application.canOpenURL(phoneCallURL)) {
-                application.open(phoneCallURL, options: [:], completionHandler: nil)
+                application.open(phoneCallURL, options: convertToUIApplicationOpenExternalURLOptionsKeyDictionary([:]), completionHandler: nil)
             }
         }
     }
@@ -130,7 +123,7 @@ class WalletViewController: UIViewController, UIScrollViewDelegate {
         
         let next = self.storyboard?.instantiateViewController(withIdentifier: "WalletTransferViewController") as! WalletTransferViewController
         self.navigationController?.pushViewController(next, animated: true)
-  
+        
     }
     
     
@@ -146,66 +139,30 @@ class WalletViewController: UIViewController, UIScrollViewDelegate {
         }
     }
     
-    @IBAction func btnBpay(_ sender: UIButton) {
+    
+    @IBAction func btnCredit(_ sender: UIButton) {
         
-//        bPaySelected()
+        let naviagate = UtilityClass.returnValueForCredit(key: "IsRequestCreditAccount")
         
-        
+        if(naviagate == "0" || naviagate == "3")
+        {
+            let next = self.storyboard?.instantiateViewController(withIdentifier: "CreditFormViewController") as! CreditFormViewController
+            self.navigationController?.pushViewController(next, animated: true)
+        }
+        else if(naviagate == "1")
+        {
+            UtilityClass.showAlertWithCompletion("", message: "Your request is still pending please check after sometime", vc: self) { (status) in
+                
+            }
+        }
+        else
+        {
+            let next = self.storyboard?.instantiateViewController(withIdentifier: "WalletBalanceMainVC") as! WalletBalanceMainVC
+            next.isFromCredit = true
+            self.navigationController?.pushViewController(next, animated: true)
+        }
     }
     
-    @IBAction func btnTravel(_ sender: UIButton) {
-        
-//        travelSelected()
-        
-        
-    }
-    
-    @IBAction func btnEntertainment(_ sender: UIButton) {
-        
-//        entertainmentSelected()
-        
-       
-    }
-    
-    func bPaySelected() {
-        
-        scrollObj.setContentOffset(CGPoint(x: 0, y: 0), animated: true)
-        
-        lblBpay.textColor = UIColor.init(red: 56/255, green: 145/255, blue: 219/255, alpha: 1.0)
-        lblTravel.textColor = UIColor.init(red: 147/255, green: 147/255, blue: 147/255, alpha: 1.0)
-        lblEntertainment.textColor = UIColor.init(red: 147/255, green: 147/255, blue: 147/255, alpha: 1.0)
-        
-        imgBpay.image = UIImage(named: "iconDollerSelected")
-        imgEntertainment.image = UIImage(named: "iconEntertainmentUnSelected")
-        imgTravel.image = UIImage(named: "iconTravelBag")
-    }
-    
-    func travelSelected() {
-        
-        scrollObj.setContentOffset(CGPoint(x: self.view.frame.size.width, y: 0), animated: true)
-        
-        lblBpay.textColor = UIColor.init(red: 147/255, green: 147/255, blue: 147/255, alpha: 1.0)
-        lblTravel.textColor = UIColor.init(red: 56/255, green: 145/255, blue: 219/255, alpha: 1.0)
-        lblEntertainment.textColor = UIColor.init(red: 147/255, green: 147/255, blue: 147/255, alpha: 1.0)
-        
-        imgBpay.image = UIImage(named: "iconDollerGrey")
-        imgEntertainment.image = UIImage(named: "iconEntertainmentUnSelected")
-        imgTravel.image = UIImage(named: "iconTravelBagSelected")
-    }
-    
-    func entertainmentSelected() {
-        
-        imgBpay.image = UIImage(named: "iconDollerGrey")
-        imgEntertainment.image = UIImage(named: "iconEntertainmentSelected")
-        imgTravel.image = UIImage(named: "iconTravelBag")
-        
-        scrollObj.setContentOffset(CGPoint(x: self.view.frame.size.width * 2, y: 0), animated: true)
-        
-        lblBpay.textColor = UIColor.init(red: 147/255, green: 147/255, blue: 147/255, alpha: 1.0)
-        lblTravel.textColor = UIColor.init(red: 147/255, green: 147/255, blue: 147/255, alpha: 1.0)
-        lblEntertainment.textColor = UIColor.init(red: 56/255, green: 145/255, blue: 219/255, alpha: 1.0)
-        
-    }
     
     //-------------------------------------------------------------
     // MARK: - Webservice Methods Transaction History
@@ -220,14 +177,14 @@ class WalletViewController: UIViewController, UIScrollViewDelegate {
                 
                 SingletonClass.sharedInstance.strCurrentBalance = ((result as! NSDictionary).object(forKey: "walletBalance") as AnyObject).doubleValue
                 self.lblCurrentBalance.text = "\(currencySign) \(SingletonClass.sharedInstance.strCurrentBalance)"
-
+                
                 if let history = result["history"] as? [[String:AnyObject]]
                 {
                     SingletonClass.sharedInstance.walletHistoryData = history
                 }
                 
-//                SingletonClass.sharedInstance.walletHistoryData = (result as! NSDictionary).object(forKey: "history") as! [[String:AnyObject]]
-
+                //                SingletonClass.sharedInstance.walletHistoryData = (result as! NSDictionary).object(forKey: "history") as! [[String:AnyObject]]
+                
                 self.webserviceOFGetAllCards()
                 
             }
@@ -248,17 +205,19 @@ class WalletViewController: UIViewController, UIScrollViewDelegate {
                 }
                 
             }
-        
+            
         }
-
+        
     }
+    
+    
     
     var aryCards = [[String:AnyObject]]()
     
     func webserviceOFGetAllCards() {
         
         webserviceForCardList(SingletonClass.sharedInstance.strPassengerID as AnyObject){ (result, status) in
-
+            
             if (status) {
                 print(result)
                 
@@ -266,8 +225,8 @@ class WalletViewController: UIViewController, UIScrollViewDelegate {
                 
                 SingletonClass.sharedInstance.CardsVCHaveAryData = self.aryCards
                 
-//                SingletonClass.sharedInstance.isCardsVCFirstTimeLoad = false
-
+                //                SingletonClass.sharedInstance.isCardsVCFirstTimeLoad = false
+                
             }
             else {
                 print(result)
@@ -282,185 +241,13 @@ class WalletViewController: UIViewController, UIScrollViewDelegate {
                 }
             }
         }
-
-    }
-
-}
-
-//-------------------------------------------------------------
-// MARK: - BpayVC
-//-------------------------------------------------------------
-
-
-class BpayVC: UIViewController {
-    
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        
-        viewTop.layer.cornerRadius = 5
-        viewTop.layer.masksToBounds = true
-        
-        btnSubmit.layer.cornerRadius = 5
-        btnSubmit.layer.masksToBounds = true
-        
-        // Do any additional setup after loading the view.
-    }
-    
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
-    }
-    @IBOutlet weak var viewTop: UIView!
-    @IBOutlet weak var btnSubmit: UIButton!
-    
-    @IBAction func btnSubmit(_ sender: UIButton) {
         
     }
     
 }
 
 
-//-------------------------------------------------------------
-// MARK: - TravelVC
-//-------------------------------------------------------------
-
-class TravelVC: UIViewController {
-    
-   
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        
-        viewTop.layer.cornerRadius = 5
-        viewTop.layer.masksToBounds = true
-        
-        // Do any additional setup after loading the view.
-    }
-    
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
-    }
-    
-    @IBOutlet weak var viewTop: UIView!
-    
-    //-------------------------------------------------------------
-    // MARK: - Actions
-    //-------------------------------------------------------------
-    
-    @IBAction func btnAction(_ sender: UIButton) {
-        
-        let next = self.storyboard?.instantiateViewController(withIdentifier: "CommingSoonViewController") as! CommingSoonViewController
-        self.navigationController?.pushViewController(next, animated: true)
-        
-        /*
-        switch sender.tag {
-        case 1:
-            showWebSite(strHeager: "TRAIN", strURL: "http://www.metrotrains.com.au/")
-            
-        case 2:
-             showWebSite(strHeager: "BUS", strURL: "https://www.ptv.vic.gov.au/projects/buses")
-            
-        case 3:
-            showWebSite(strHeager: "TRAM", strURL: "https://www.ptv.vic.gov.au/getting-around/maps/metropolitan-trams/")
-            
-        case 4:
-            showWebSite(strHeager: "VLINE", strURL: "https://www.vline.com.au/")
-            
-        case 5:
-            showWebSite(strHeager: "FERRY", strURL: "https://www.ptv.vic.gov.au/getting-around/ferries/")
-            
-        case 6:
-            showWebSite(strHeager: "FLIGHT", strURL: "https://www.virginaustralia.com/au/en/bookings/flights/make-a-booking/")
-            
-        default: break
-            
-        }
-       */
-       
-        
-//        let next = self.storyboard?.instantiateViewController(withIdentifier: "webViewVC") as! webViewVC
-//        self.navigationController?.pushViewController(next, animated: true)
-    }
-    
-    
-    func showWebSite(strHeager: String, strURL: String) {
-        
-        let next = self.storyboard?.instantiateViewController(withIdentifier: "webViewVC") as! webViewVC
-        next.headerName = strHeager
-        next.strURL = strURL
-        self.navigationController?.present(next, animated: true, completion: nil)
-    }
-    
+// Helper function inserted by Swift 4.2 migrator.
+fileprivate func convertToUIApplicationOpenExternalURLOptionsKeyDictionary(_ input: [String: Any]) -> [UIApplication.OpenExternalURLOptionsKey: Any] {
+    return Dictionary(uniqueKeysWithValues: input.map { key, value in (UIApplication.OpenExternalURLOptionsKey(rawValue: key), value)})
 }
-
-//-------------------------------------------------------------
-// MARK: - EntertainmentVC
-//-------------------------------------------------------------
-
-class EntertainmentVC: UIViewController {
-    
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        
-        viewTop.layer.cornerRadius = 5
-        viewTop.layer.masksToBounds = true
-        // Do any additional setup after loading the view.
-    }
-    
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
-    }
-    
-    @IBOutlet weak var viewTop: UIView!
-    
-    //-------------------------------------------------------------
-    // MARK: - Actions
-    //-------------------------------------------------------------
-   
-    @IBAction func btnActions(_ sender: UIButton) {
-
-        let next = self.storyboard?.instantiateViewController(withIdentifier: "CommingSoonViewController") as! CommingSoonViewController
-        self.navigationController?.pushViewController(next, animated: true)
-        
-        /*
-        switch sender.tag {
-        case 11:
-            showWebSite(strHeager: "MOVIE", strURL: "https://www.hoyts.com.au/")
-            
-        case 12:
-            showWebSite(strHeager: "GROCERIES", strURL: "https://www.coles.com.au/")
-            
-        case 13:
-            showWebSite(strHeager: "RETAILS", strURL: "https://www.chadstone.com.au/")
-            
-        case 14:
-            showWebSite(strHeager: "DISCOUNT", strURL: "https://www.chadstone.com.au/whats-on")
-            
-        case 15:
-            showWebSite(strHeager: "GIFT CARD", strURL: "https://www.chadstone.com.au/services-facilities/services/gift-card")
-            
-        case 16:
-            showWebSite(strHeager: "FESTIVAL", strURL: "https://www.festival.melbourne/2017/")
-            
-        default: break
-            
-        }
-        */
-    }
-    
-    func showWebSite(strHeager: String, strURL: String) {
-        
-        let next = self.storyboard?.instantiateViewController(withIdentifier: "webViewVC") as! webViewVC
-        next.headerName = strHeager
-        next.strURL = strURL
-        self.navigationController?.present(next, animated: true, completion: nil)
-    }
-    
-    
-}
-
-
-

@@ -28,7 +28,7 @@ class PastBookingVC: UIViewController, UITableViewDataSource, UITableViewDelegat
         let refreshControl = UIRefreshControl()
         refreshControl.addTarget(self, action:
             #selector(self.handleRefresh(_:)),
-                                 for: UIControlEvents.valueChanged)
+                                 for: UIControl.Event.valueChanged)
         refreshControl.tintColor = themeYellowColor
         
         return refreshControl
@@ -122,8 +122,8 @@ class PastBookingVC: UIViewController, UITableViewDataSource, UITableViewDelegat
                     let attributedString = NSAttributedString(string: name)
                     let textRange = NSMakeRange(0, attributedString.length)
                     let underlinedMessage = NSMutableAttributedString(attributedString: attributedString)
-                    underlinedMessage.addAttribute(NSAttributedStringKey.underlineStyle,
-                                                   value:NSUnderlineStyle.styleSingle.rawValue,
+                    underlinedMessage.addAttribute(NSAttributedString.Key.underlineStyle,
+                                                   value:NSUnderlineStyle.single.rawValue,
                                                    range: textRange)
                     cell.lblDriverName.attributedText = underlinedMessage
 //                    cell.lblDriverName.text = name

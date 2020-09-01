@@ -92,7 +92,7 @@ open class Pulsator: CAReplicatorLayer, CAAnimationDelegate {
     open var pulseInterval: TimeInterval = 0
     
     /// A function describing a timing curve of the animation.
-    open var timingFunction: CAMediaTimingFunction? = CAMediaTimingFunction(name: kCAMediaTimingFunctionDefault) {
+    open var timingFunction: CAMediaTimingFunction? = CAMediaTimingFunction(name: CAMediaTimingFunctionName.default) {
         didSet {
             if let animationGroup = animationGroup {
                 animationGroup.timingFunction = timingFunction
@@ -124,12 +124,12 @@ open class Pulsator: CAReplicatorLayer, CAAnimationDelegate {
         
         NotificationCenter.default.addObserver(self,
                                                selector: #selector(save),
-                                               name: NSNotification.Name.UIApplicationDidEnterBackground,
+                                               name: UIApplication.didEnterBackgroundNotification,
                                                object: nil)
         
         NotificationCenter.default.addObserver(self,
                                                selector: #selector(resume),
-                                               name: NSNotification.Name.UIApplicationWillEnterForeground,
+                                               name: UIApplication.willEnterForegroundNotification,
                                                object: nil)
     }
     

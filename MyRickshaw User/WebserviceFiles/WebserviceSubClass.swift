@@ -63,6 +63,10 @@ let Chating = WebserviceURLs.kChating
 let pastBooking = WebserviceURLs.kPastBooking
 let upcommingBooking = WebserviceURLs.kUpcomingBooking
 let onGoingBooking = WebserviceURLs.kOngoingBooking
+let creditRequest = WebserviceURLs.kCreditAccountRequest
+let PayForCreditRequest = WebserviceURLs.kPayCreditAccount
+let CreditHistory = WebserviceURLs.kCreditHistory
+let CreditAccountPaymentHistory = WebserviceURLs.kCreditAccountPaymentHistory
 
 //-------------------------------------------------------------
 // MARK: - Webservice For Registration
@@ -518,4 +522,49 @@ func webserviceForOnGoingBooking(_ dictParams: AnyObject, isLoading: Bool,comple
 {
     let url = onGoingBooking + (dictParams as! String)
     getDataWithOrWithoutLoading("" as AnyObject, nsURL: url, isLoading: isLoading, completion: completion)
+}
+
+
+//-------------------------------------------------------------
+// MARK: - Webservice For Credit Request
+//-------------------------------------------------------------
+
+func webserviceForCreditRequest(_ dictParams: AnyObject, completion: @escaping(_ result: AnyObject, _ success: Bool) -> Void)
+{
+    let url = creditRequest
+    postData(dictParams, nsURL: url, completion: completion)
+}
+
+
+//-------------------------------------------------------------
+// MARK: - Webservice To Pay Credit Request
+//-------------------------------------------------------------
+
+func webserviceForPaymentInCredit(_ dictParams: AnyObject, completion: @escaping(_ result: AnyObject, _ success: Bool) -> Void)
+{
+    let url = PayForCreditRequest
+    postData(dictParams, nsURL: url, completion: completion)
+}
+
+
+//-------------------------------------------------------------
+// MARK: - Webservice To Pay Credit History
+//-------------------------------------------------------------
+
+func webserviceForCreditHistory(_ dictParams: AnyObject, completion: @escaping(_ result: AnyObject, _ success: Bool) -> Void)
+{
+//    let url = CreditHistory
+    let url = CreditHistory + "\(dictParams)"
+    getData("" as AnyObject, nsURL: url, completion: completion)
+}
+
+//-------------------------------------------------------------
+// MARK: - Webservice History
+//-------------------------------------------------------------
+
+func webserviceCreditHistory(_ dictParams: AnyObject, completion: @escaping(_ result: AnyObject, _ success: Bool) -> Void)
+{
+//    let url = CreditHistory
+    let url = CreditAccountPaymentHistory + "\(dictParams)"
+    getData("" as AnyObject, nsURL: url, completion: completion)
 }

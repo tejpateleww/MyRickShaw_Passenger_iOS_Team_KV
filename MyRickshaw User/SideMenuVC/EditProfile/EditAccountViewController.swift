@@ -116,7 +116,7 @@ class EditAccountViewController: UIViewController, UITextFieldDelegate {
             
             let application:UIApplication = UIApplication.shared
             if (application.canOpenURL(phoneCallURL)) {
-                application.open(phoneCallURL, options: [:], completionHandler: nil)
+                application.open(phoneCallURL, options: convertToUIApplicationOpenExternalURLOptionsKeyDictionary([:]), completionHandler: nil)
             }
         }
     }
@@ -128,7 +128,7 @@ class EditAccountViewController: UIViewController, UITextFieldDelegate {
     func validationForUpdateBankAccountDetails() -> Bool {
         
         if (txtAccountHolderName.text!.count == 0) {
-            UtilityClass.setCustomAlert(title: appName, message: "Please enter account holeder name") { (index, title) in
+            UtilityClass.setCustomAlert(title: appName, message: "Please enter account holder name") { (index, title) in
             }
             return false
         }
@@ -258,4 +258,9 @@ class EditAccountViewController: UIViewController, UITextFieldDelegate {
         }
     }
 
+}
+
+// Helper function inserted by Swift 4.2 migrator.
+fileprivate func convertToUIApplicationOpenExternalURLOptionsKeyDictionary(_ input: [String: Any]) -> [UIApplication.OpenExternalURLOptionsKey: Any] {
+	return Dictionary(uniqueKeysWithValues: input.map { key, value in (UIApplication.OpenExternalURLOptionsKey(rawValue: key), value)})
 }

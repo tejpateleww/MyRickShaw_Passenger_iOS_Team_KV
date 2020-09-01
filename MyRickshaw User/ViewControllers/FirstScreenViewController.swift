@@ -10,10 +10,13 @@ import UIKit
 
 
 class FirstScreenViewController: UIViewController {
-
+    
     @IBOutlet weak var constraintCenterOfDimondImage: NSLayoutConstraint! // 1.02
     
     @IBOutlet weak var constraintWidthOfCarImage: NSLayoutConstraint! //
+    
+    @IBOutlet weak var btnContinue : UIButton?
+    @IBOutlet weak var btnAbout : UIButton?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -21,12 +24,16 @@ class FirstScreenViewController: UIViewController {
         setImages()
         webserviceOfAppSetting()
         
+        
+        btnContinue?.imageView?.contentMode = .scaleAspectFit
+            btnAbout?.imageView?.contentMode = .scaleAspectFit
+        
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
     }
-
+    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         
@@ -46,22 +53,22 @@ class FirstScreenViewController: UIViewController {
             imgHomeScreen.image = UIImage(named: "iPhoneX.jpg")
             
             
-//            let newConstraint2 = self.constraintWidthOfCarImage.constraintWithMultiplier(0.485)
-//            self.view!.removeConstraint(self.constraintWidthOfCarImage)
-//            constraintWidthOfCarImage = newConstraint2
-//
-//            self.view!.addConstraint(constraintWidthOfCarImage)
-//            self.view!.layoutIfNeeded()
+            //            let newConstraint2 = self.constraintWidthOfCarImage.constraintWithMultiplier(0.485)
+            //            self.view!.removeConstraint(self.constraintWidthOfCarImage)
+            //            constraintWidthOfCarImage = newConstraint2
+            //
+            //            self.view!.addConstraint(constraintWidthOfCarImage)
+            //            self.view!.layoutIfNeeded()
         }
         
         
         if (DeviceType.IS_IPHONE_X) {
             
             let newConstraint = self.constraintCenterOfDimondImage.constraintWithMultiplier(1.12)
-//            self.view!.removeConstraint(self.constraintCenterOfDimondImage)
+            //            self.view!.removeConstraint(self.constraintCenterOfDimondImage)
             
             let newConstraint2 = self.constraintWidthOfCarImage.constraintWithMultiplier(0.485)
-//            self.view!.removeConstraint(self.constraintWidthOfCarImage)
+            //            self.view!.removeConstraint(self.constraintWidthOfCarImage)
             
             self.view.removeConstraints([self.constraintCenterOfDimondImage])
             
@@ -69,20 +76,20 @@ class FirstScreenViewController: UIViewController {
             constraintWidthOfCarImage = newConstraint2
             
             self.view!.addConstraints([self.constraintCenterOfDimondImage])
-
-//            self.view!.addConstraint(constraintCenterOfDimondImage)
+            
+            //            self.view!.addConstraint(constraintCenterOfDimondImage)
             self.view!.layoutIfNeeded()
         }
         
         
         
-//        let people = ["asdf", "axcv", "basdf", "jkjhjk", "beadsf", "cvxcdf"]
-//        print(people)
-//        
-//        let groupData = Dictionary(grouping: people, by: {$0.first!})
-//        print(groupData)
-//        
-//        groupData["a".first! as! Character]
+        //        let people = ["asdf", "axcv", "basdf", "jkjhjk", "beadsf", "cvxcdf"]
+        //        print(people)
+        //
+        //        let groupData = Dictionary(grouping: people, by: {$0.first!})
+        //        print(groupData)
+        //
+        //        groupData["a".first! as! Character]
         
     }
     
@@ -100,12 +107,22 @@ class FirstScreenViewController: UIViewController {
     @IBAction func btnContinue(_ sender: UIButton) {
         
         if Connectivity.isConnectedToInternet() {
-           self.performSegue(withIdentifier: "segueToContinue", sender: self)
+            
+            if(SingletonClass.sharedInstance.isUserLoggedIN)
+            {
+                appDelegate.GoToHome()
+            }
+            else
+            {
+                appDelegate.GoToLogin()
+                
+            }
         }
         else {
             UtilityClass.setCustomAlert(title: InternetConnection.internetConnectionTitle, message: InternetConnection.internetConnectionMessage) { (index, msg) in
-            }        
+            }
         }
+        
     }
     
     @IBAction func btnAbout(_ sender: UIButton) {
@@ -122,7 +139,7 @@ class FirstScreenViewController: UIViewController {
     @IBAction func btnBudgetTaxis(_ sender: UIButton) {
         
         if Connectivity.isConnectedToInternet() {
-           navicodes(website: strBudgetTaxis, header: "Budget Taxis")
+            navicodes(website: strBudgetTaxis, header: "Budget Taxis")
         }
         else {
             UtilityClass.setCustomAlert(title: InternetConnection.internetConnectionTitle, message: InternetConnection.internetConnectionMessage) { (index, msg) in
@@ -131,9 +148,9 @@ class FirstScreenViewController: UIViewController {
     }
     
     @IBAction func btnBudgetShuttlesAndValues(_ sender: UIButton) {
-       
+        
         if Connectivity.isConnectedToInternet() {
-             navicodes(website: strBudgetShuttlesAndValues, header: "Budget Shuttles And Values")
+            navicodes(website: strBudgetShuttlesAndValues, header: "Budget Shuttles And Values")
         }
         else {
             UtilityClass.setCustomAlert(title: InternetConnection.internetConnectionTitle, message: InternetConnection.internetConnectionMessage) { (index, msg) in
@@ -205,7 +222,7 @@ class FirstScreenViewController: UIViewController {
                         if(SingletonClass.sharedInstance.isUserLoggedIN)
                         {
                             //                            self.webserviceForAllDrivers()
-//                            self.performSegue(withIdentifier: "segueToHomeVC", sender: nil)
+                            //                            self.performSegue(withIdentifier: "segueToHomeVC", sender: nil)
                         }
                     })
                     alert.addAction(UPDATE)
@@ -216,7 +233,7 @@ class FirstScreenViewController: UIViewController {
                     
                     if(SingletonClass.sharedInstance.isUserLoggedIN) {
                         
-//                        self.performSegue(withIdentifier: "segueToHomeVC", sender: nil)
+                        //                        self.performSegue(withIdentifier: "segueToHomeVC", sender: nil)
                     }
                 }
             }
@@ -266,7 +283,7 @@ class FirstScreenViewController: UIViewController {
             }
         }
     }
-   
+    
 }
 
 

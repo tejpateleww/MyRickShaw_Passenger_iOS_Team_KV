@@ -106,7 +106,7 @@ import UIKit
     
     internal func setupDisplayLink() {
         self.displayLink = CADisplayLink(target: self, selector: #selector(updateFrame))
-        self.displayLink?.add(to: .current, forMode: .commonModes)
+        self.displayLink?.add(to: .current, forMode: RunLoop.Mode.common)
     }
 
     @objc internal func updateFrame() {

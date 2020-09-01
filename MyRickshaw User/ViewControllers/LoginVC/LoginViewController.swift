@@ -41,20 +41,20 @@ class LoginViewController: UIViewController, CLLocationManagerDelegate, alertVie
     override func loadView() {
         super.loadView()
         
-        if Connectivity.isConnectedToInternet() {
-            print("Yes! internet is available.")
-            // do some tasks..
-            
-            if(SingletonClass.sharedInstance.isUserLoggedIN)
-            {
-                self.performSegue(withIdentifier: "segueToHomeVC", sender: nil)
-            }
-        }
-        else {
-
-            UtilityClass.setCustomAlert(title: "Connection Error", message: "Internet connection not available") { (index, title) in
-            }
-        }
+//        if Connectivity.isConnectedToInternet() {
+//            print("Yes! internet is available.")
+//            // do some tasks..
+//
+//            if(SingletonClass.sharedInstance.isUserLoggedIN)
+//            {
+//                self.performSegue(withIdentifier: "segueToHomeVC", sender: nil)
+//            }
+//        }
+//        else {
+//
+//            UtilityClass.setCustomAlert(title: "Connection Error", message: "Internet connection not available") { (index, title) in
+//            }
+//        }
         
 //        webserviceOfAppSetting()
         

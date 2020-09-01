@@ -33,7 +33,7 @@ class AKRadioButton: UIButton {
             self._imageView?.clipsToBounds = true
             
             //move text right
-            self.titleEdgeInsets = UIEdgeInsetsMake(0.0, self._imageView!.bounds.width + 10 , 0.0, 0.0)
+            self.titleEdgeInsets = UIEdgeInsets.init(top: 0.0, left: self._imageView!.bounds.width + 10 , bottom: 0.0, right: 0.0)
         }
         self._imageView?.image = image
         self._imageView?.layer.contentsScale = UIScreen.main.scale

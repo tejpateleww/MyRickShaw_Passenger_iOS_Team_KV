@@ -98,21 +98,21 @@ class PackageViewController: UIViewController,UICollectionViewDelegate, UICollec
         self.navigationController?.navigationBar.barTintColor = UIColor.white;
         self.navigationController?.navigationBar.tintColor = themeYellowColor;
         self.title = "Packages"
-        self.navigationController?.navigationBar.titleTextAttributes = [NSAttributedStringKey.foregroundColor : themeYellowColor]
+        self.navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor : themeYellowColor]
         
         
-        let btnback :UIBarButtonItem = UIBarButtonItem.init(image: UIImage.init(named: "iconArrowSmall"), style: UIBarButtonItemStyle.plain, target: self, action: #selector(btnBackClicked(_:)))
+        let btnback :UIBarButtonItem = UIBarButtonItem.init(image: UIImage.init(named: "iconArrowSmall"), style: UIBarButtonItem.Style.plain, target: self, action: #selector(btnBackClicked(_:)))
         self.navigationItem.leftBarButtonItem = btnback
         
 //        let btnCall :UIBarButtonItem = UIBarButtonItem.init(image: UIImage.init(named: "iconCall"), style: UIBarButtonItemStyle.plain, target: self, action: #selector(btnCallClicked(_:)))
 //        self.navigationItem.rightBarButtonItem = btnCall
         
         
-        let btnCall  = UIButton(type: UIButtonType.custom)
+        let btnCall  = UIButton(type: UIButton.ButtonType.custom)
         btnCall.frame = CGRect (x: 0, y: 0, width: 50, height: 32)
         btnCall.backgroundColor = UIColor.clear
         btnCall.setImage(UIImage.init(named: "iconCallSmall"), for: .normal)
-        btnCall.addTarget(self, action: #selector(btnCallClicked(_:)), for: UIControlEvents.touchUpInside)  // Action
+        btnCall.addTarget(self, action: #selector(btnCallClicked(_:)), for: UIControl.Event.touchUpInside)  // Action
         let btnCallBArButton: UIBarButtonItem = UIBarButtonItem(customView: btnCall)  // Create the bar button
         
         // Add the component to the navigation Bar
@@ -143,7 +143,7 @@ class PackageViewController: UIViewController,UICollectionViewDelegate, UICollec
             
             let application:UIApplication = UIApplication.shared
             if (application.canOpenURL(phoneCallURL)) {
-                application.open(phoneCallURL, options: [:], completionHandler: nil)
+                application.open(phoneCallURL, options: convertToUIApplicationOpenExternalURLOptionsKeyDictionary([:]), completionHandler: nil)
             }
         }
     }
@@ -555,4 +555,9 @@ class PackageViewController: UIViewController,UICollectionViewDelegate, UICollec
                 self.view.layoutIfNeeded()
         }, completion: nil)
     }
+}
+
+// Helper function inserted by Swift 4.2 migrator.
+fileprivate func convertToUIApplicationOpenExternalURLOptionsKeyDictionary(_ input: [String: Any]) -> [UIApplication.OpenExternalURLOptionsKey: Any] {
+	return Dictionary(uniqueKeysWithValues: input.map { key, value in (UIApplication.OpenExternalURLOptionsKey(rawValue: key), value)})
 }

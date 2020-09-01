@@ -24,7 +24,7 @@ extension HomeViewController {
     
     func mapView(_ mapView: GMSMapView, willMove gesture: Bool) {
         
-//        print("willMove gesture : \(gesture)")
+        //        print("willMove gesture : \(gesture)")
         
         self.btnDoneForLocationSelected.isHidden = true
         if MarkerCurrntLocation.isHidden == false {
@@ -39,61 +39,61 @@ extension HomeViewController {
     
     func mapView(_ mapView: GMSMapView, idleAt cameraPosition: GMSCameraPosition) {
         
-//        print("idleAt cameraPosition : \(cameraPosition)")
+        //        print("idleAt cameraPosition : \(cameraPosition)")
         
         
         
         if Connectivity.isConnectedToInternet() {
             
-//            if strBookingType == "" {
-                if MarkerCurrntLocation.isHidden == false {
+            //            if strBookingType == "" {
+            if MarkerCurrntLocation.isHidden == false {
+                
+                //                geocoder.reverseGeocodeCoordinate(cameraPosition.target) { (response, error) in
+                //                    guard error == nil else {
+                //                        return
+                //                    }
+                //                }
+                
+                self.btnDoneForLocationSelected.isHidden = false /// informal testing 27-Aug-2018
+                if self.strLocationType != "" {
                     
-                    //                geocoder.reverseGeocodeCoordinate(cameraPosition.target) { (response, error) in
-                    //                    guard error == nil else {
-                    //                        return
-                    //                    }
-                    //                }
+                    //                     UtilityClass.showACProgressHUD()
                     
-                    self.btnDoneForLocationSelected.isHidden = false /// informal testing 27-Aug-2018
-                    if self.strLocationType != "" {
+                    
+                    self.btnDoneForLocationSelected.isHidden = false
+                    
+                    if self.strLocationType == self.currentLocationMarkerText {
                         
-                        //                     UtilityClass.showACProgressHUD()
+                        self.doublePickupLat = cameraPosition.target.latitude
+                        self.doublePickupLng = cameraPosition.target.longitude
+                        
+                        getAddressForLatLng(latitude: "\(cameraPosition.target.latitude)", longitude: "\(cameraPosition.target.longitude)", markerType: strLocationType)
                         
                         
-                        self.btnDoneForLocationSelected.isHidden = false
+                    }
+                    else if self.strLocationType == self.destinationLocationMarkerText {
                         
-                        if self.strLocationType == self.currentLocationMarkerText {
-                            
-                            self.doublePickupLat = cameraPosition.target.latitude
-                            self.doublePickupLng = cameraPosition.target.longitude
-                            
-                            getAddressForLatLng(latitude: "\(cameraPosition.target.latitude)", longitude: "\(cameraPosition.target.longitude)", markerType: strLocationType)
-                            
-                            
-                        }
-                        else if self.strLocationType == self.destinationLocationMarkerText {
-                            
-                            self.doubleDropOffLat = cameraPosition.target.latitude
-                            self.doubleDropOffLng = cameraPosition.target.longitude
-                            
-                            getAddressForLatLng(latitude: "\(cameraPosition.target.latitude)", longitude: "\(cameraPosition.target.longitude)", markerType: strLocationType)
-                            
-                            
-                        }
+                        self.doubleDropOffLat = cameraPosition.target.latitude
+                        self.doubleDropOffLng = cameraPosition.target.longitude
                         
-                        if txtCurrentLocation.text?.count != 0 && txtDestinationLocation.text?.count != 0 && self.btnDoneForLocationSelected.isHidden != false {
-                            self.strLocationType = ""
-                            
-                            //                        UtilityClass.hideHUD()
-                        }
+                        getAddressForLatLng(latitude: "\(cameraPosition.target.latitude)", longitude: "\(cameraPosition.target.longitude)", markerType: strLocationType)
+                        
+                        
                     }
                     
-                    //                getAddressForLatLng(latitude: "\(cameraPosition.target.latitude)", longitude: "\(cameraPosition.target.longitude)", markerType: strLocationType) // currentLocationMarkerText
+                    if txtCurrentLocation.text?.count != 0 && txtDestinationLocation.text?.count != 0 && self.btnDoneForLocationSelected.isHidden != false {
+                        self.strLocationType = ""
+                        
+                        //                        UtilityClass.hideHUD()
+                    }
                 }
-//            }
-//            else {
-//                MarkerCurrntLocation.isHidden = true
-//            }
+                
+                //                getAddressForLatLng(latitude: "\(cameraPosition.target.latitude)", longitude: "\(cameraPosition.target.longitude)", markerType: strLocationType) // currentLocationMarkerText
+            }
+            //            }
+            //            else {
+            //                MarkerCurrntLocation.isHidden = true
+            //            }
         }
         else {
             UtilityClass.showAlert("", message: "Internet connection not available", vc: self)
@@ -279,11 +279,11 @@ extension HomeViewController {
         
     }
     
-//    func mapView(_ mapView: GMSMapView, didTapAt coordinate: CLLocationCoordinate2D) {
-//
-//        //        print("You tapped at \(coordinate.latitude), \(coordinate.longitude)")
-//
-//    }
+    //    func mapView(_ mapView: GMSMapView, didTapAt coordinate: CLLocationCoordinate2D) {
+    //
+    //        //        print("You tapped at \(coordinate.latitude), \(coordinate.longitude)")
+    //
+    //    }
     
     
     

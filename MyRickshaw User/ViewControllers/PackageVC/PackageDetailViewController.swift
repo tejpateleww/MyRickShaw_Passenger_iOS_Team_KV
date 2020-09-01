@@ -81,13 +81,13 @@ class PackageDetailViewController: UIViewController,UIPickerViewDelegate, UIPick
         self.navigationController?.navigationBar.barTintColor = UIColor.white;
         self.navigationController?.navigationBar.tintColor = themeYellowColor;
         self.title = "Packages Details"
-        self.navigationController?.navigationBar.titleTextAttributes = [NSAttributedStringKey.foregroundColor : themeYellowColor]
+        self.navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor : themeYellowColor]
         
         
-        let btnback :UIBarButtonItem = UIBarButtonItem.init(image: UIImage.init(named: "iconCloseAlert"), style: UIBarButtonItemStyle.plain, target: self, action: #selector(btnBackClicked(_:)))
+        let btnback :UIBarButtonItem = UIBarButtonItem.init(image: UIImage.init(named: "iconCloseAlert"), style: UIBarButtonItem.Style.plain, target: self, action: #selector(btnBackClicked(_:)))
         self.navigationItem.leftBarButtonItem = btnback
         
-        let btnCall :UIBarButtonItem = UIBarButtonItem.init(image: UIImage.init(named: "iconCallSmall"), style: UIBarButtonItemStyle.plain, target: self, action: #selector(btnCallClicked(_:)))
+        let btnCall :UIBarButtonItem = UIBarButtonItem.init(image: UIImage.init(named: "iconCallSmall"), style: UIBarButtonItem.Style.plain, target: self, action: #selector(btnCallClicked(_:)))
         self.navigationItem.rightBarButtonItem = btnCall
         
         if SingletonClass.sharedInstance.CardsVCHaveAryData.count != 0 {
@@ -135,7 +135,7 @@ class PackageDetailViewController: UIViewController,UIPickerViewDelegate, UIPick
         {
             let application:UIApplication = UIApplication.shared
             if (application.canOpenURL(phoneCallURL)) {
-                application.open(phoneCallURL, options: [:], completionHandler: nil)
+                application.open(phoneCallURL, options: convertToUIApplicationOpenExternalURLOptionsKeyDictionary([:]), completionHandler: nil)
             }
         }
     }
@@ -618,4 +618,9 @@ class PackageDetailViewController: UIViewController,UIPickerViewDelegate, UIPick
     
     
     
+}
+
+// Helper function inserted by Swift 4.2 migrator.
+fileprivate func convertToUIApplicationOpenExternalURLOptionsKeyDictionary(_ input: [String: Any]) -> [UIApplication.OpenExternalURLOptionsKey: Any] {
+	return Dictionary(uniqueKeysWithValues: input.map { key, value in (UIApplication.OpenExternalURLOptionsKey(rawValue: key), value)})
 }

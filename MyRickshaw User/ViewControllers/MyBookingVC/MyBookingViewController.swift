@@ -17,7 +17,8 @@ class MyBookingViewController: UIViewController, UIScrollViewDelegate {
     let bottomBorderOnGoing = CALayer()
     let bottomBorderUpComming = CALayer()
     let bottomBorderPastBooking = CALayer()
-    
+    @IBOutlet weak var constraintHeight: NSLayoutConstraint!
+
     var heightOfLayer = CGFloat()
     var heighMinusFromY = CGFloat()
     
@@ -38,7 +39,7 @@ class MyBookingViewController: UIViewController, UIScrollViewDelegate {
         webserviceOfBookingHistory()
         
         scrollObject.isUserInteractionEnabled = true
-        
+        setHeaderForIphoneX()
         scrollObject.delegate = self
         scrollObject.layoutIfNeeded()
         scrollObject.setContentOffset(CGPoint(x: 0, y: 0), animated: true)
@@ -58,6 +59,21 @@ class MyBookingViewController: UIViewController, UIScrollViewDelegate {
         }
         
         // Do any additional setup after loading the view.
+    }
+    
+    
+    func setHeaderForIphoneX() {
+        
+        if UIDevice().userInterfaceIdiom == .phone {
+            switch UIScreen.main.nativeBounds.height {
+            case 2436,1792:
+                
+                constraintHeight.constant = 00
+            default:
+                print("Height of device is \(UIScreen.main.nativeBounds.height)")
+            }
+        }
+        
     }
 
     override func didReceiveMemoryWarning() {
@@ -125,7 +141,7 @@ class MyBookingViewController: UIViewController, UIScrollViewDelegate {
             
             let application:UIApplication = UIApplication.shared
             if (application.canOpenURL(phoneCallURL)) {
-                application.open(phoneCallURL, options: [:], completionHandler: nil)
+                application.open(phoneCallURL, options: convertToUIApplicationOpenExternalURLOptionsKeyDictionary([:]), completionHandler: nil)
             }
         }
     }
@@ -137,8 +153,8 @@ class MyBookingViewController: UIViewController, UIScrollViewDelegate {
     
     @IBAction func btnUpComming(_ sender: UIButton) {
         Upcomming()
-        if self.childViewControllers.count != 0 {
-            if let commingVC = self.childViewControllers.first as? UpCommingVC {
+        if self.children.count != 0 {
+            if let commingVC = self.children.first as? UpCommingVC {
                 commingVC.webserviceOfUpcommingPagination(index: 1)
             }
         }
@@ -254,8 +270,8 @@ class MyBookingViewController: UIViewController, UIScrollViewDelegate {
        
         PastBooking()
         
-        if self.childViewControllers.count != 0 {
-            if let pastVC = self.childViewControllers.last as? PastBookingVC {
+        if self.children.count != 0 {
+            if let pastVC = self.children.last as? PastBookingVC {
                 pastVC.webserviceOfPastbookingpagination(index: 1)
             }
         }        
@@ -347,4 +363,9 @@ class MyBookingViewController: UIViewController, UIScrollViewDelegate {
         }
     }
 
+}
+
+// Helper function inserted by Swift 4.2 migrator.
+fileprivate func convertToUIApplicationOpenExternalURLOptionsKeyDictionary(_ input: [String: Any]) -> [UIApplication.OpenExternalURLOptionsKey: Any] {
+	return Dictionary(uniqueKeysWithValues: input.map { key, value in (UIApplication.OpenExternalURLOptionsKey(rawValue: key), value)})
 }

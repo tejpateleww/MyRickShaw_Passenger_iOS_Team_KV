@@ -34,7 +34,7 @@ class TiCKPayNeedToVarifyViewController: UIViewController {
     @IBAction func btnBack(_ sender: UIButton) {
         
     
-        if let HomeVC = self.navigationController?.childViewControllers[1] as? CustomSideMenuViewController{
+        if let HomeVC = self.navigationController?.children[1] as? CustomSideMenuViewController{
 
             self.navigationController?.popToViewController(HomeVC, animated: true)
 

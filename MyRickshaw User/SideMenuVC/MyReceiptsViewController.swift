@@ -24,7 +24,7 @@ class MyReceiptsViewController: ParentViewController, UITableViewDataSource, UIT
         let refreshControl = UIRefreshControl()
         refreshControl.addTarget(self, action:
             #selector(self.handleRefresh(_:)),
-                                 for: UIControlEvents.valueChanged)
+                                 for: UIControl.Event.valueChanged)
         refreshControl.tintColor = themeYellowColor
         
         return refreshControl
@@ -34,7 +34,7 @@ class MyReceiptsViewController: ParentViewController, UITableViewDataSource, UIT
         super.viewDidLoad()
         self.counts = 0
         
-        UIBarButtonItem.appearance(whenContainedInInstancesOf: [UINavigationBar.self]).setTitleTextAttributes([NSAttributedStringKey(rawValue: NSAttributedStringKey.foregroundColor.rawValue): UIColor.black], for: UIControlState.normal)
+        UIBarButtonItem.appearance(whenContainedInInstancesOf: [UINavigationBar.self]).setTitleTextAttributes([NSAttributedString.Key(rawValue: NSAttributedString.Key.foregroundColor.rawValue): UIColor.black], for: UIControl.State.normal)
         
         UtilityClass.showNavigationTextColor(color: UIColor.black)
 

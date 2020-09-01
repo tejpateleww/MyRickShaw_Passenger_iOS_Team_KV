@@ -20,7 +20,7 @@ class PackageHistoryViewController: ParentViewController, UITableViewDataSource,
         super.viewDidLoad()
 
         webserviceOfPackageBookingHistory()
-        tblView.rowHeight = UITableViewAutomaticDimension
+        tblView.rowHeight = UITableView.automaticDimension
         tblView.estimatedRowHeight = 320
         
         // Do any additional setup after loading the view.

@@ -10,21 +10,17 @@ import UIKit
 import IQKeyboardManagerSwift
 import GoogleMaps
 import GooglePlaces
-import Fabric
-import Crashlytics
+//import Fabric
+//import Crashlytics
 import SideMenuController
 import SocketIO
 import UserNotifications
 import Firebase
+import FirebaseCore
+import FirebaseMessaging
 
 
-let googlApiKey = "AIzaSyB7GS-O76Vp0jkS2nU-eZ_jkxLXJaUHAjg" //"AIzaSyBpHWct2Dal71hBjPis6R1CU0OHZNfMgCw"         // AIzaSyB08IH_NbumyQIAUCxbpgPCuZtFzIT5WQo
-let googlPlacesApiKey = "AIzaSyB7GS-O76Vp0jkS2nU-eZ_jkxLXJaUHAjg" // "AIzaSyCKEP5WGD7n5QWtCopu0QXOzM9Qec4vAfE"   //   AIzaSyBBQGfB0ca6oApMpqqemhx8-UV-gFls_Zk
-let googlePlacesOnly = "AIzaSyCvOJJfa9dDqA2iq1YlZwOw3QlLc3aEj1A"
-
-let googleMapAddress = "AIzaSyA5Awq3sgID29mLlPSVvYreFuF8TJaNHMI" // "AIzaSyDoMxWgofg2etB41_cYuV8YzT0iE7gzUJc"
-
-//AIzaSyBBQGfB0ca6oApMpqqemhx8-UV-gFls_Zk
+let googleMapAddress = "AIzaSyC-SFqp8tjooejbFiIa-hwq2Gl-og7ZeSQ"//"AIzaSyDfI6F_8lFtv_Cf-QhfwsGzCiS2V-ladSA"//
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate, MessagingDelegate {
 
@@ -34,28 +30,27 @@ class AppDelegate: UIResponder, UIApplicationDelegate, MessagingDelegate {
 
      let SocketManager = SocketIOClient(socketURL: URL(string: SocketData.kBaseURL)!, config: [.log(false), .compress])
 
-    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
+    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
         
         UIFont.overrideInitialize()
 
-        UIBarButtonItem.appearance().setTitleTextAttributes([NSAttributedStringKey.foregroundColor: UIColor.clear], for: .normal)
-        UIBarButtonItem.appearance().setTitleTextAttributes([NSAttributedStringKey.foregroundColor: UIColor.clear], for: UIControlState.highlighted)
+        UIBarButtonItem.appearance().setTitleTextAttributes([NSAttributedString.Key.foregroundColor: UIColor.clear], for: .normal)
+        UIBarButtonItem.appearance().setTitleTextAttributes([NSAttributedString.Key.foregroundColor: UIColor.clear], for: UIControl.State.highlighted)
         
         // Firebase
         FirebaseApp.configure()
         Messaging.messaging().delegate = self
 
         
-        IQKeyboardManager.sharedManager().enable = true
+        IQKeyboardManager.shared.enable = true
         
         
         GMSServices.provideAPIKey(googleMapAddress)
         GMSPlacesClient.provideAPIKey(googleMapAddress)
         
         
-        Fabric.with([Crashlytics.self])
-        // TODO: Move this to where you establish a user session
+         // TODO: Move this to where you establish a user session
      //   self.logUser()
         
         // ------------------------------------------------------------
@@ -73,9 +68,20 @@ class AppDelegate: UIResponder, UIApplicationDelegate, MessagingDelegate {
 
         if ((UserDefaults.standard.object(forKey: "profileData")) != nil)
         {
-            SingletonClass.sharedInstance.dictProfile = UserDefaults.standard.object(forKey: "profileData") as! NSMutableDictionary
+            
+            if let dictProfile = UserDefaults.standard.object(forKey: "profileData") as? NSMutableDictionary
+            {
+                SingletonClass.sharedInstance.dictProfile = dictProfile
+            }
+            else if let dictProfile = UserDefaults.standard.object(forKey: "profileData") as? NSDictionary
+            {
+                SingletonClass.sharedInstance.dictProfile = NSMutableDictionary(dictionary: dictProfile)
+            }
+            
+            
+//            SingletonClass.sharedInstance.dictProfile = UserDefaults.standard.object(forKey: "profileData") as! NSMutableDictionary
             SingletonClass.sharedInstance.strPassengerID = String(describing: SingletonClass.sharedInstance.dictProfile.object(forKey: "Id")!)
-            SingletonClass.sharedInstance.arrCarLists = NSMutableArray(array:  UserDefaults.standard.object(forKey: "carLists") as! NSArray)
+            SingletonClass.sharedInstance.arrCarLists = NSMutableArray(array:  UserDefaults.standard.object(forKey: "carLists") as? NSArray ?? NSArray())
             SingletonClass.sharedInstance.isUserLoggedIN = true
         }
         else
@@ -117,7 +123,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, MessagingDelegate {
         // Push Notification Code
         registerForPushNotification()
         
-        let remoteNotif = launchOptions?[UIApplicationLaunchOptionsKey.remoteNotification] as? NSDictionary
+        let remoteNotif = launchOptions?[UIApplication.LaunchOptionsKey.remoteNotification] as? NSDictionary
         
         if remoteNotif != nil {
             let key = (remoteNotif as! NSDictionary).object(forKey: "gcm.notification.type")!
@@ -131,6 +137,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate, MessagingDelegate {
             
         }
         
+        
+        self.GoToFirstScreen()
         
         /*
          if let notification = launchOptions?[.remoteNotification] as? [String:AnyObject] {
@@ -287,6 +295,57 @@ class AppDelegate: UIResponder, UIApplicationDelegate, MessagingDelegate {
          completionHandler()
          */
     }
+    
+    
+      // MARK:- Login & Logout Methods
+
+        func GoToHome() {
+            let storyborad = UIStoryboard(name: "Main", bundle: nil)
+            let CustomSideMenu = storyborad.instantiateViewController(withIdentifier: "CustomSideMenuViewController") as! SideMenuController
+            let NavHomeVC = UINavigationController(rootViewController: CustomSideMenu)
+            NavHomeVC.isNavigationBarHidden = true
+            UIApplication.shared.keyWindow?.rootViewController = NavHomeVC
+        }
+
+
+        func GoToFirstScreen() {
+            let storyborad = UIStoryboard(name: "Main", bundle: nil)
+            let CustomSideMenu = storyborad.instantiateViewController(withIdentifier: "FirstScreenViewController") as! FirstScreenViewController
+            let NavHomeVC = UINavigationController(rootViewController: CustomSideMenu)
+            NavHomeVC.isNavigationBarHidden = true
+            UIApplication.shared.keyWindow?.rootViewController = NavHomeVC
+        }
+
+
+        func GoToLogin() {
+
+            let storyborad = UIStoryboard(name: "Main", bundle: nil)
+            let Login = storyborad.instantiateViewController(withIdentifier: "LoginViewController") as! LoginViewController
+            let NavHomeVC = UINavigationController(rootViewController: Login)
+            NavHomeVC.isNavigationBarHidden = true
+            UIApplication.shared.keyWindow?.rootViewController = NavHomeVC
+
+        }
+
+        func GoToLogout() {
+            
+    //        (UIApplication.shared.delegate as! AppDelegate).window?.rootViewController?.children.first?.children.first?.children.first as! HomeViewController
+            //1. Clear Singleton class
+//            SingletonClass.sharedInstance.clearSingletonClass()
+
+            //2. Clear all userdefaults
+            for (key, _) in UserDefaults.standard.dictionaryRepresentation() {
+    //            print("\(key) = \(value) \n")
+                if key == "Token" || key  == "i18n_language" {
+                }
+                else {
+                    UserDefaults.standard.removeObject(forKey: key)
+                }
+            }
+            //3. Set isLogin USer Defaults to false
+            UserDefaults.standard.set(false, forKey: "isUserLogin")
+            self.GoToLogin()
+        }
     
     //-------------------------------------------------------------
     // MARK: - Push Notification Methods

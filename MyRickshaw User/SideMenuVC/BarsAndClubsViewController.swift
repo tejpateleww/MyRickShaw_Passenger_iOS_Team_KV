@@ -125,7 +125,7 @@ class BarsAndClubsViewController: ParentViewController, UITableViewDataSource, U
     
     func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath) -> [UITableViewRowAction]? {
         
-        let BookCarNow = UITableViewRowAction(style: UITableViewRowActionStyle.default, title: "Book Car Now") { (action , indexPath ) -> Void in
+        let BookCarNow = UITableViewRowAction(style: UITableViewRowAction.Style.default, title: "Book Car Now") { (action , indexPath ) -> Void in
             
             print("Book Car Now")
             
@@ -165,7 +165,7 @@ class BarsAndClubsViewController: ParentViewController, UITableViewDataSource, U
 
         }
         
-        let BookCarLater = UITableViewRowAction(style: UITableViewRowActionStyle.default, title: "Book Car Later") { (action , indexPath) -> Void in
+        let BookCarLater = UITableViewRowAction(style: UITableViewRowAction.Style.default, title: "Book Car Later") { (action , indexPath) -> Void in
             self.isEditing = false
             print("Book Car Later")
             

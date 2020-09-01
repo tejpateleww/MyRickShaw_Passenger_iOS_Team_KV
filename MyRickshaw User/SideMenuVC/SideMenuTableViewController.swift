@@ -308,7 +308,7 @@ class SideMenuTableViewController: UIViewController,UITableViewDataSource,UITabl
                 for controller in self.navigationController!.viewControllers as Array {
                     if controller.isKind(of: CustomSideMenuViewController.self) {
                         
-                        homeVC = (controller.childViewControllers[0] as! UINavigationController).childViewControllers[0] as! HomeViewController
+                        homeVC = (controller.children[0] as! UINavigationController).children[0] as! HomeViewController
                         self.navigationController!.popToViewController(controller, animated: true)
                         break
                     }
@@ -344,44 +344,15 @@ class SideMenuTableViewController: UIViewController,UITableViewDataSource,UITabl
                 
 //                UserDefaults.standard.removePersistentDomain(forName: Bundle.main.bundleIdentifier!)
                 
-                UserDefaults.standard.removeObject(forKey: "Passcode")
-                SingletonClass.sharedInstance.setPasscode = ""
                 
-                UserDefaults.standard.removeObject(forKey: "isPasscodeON")
-                SingletonClass.sharedInstance.isPasscodeON = false
-                
-                for key in UserDefaults.standard.dictionaryRepresentation().keys {
-                    if (key != "Token")
+                UtilityClass.showAlertWithButtons("Logout", message: "Are you sure you want to logout?", cancelTitle: "Cancel", otherButtonTitle: "OK", vc: UIApplication.topViewController() ?? self) { (index, title) in
+                    if(index == 1)
                     {
-                        UserDefaults.standard.removeObject(forKey: key.description)
+                        self.logout()
                     }
                 }
                 
-                let socket = (((self.parent as? CustomSideMenuViewController)?.childViewControllers.first as! UINavigationController).childViewControllers.first as! HomeViewController).socket
-                
-                socket.off(SocketData.kAcceptBookingRequestNotification)
-                socket.off(SocketData.kRejectBookingRequestNotification)
-                socket.off(SocketData.kPickupPassengerNotification)
-                socket.off(SocketData.kBookingCompletedNotification)
-                socket.off(SocketData.kAdvancedBookingTripHoldNotification)
-                
-                socket.off(SocketData.kReceiveDriverLocationToPassenger)
-                socket.off(SocketData.kCancelTripByDriverNotficication)
-                socket.off(SocketData.kAcceptAdvancedBookingRequestNotification)
-                socket.off(SocketData.kRejectAdvancedBookingRequestNotification)
-                socket.off(SocketData.kAdvancedBookingPickupPassengerNotification)
-                
-                socket.off(SocketData.kReceiveHoldingNotificationToPassenger)
-                socket.off(SocketData.kAdvancedBookingDetails)
-                socket.off(SocketData.kReceiveGetEstimateFare)
-                socket.off(SocketData.kInformPassengerForAdvancedTrip)
-                socket.off(SocketData.kAcceptAdvancedBookingRequestNotify)
-                socket.off(SocketData.kReceiveMessage)
-                socket.off(SocketData.kNearByDriverList)
-                
-                socket.disconnect()
-            
-                self.performSegue(withIdentifier: "unwindToContainerVC", sender: self)
+              
                 
             }
 //            else if (indexPath.row == arrMenuTitle.count - 2)
@@ -392,6 +363,48 @@ class SideMenuTableViewController: UIViewController,UITableViewDataSource,UITabl
             self.tableView.reloadData()
         }
 
+    }
+    
+    func logout()
+    {
+        UserDefaults.standard.removeObject(forKey: "Passcode")
+                      SingletonClass.sharedInstance.setPasscode = ""
+                      
+                      UserDefaults.standard.removeObject(forKey: "isPasscodeON")
+                      SingletonClass.sharedInstance.isPasscodeON = false
+                      
+                      for key in UserDefaults.standard.dictionaryRepresentation().keys {
+                          if (key != "Token")
+                          {
+                              UserDefaults.standard.removeObject(forKey: key.description)
+                          }
+                      }
+                      
+                      let socket = (((self.parent as? CustomSideMenuViewController)?.children.first as! UINavigationController).children.first as! HomeViewController).socket
+                      
+                      socket.off(SocketData.kAcceptBookingRequestNotification)
+                      socket.off(SocketData.kRejectBookingRequestNotification)
+                      socket.off(SocketData.kPickupPassengerNotification)
+                      socket.off(SocketData.kBookingCompletedNotification)
+                      socket.off(SocketData.kAdvancedBookingTripHoldNotification)
+                      
+                      socket.off(SocketData.kReceiveDriverLocationToPassenger)
+                      socket.off(SocketData.kCancelTripByDriverNotficication)
+                      socket.off(SocketData.kAcceptAdvancedBookingRequestNotification)
+                      socket.off(SocketData.kRejectAdvancedBookingRequestNotification)
+                      socket.off(SocketData.kAdvancedBookingPickupPassengerNotification)
+                      
+                      socket.off(SocketData.kReceiveHoldingNotificationToPassenger)
+                      socket.off(SocketData.kAdvancedBookingDetails)
+                      socket.off(SocketData.kReceiveGetEstimateFare)
+                      socket.off(SocketData.kInformPassengerForAdvancedTrip)
+                      socket.off(SocketData.kAcceptAdvancedBookingRequestNotify)
+                      socket.off(SocketData.kReceiveMessage)
+                      socket.off(SocketData.kNearByDriverList)
+                      
+                      socket.disconnect()
+            appDelegate.GoToLogin()
+//                      self.performSegue(withIdentifier: "unwindToContainerVC", sender: self)
     }
     
     

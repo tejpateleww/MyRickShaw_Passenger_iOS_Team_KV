@@ -91,7 +91,7 @@ extension HomeViewController: CLLocationManagerDelegate {
             
             mapView.delegate = self
             
-            let position = CLLocationCoordinate2D(latitude: defaultLocation.coordinate.latitude, longitude: defaultLocation.coordinate.longitude)
+//            let position = CLLocationCoordinate2D(latitude: defaultLocation.coordinate.latitude, longitude: defaultLocation.coordinate.longitude)
             
             MarkerCurrntLocation.isHidden = false
             

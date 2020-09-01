@@ -11,6 +11,7 @@ import NVActivityIndicatorView
 import Alamofire
 
 typealias CompletionHandler = (_ success:Bool) -> Void
+typealias CompletionHandlerAJ = ((Int, String) -> Void)?
 
 class UtilityClass: NSObject, alertViewMethodsDelegates {
     
@@ -20,7 +21,7 @@ class UtilityClass: NSObject, alertViewMethodsDelegates {
     {
         let alert = UIAlertController(title: title,
                                       message: message,
-                                      preferredStyle: UIAlertControllerStyle.alert)
+                                      preferredStyle: UIAlertController.Style.alert)
         
         let cancelAction = UIAlertAction(title: "OK",
                                          style: .cancel, handler: nil)
@@ -37,14 +38,14 @@ class UtilityClass: NSObject, alertViewMethodsDelegates {
 //        else {
         
         
-        let alertWindow = UIWindow(frame: UIScreen.main.bounds)
-        alertWindow.rootViewController = UIViewController()
-        alertWindow.windowLevel = UIWindowLevelAlert + 1;
-        alertWindow.makeKeyAndVisible()
-        alertWindow.rootViewController?.present(alert, animated: true, completion: nil)
+//        let alertWindow = UIWindow(frame: UIScreen.main.bounds)
+//        alertWindow.rootViewController = UIViewController()
+//        alertWindow.windowLevel = UIWindow.Level.alert + 1;
+//        alertWindow.makeKeyAndVisible()
+//        alertWindow.rootViewController?.present(alert, animated: true, completion: nil)
         
         
-//            (UIApplication.shared.delegate as! AppDelegate).window?.rootViewController?.present(alert, animated: true, completion: nil)
+            (UIApplication.shared.delegate as! AppDelegate).window?.rootViewController?.present(alert, animated: true, completion: nil)
 //        }
         
         
@@ -52,11 +53,17 @@ class UtilityClass: NSObject, alertViewMethodsDelegates {
         
     }
     
+    
+    class func showAlertWithButtons(_ title: String, message: String, cancelTitle : String, otherButtonTitle : String, vc: UIViewController ,completionHandler: CompletionHandlerAJ) -> Void
+      {
+        AJAlertController.initialization().showAlert(aStrMessage: title, aStrTitle: message, aCancelBtnTitle: cancelTitle, aOtherBtnTitle: otherButtonTitle, completion: completionHandler)
+    }
+    
     class func showAlertWithCompletion(_ title: String, message: String, vc: UIViewController,completionHandler: @escaping CompletionHandler) -> Void
     {
         let alert = UIAlertController(title: title,
                                       message: message,
-                                      preferredStyle: UIAlertControllerStyle.alert)
+                                      preferredStyle: UIAlertController.Style.alert)
         
         
         alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { (action) in
@@ -72,24 +79,42 @@ class UtilityClass: NSObject, alertViewMethodsDelegates {
 //        }
 //        else {
         
-            let alertWindow = UIWindow(frame: UIScreen.main.bounds)
-            alertWindow.rootViewController = UIViewController()
-            alertWindow.windowLevel = UIWindowLevelAlert + 1;
-            alertWindow.makeKeyAndVisible()
-            alertWindow.rootViewController?.present(alert, animated: true, completion: nil)
+//            let alertWindow = UIWindow(frame: UIScreen.main.bounds)
+//            alertWindow.rootViewController = UIViewController()
+//            alertWindow.windowLevel = UIWindow.Level.alert + 1;
+//            alertWindow.makeKeyAndVisible()
+//            alertWindow.rootViewController?.present(alert, animated: true, completion: nil)
         
-//            (UIApplication.shared.delegate as! AppDelegate).window?.rootViewController?.present(alert, animated: true, completion: nil)
+            (UIApplication.shared.delegate as! AppDelegate).window?.rootViewController?.present(alert, animated: true, completion: nil)
 //        }
 
     }
     
+    class func returnValueForCredit(key : String) -> String
+    {
+        var naviagate = String()
+        if let isRequestedCreditAccount = SingletonClass.sharedInstance.creditHistoryData[key] as? String
+        {
+            naviagate = isRequestedCreditAccount
+        }
+        else if let isRequestedCreditAccount = SingletonClass.sharedInstance.creditHistoryData[key] as? Int
+        {
+            naviagate = "\(isRequestedCreditAccount)"
+            
+        }
+        return naviagate
+    }
+    
     
     class func presentAlertVC(selfVC: UIViewController) {
-        let alertWindow = UIWindow(frame: UIScreen.main.bounds)
-        alertWindow.rootViewController = UIViewController()
-        alertWindow.windowLevel = UIWindowLevelAlert + 1
-        alertWindow.makeKeyAndVisible()
-        alertWindow.rootViewController?.present(selfVC, animated: true, completion: nil)
+//        let alertWindow = UIWindow(frame: UIScreen.main.bounds)
+//        alertWindow.rootViewController = UIViewController()
+//        alertWindow.windowLevel = UIWindow.Level.alert + 1
+//        alertWindow.makeKeyAndVisible()
+//        alertWindow.rootViewController?.present(selfVC, animated: true, completion: nil)
+        
+        (UIApplication.shared.delegate as! AppDelegate).window?.rootViewController?.present(selfVC, animated: false, completion: nil)
+
     }
     
     class func CustomAlertViewMethod(_ title: String, message: String, vc: UIViewController, completionHandler: @escaping CompletionHandler) -> Void {
@@ -101,23 +126,25 @@ class UtilityClass: NSObject, alertViewMethodsDelegates {
         next.strMessage = message
         
         
-        let alertWindow = UIWindow(frame: UIScreen.main.bounds)
-        alertWindow.rootViewController = UIViewController()
-        alertWindow.windowLevel = UIWindowLevelAlert + 1;
-        alertWindow.makeKeyAndVisible()
-        alertWindow.rootViewController?.present(next, animated: true, completion: nil)
+//        let alertWindow = UIWindow(frame: UIScreen.main.bounds)
+//        alertWindow.rootViewController = UIViewController()
+//        alertWindow.windowLevel = UIWindow.Level.alert + 1;
+//        alertWindow.makeKeyAndVisible()
+//        alertWindow.rootViewController?.present(next, animated: true, completion: nil)
         
         
-//        (UIApplication.shared.delegate as! AppDelegate).window?.rootViewController?.present(next, animated: false, completion: nil)
+        (UIApplication.shared.delegate as! AppDelegate).window?.rootViewController?.present(next, animated: false, completion: nil)
         
     }
     
     class func presentOverAlert(vc: UIViewController) {
-        let alertWindow = UIWindow(frame: UIScreen.main.bounds)
-        alertWindow.rootViewController = UIViewController()
-        alertWindow.windowLevel = UIWindowLevelAlert + 1;
-        alertWindow.makeKeyAndVisible()
-        alertWindow.rootViewController?.present(vc, animated: true, completion: nil)
+//        let alertWindow = UIWindow(frame: UIScreen.main.bounds)
+//        alertWindow.rootViewController = UIViewController()
+//        alertWindow.windowLevel = UIWindow.Level.alert + 1;
+//        alertWindow.makeKeyAndVisible()
+//        alertWindow.rootViewController?.present(vc, animated: true, completion: nil)
+        (UIApplication.shared.delegate as! AppDelegate).window?.rootViewController?.present(vc, animated: false, completion: nil)
+
         
     }
     
@@ -231,13 +258,13 @@ class UtilityClass: NSObject, alertViewMethodsDelegates {
     }
     
     class func showNavigationTextColor(color: UIColor) {
-        UIBarButtonItem.appearance().setTitleTextAttributes([NSAttributedStringKey.foregroundColor: color], for: .normal)
-        UIBarButtonItem.appearance().setTitleTextAttributes([NSAttributedStringKey.foregroundColor: color], for: UIControlState.highlighted)
+        UIBarButtonItem.appearance().setTitleTextAttributes([NSAttributedString.Key.foregroundColor: color], for: .normal)
+        UIBarButtonItem.appearance().setTitleTextAttributes([NSAttributedString.Key.foregroundColor: color], for: UIControl.State.highlighted)
     }
     
     class func hideNavigationTextColor() {
-        UIBarButtonItem.appearance().setTitleTextAttributes([NSAttributedStringKey.foregroundColor: UIColor.clear], for: .normal)
-        UIBarButtonItem.appearance().setTitleTextAttributes([NSAttributedStringKey.foregroundColor: UIColor.clear], for: UIControlState.highlighted)
+        UIBarButtonItem.appearance().setTitleTextAttributes([NSAttributedString.Key.foregroundColor: UIColor.clear], for: .normal)
+        UIBarButtonItem.appearance().setTitleTextAttributes([NSAttributedString.Key.foregroundColor: UIColor.clear], for: UIControl.State.highlighted)
     }
 
 }
@@ -246,8 +273,8 @@ extension UILabel {
     func underlineToLabel() {
         if let textString = self.text {
             let attributedString = NSMutableAttributedString(string: textString)
-            attributedString.addAttribute(NSAttributedStringKey.underlineStyle,
-                                          value: NSUnderlineStyle.styleSingle.rawValue,
+            attributedString.addAttribute(NSAttributedString.Key.underlineStyle,
+                                          value: NSUnderlineStyle.single.rawValue,
                                           range: NSRange(location: 0, length: attributedString.length))
             attributedText = attributedString
         }
@@ -401,3 +428,27 @@ extension Dictionary {
     }
 }
 
+
+
+extension UIApplication {
+
+    class func topViewController(_ viewController: UIViewController? = UIApplication.shared.keyWindow?.rootViewController) -> UIViewController? {
+        if let nav = viewController as? UINavigationController {
+            return topViewController(nav.visibleViewController)
+        }
+        if let tab = viewController as? UITabBarController {
+            if let selected = tab.selectedViewController {
+                return topViewController(selected)
+            }
+        }
+        if let presented = viewController?.presentedViewController {
+            return topViewController(presented)
+        }
+
+        //        if let slide = viewController as? SlideMenuController {
+        //            return topViewController(slide.mainViewController)
+        //        }
+        return viewController
+    }
+
+}

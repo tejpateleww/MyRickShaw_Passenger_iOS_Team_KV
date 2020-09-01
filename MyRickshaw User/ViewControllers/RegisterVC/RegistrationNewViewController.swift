@@ -159,9 +159,12 @@ class RegistrationNewViewController: UIViewController, AKRadioButtonsControllerD
     // MARK: - Image Delegate and DataSource Methods
 
     
-    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+// Local variable inserted by Swift 4.2 migrator.
+let info = convertFromUIImagePickerControllerInfoKeyDictionary(info)
+
         
-        if let pickedImage = info[UIImagePickerControllerOriginalImage] as? UIImage {
+        if let pickedImage = info[convertFromUIImagePickerControllerInfoKey(UIImagePickerController.InfoKey.originalImage)] as? UIImage {
             imgProfile.contentMode = .scaleToFill
             imgProfile.image = pickedImage
         }
@@ -177,9 +180,9 @@ class RegistrationNewViewController: UIViewController, AKRadioButtonsControllerD
         
         let datePickerView:UIDatePicker = UIDatePicker()
         datePickerView.maximumDate = Date()
-        datePickerView.datePickerMode = UIDatePickerMode.date
+        datePickerView.datePickerMode = UIDatePicker.Mode.date
         sender.inputView = datePickerView
-        datePickerView.addTarget(self, action: #selector(self.pickupdateMethod(_:)), for: UIControlEvents.valueChanged)
+        datePickerView.addTarget(self, action: #selector(self.pickupdateMethod(_:)), for: UIControl.Event.valueChanged)
     }
     
     @objc func pickupdateMethod(_ sender: UIDatePicker)
@@ -259,7 +262,7 @@ class RegistrationNewViewController: UIViewController, AKRadioButtonsControllerD
             
             if (checkValidation())
             {
-                let registerVC = (self.navigationController?.viewControllers.last as! RegistrationContainerViewController).childViewControllers[0] as! RegisterViewController
+                let registerVC = (self.navigationController?.viewControllers.last as! RegistrationContainerViewController).children[0] as! RegisterViewController
 
                 strPhoneNumber = (registerVC.txtPhoneNumber.text)!
                 strEmail = (registerVC.txtEmail.text)!
@@ -357,4 +360,14 @@ class RegistrationNewViewController: UIViewController, AKRadioButtonsControllerD
     }
     */
 
+}
+
+// Helper function inserted by Swift 4.2 migrator.
+fileprivate func convertFromUIImagePickerControllerInfoKeyDictionary(_ input: [UIImagePickerController.InfoKey: Any]) -> [String: Any] {
+	return Dictionary(uniqueKeysWithValues: input.map {key, value in (key.rawValue, value)})
+}
+
+// Helper function inserted by Swift 4.2 migrator.
+fileprivate func convertFromUIImagePickerControllerInfoKey(_ input: UIImagePickerController.InfoKey) -> String {
+	return input.rawValue
 }
