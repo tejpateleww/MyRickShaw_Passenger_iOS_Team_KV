@@ -62,8 +62,8 @@ public class ARCarMovement: NSObject {
 
     //        print ("\n Another angle is \(oldCoordinate.bearing(to: newCoordinate))\n" )
 
-            SingletonClass.sharedInstance.floatBearing = Float(degree)//getHeadingForDirection(fromCoordinate: oldCoordinate, toCoordinate: newCoordinate)//Float(degrees)
-            marker.rotation = degree//CLLocationDegrees(getHeadingForDirection(fromCoordinate: oldCoordinate, toCoordinate: newCoordinate))//CLLocationDegrees(calBearing);
+//            SingletonClass.sharedInstance.floatBearing = Float(degree)//getHeadingForDirection(fromCoordinate: oldCoordinate, toCoordinate: newCoordinate)//Float(degrees)
+        marker.rotation = CLLocationDegrees(bearing)//CLLocationDegrees(getHeadingForDirection(fromCoordinate: oldCoordinate, toCoordinate: newCoordinate))//CLLocationDegrees(calBearing);
             CATransaction.commit()
             
         }

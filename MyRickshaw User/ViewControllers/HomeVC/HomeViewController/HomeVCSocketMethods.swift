@@ -593,7 +593,9 @@ extension HomeViewController {
             
             var DriverCordinate = CLLocationCoordinate2D(latitude: lati , longitude: lng )
             
-            
+            let camera = GMSCameraPosition.camera(withLatitude: DriverCordinate.latitude,longitude: DriverCordinate.longitude, zoom: 17)
+            self.mapView.animate(to: camera)
+            self.driverMarker.map = self.mapView
             //            var DriverCordinate = CLLocationCoordinate2D(latitude: Double("23.076701577176262")! , longitude: Double("72.51612203357585")!)
             
             DriverCordinate = CLLocationCoordinate2DMake(DriverCordinate.latitude, DriverCordinate.longitude)
@@ -632,11 +634,17 @@ extension HomeViewController {
                 // Bhavesh changes 2-1-2019
                 self.driverMarker.icon = UIImage(named: "dummyCar") //  UIImage(named: self.markerCarIconName(modelId: vehicleID))
             }
+            
+            if let bearing = SingletonClass.sharedInstance.driverLocation["bearing"] as? String {
+                SingletonClass.sharedInstance.floatBearing = Float(bearing) ?? SingletonClass.sharedInstance.floatBearing
+            }
             self.moveMent.ARCarMovement(marker: self.driverMarker, oldCoordinate: self.destinationCordinate, newCoordinate: DriverCordinate, mapView: self.mapView, bearing: Float(SingletonClass.sharedInstance.floatBearing))
             self.destinationCordinate = DriverCordinate
             print("The degree is \(SingletonClass.sharedInstance.floatBearing)")
             self.MarkerCurrntLocation.isHidden = true
             
+            
+    
         })
         
         
