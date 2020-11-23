@@ -118,10 +118,11 @@ class AJAlertController: UIViewController {
         case .phone: break
         //        alertWidthConstraint.constant = 280.0
         case .pad: break
-          //      alertWidthConstraint.constant = 340.0
-            case .unspecified: break
-            case .tv: break
-            case .carPlay: break
+        //      alertWidthConstraint.constant = 340.0
+        case .unspecified: break
+        case .tv: break
+        case .carPlay: break
+//        case .mac : break
         }
     }
     

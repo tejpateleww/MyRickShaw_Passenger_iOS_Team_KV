@@ -30,6 +30,21 @@ class MyBookingViewController: UIViewController, UIScrollViewDelegate {
     var selectedTextColor = UIColor.black
     var unselectedTextColor = UIColor.init(red: 167/255, green: 167/255, blue: 167/255, alpha: 1.0)
     
+//    @IBOutlet weak var viewHeaderHeightConstant: NSLayoutConstraint!
+//
+//    func setHeaderForIphoneX() {
+//
+//        if UIDevice().userInterfaceIdiom == .phone {
+//            switch UIScreen.main.nativeBounds.height {
+//            case 2436,1792:
+//
+//                viewHeaderHeightConstant.constant = 80
+//            default:
+//                print("Height of device is \(UIScreen.main.nativeBounds.height)")
+//            }
+//        }
+//    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -68,7 +83,7 @@ class MyBookingViewController: UIViewController, UIScrollViewDelegate {
             switch UIScreen.main.nativeBounds.height {
             case 2436,1792:
                 
-                constraintHeight.constant = 00
+                constraintHeight.constant = 40
             default:
                 print("Height of device is \(UIScreen.main.nativeBounds.height)")
             }

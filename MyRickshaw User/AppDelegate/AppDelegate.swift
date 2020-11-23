@@ -48,7 +48,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate, MessagingDelegate {
         
         GMSServices.provideAPIKey(googleMapAddress)
         GMSPlacesClient.provideAPIKey(googleMapAddress)
-        
+        if #available(iOS 13.0, *) {
+            window?.overrideUserInterfaceStyle = .light
+        }
         
          // TODO: Move this to where you establish a user session
      //   self.logUser()

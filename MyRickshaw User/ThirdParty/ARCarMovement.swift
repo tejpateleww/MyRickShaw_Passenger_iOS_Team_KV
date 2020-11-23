@@ -35,32 +35,38 @@ public class ARCarMovement: NSObject {
     public var duration: Float = 2.0
     
     public func ARCarMovement(marker: GMSMarker, oldCoordinate: CLLocationCoordinate2D, newCoordinate:CLLocationCoordinate2D, mapView: GMSMapView, bearing: Float) {
-    
-        //calculate the bearing value from old and new coordinates
-        //
-        let calBearing: Float = getHeadingForDirection(fromCoordinate: oldCoordinate, toCoordinate: newCoordinate)
-        marker.groundAnchor = CGPoint(x: CGFloat(0.5), y: CGFloat(0.5))
-        marker.rotation = CLLocationDegrees(calBearing); //found bearing value by calculation when marker add
-        marker.position = oldCoordinate; //this can be old position to make car movement to new position
-    
-        //marker movement animation
-        CATransaction.begin()
-        CATransaction.setValue(duration, forKey: kCATransactionAnimationDuration)
-        CATransaction.setCompletionBlock({() -> Void in
-            marker.rotation = (Int(calBearing) != 0) ? CLLocationDegrees(bearing) : CLLocationDegrees(calBearing)
-        })
-
-        // delegate method pass value
-        //
-        delegate?.ARCarMovementMoved(marker)
-    
-        marker.position = newCoordinate; //this can be new position after car moved from old position to new position with animation
-        marker.map = mapView;
-        SingletonClass.sharedInstance.floatBearing = calBearing
-        marker.rotation = CLLocationDegrees(calBearing);
-        CATransaction.commit()
         
-    }
+            //calculate the bearing value from old and new coordinates
+            //
+
+            let degree = oldCoordinate.bearing(to: newCoordinate)
+            let calBearing: Float = getHeadingForDirection(fromCoordinate: oldCoordinate, toCoordinate: newCoordinate)
+            marker.groundAnchor = CGPoint(x: CGFloat(0.5), y: CGFloat(0.5))
+            marker.rotation = degree//CLLocationDegrees(calBearing); //found bearing value by calculation when marker add
+            marker.position = oldCoordinate; //this can be old position to make car movement to new position
+        
+            //marker movement animation
+            CATransaction.begin()
+            CATransaction.setValue(duration, forKey: kCATransactionAnimationDuration)
+            CATransaction.setCompletionBlock({() -> Void in
+                marker.rotation = degree//(Int(calBearing) != 0) ? CLLocationDegrees(bearing) : CLLocationDegrees(calBearing)
+            })
+
+            // delegate method pass value
+            //
+            delegate?.ARCarMovementMoved(marker)
+        
+            marker.position = newCoordinate; //this can be new position after car moved from old position to new position with animation
+            marker.map = mapView;
+
+
+    //        print ("\n Another angle is \(oldCoordinate.bearing(to: newCoordinate))\n" )
+
+            SingletonClass.sharedInstance.floatBearing = Float(degree)//getHeadingForDirection(fromCoordinate: oldCoordinate, toCoordinate: newCoordinate)//Float(degrees)
+            marker.rotation = degree//CLLocationDegrees(getHeadingForDirection(fromCoordinate: oldCoordinate, toCoordinate: newCoordinate))//CLLocationDegrees(calBearing);
+            CATransaction.commit()
+            
+        }
     
     private func getHeadingForDirection(fromCoordinate fromLoc: CLLocationCoordinate2D, toCoordinate toLoc: CLLocationCoordinate2D) -> Float {
         
@@ -72,4 +78,28 @@ public class ARCarMovement: NSObject {
         return (degree >= 0) ? degree : (360 + degree)
     }
     
+}
+
+
+extension CLLocationCoordinate2D {
+
+    func bearing(to point: CLLocationCoordinate2D) -> Double {
+        func degreesToRadians(_ degrees: Double) -> Double { return degrees * Double.pi / 180.0 }
+        func radiansToDegrees(_ radians: Double) -> Double { return radians * 180.0 / Double.pi }
+
+        let lat1 = degreesToRadians(latitude)
+        let lon1 = degreesToRadians(longitude)
+
+        let lat2 = degreesToRadians(point.latitude);
+        let lon2 = degreesToRadians(point.longitude);
+
+        let dLon = lon2 - lon1;
+
+        let y = sin(dLon) * cos(lat2);
+        let x = cos(lat1) * sin(lat2) - sin(lat1) * cos(lat2) * cos(dLon);
+        let radiansBearing = atan2(y, x);
+        let degree = radiansToDegrees(radiansBearing)
+        return (degree >= 0) ? degree : (360 + degree)
+    }
+
 }

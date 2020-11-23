@@ -60,7 +60,7 @@ class WalletViewController: UIViewController, UIScrollViewDelegate {
         else if (naviagate == "2" )
         {
             self.lblCreditBalance.text = "\(currencySign)\(SingletonClass.sharedInstance.creditHistoryData["AvailableCreditLimit"] as? String ?? "")"
-            self.lblCreditExpiryDate.text = "Exp. date : \(UtilityClass.returnValueForCredit(key: "CreditAccountExpDate"))"
+            self.lblCreditExpiryDate.text = "Start date: \(UtilityClass.returnValueForCredit(key: "CreditAccountStartDate")) Exp. date : \(UtilityClass.returnValueForCredit(key: "CreditAccountExpDate"))"
 
         }
         

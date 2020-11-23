@@ -180,10 +180,11 @@ class MyReceiptsViewController: ParentViewController, UITableViewDataSource, UIT
         let emailTitle = ""
         let messageBody = urlForMail
         let toRecipents = [""]
-        guard let mc: MFMailComposeViewController = MFMailComposeViewController() else {
-            print("MFMailComposeViewController Failed To Load")
-            return
-        }
+        let mc: MFMailComposeViewController = MFMailComposeViewController()
+//        else {
+//            print("MFMailComposeViewController Failed To Load")
+//            return
+//        }
         mc.mailComposeDelegate = self
         mc.setSubject(emailTitle)
         mc.setMessageBody(messageBody, isHTML: false)

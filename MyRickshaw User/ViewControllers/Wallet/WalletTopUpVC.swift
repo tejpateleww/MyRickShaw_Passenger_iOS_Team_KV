@@ -146,12 +146,10 @@ class WalletTopUpVC: ParentViewController, SelectCardDelegate {
             
             txtAmount.text = "\(currencySign)\(String(unfiltered1.filter { !removal1.contains($0) }))"
             
-            
             let space = " "
             let comma = " "
             let currencySymboleInString = "\(currencySign),\(comma),\(space)"
             let currencySymboleInCharacter = [Character](currencySymboleInString)
-            
             
             // ----------------------------------------------------------------------
             // ----------------------------------------------------------------------

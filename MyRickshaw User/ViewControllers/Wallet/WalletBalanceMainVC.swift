@@ -81,6 +81,8 @@ class WalletBalanceMainVC: ParentViewController, UITableViewDataSource, UITableV
         {
             self.strTitle = "Credit"
             self.lblAvailableFunds.text = "Available credit limit"
+            self.lblAvailableRides.text = "Available ride"
+
             self.btnTopUp.setTitle("Payment", for: .normal)
             self.btnTransferToBank.setTitle("History", for: .normal)
             self.btnHistory.setTitle("Unpaid history", for: .normal)
@@ -91,7 +93,12 @@ class WalletBalanceMainVC: ParentViewController, UITableViewDataSource, UITableV
             self.btnTransferToBank.setImage(UIImage.init(named: "iconTransactionHistory"), for: .normal)
             self.btnHistory.setImage(UIImage.init(named: "history"), for: .normal)
             self.lblAvailableFundsDesc.text = "\(currencySign)\(SingletonClass.sharedInstance.creditHistoryData["AvailableCreditLimit"] as? String ?? "0.0")"
-            self.lblExpiryDate.text = "Exp. date : \(UtilityClass.returnValueForCredit(key: "CreditAccountExpDate"))"
+            
+            self.lblAvailableRidesDesc.text = "\(SingletonClass.sharedInstance.creditHistoryData["AvailableRides"] as? String ?? "0.0")"
+            
+            self.lblExpiryDate.text = "Start date: \(UtilityClass.returnValueForCredit(key: "CreditAccountStartDate"))\nExp. date : \(UtilityClass.returnValueForCredit(key: "CreditAccountExpDate"))"
+            
+//            self.lblExpiryDate.backgroundColor = .red
         }
     }
     
@@ -155,6 +162,11 @@ class WalletBalanceMainVC: ParentViewController, UITableViewDataSource, UITableV
     @IBOutlet weak var viewAvailableFunds: UIView!
     @IBOutlet weak var lblAvailableFunds: UILabel!
     @IBOutlet weak var lblAvailableFundsDesc: UILabel!
+
+    @IBOutlet weak var lblAvailableRides: UILabel!
+    @IBOutlet weak var lblAvailableRidesDesc: UILabel!
+
+    
     
     @IBOutlet weak var viewCenter: UIView!
     
@@ -204,8 +216,8 @@ class WalletBalanceMainVC: ParentViewController, UITableViewDataSource, UITableV
         
         cell.lblTransferTitle.text = dictData["Description"] as? String
         cell.lblTransferTitle.font = UIFont(name: cell.lblTransferTitle.font.familyName, size: 15)
-        cell.lblTransferDateAndTime.text = (dictData["UpdatedDate"] as? String)!.onlyDateToString(dateFormat: "yyyy-MM-dd hh:mm:ss")
-        cell.lblTime.text = (dictData["UpdatedDate"] as? String)!.onlyTimeToString(dateFormat: "yyyy-MM-dd hh:mm:ss")
+        cell.lblTransferDateAndTime.text = (dictData["UpdatedDate"] as? String)!.onlyDateToString(dateFormat: "yyyy-MM-dd HH:mm:ss")
+        cell.lblTime.text = (dictData["UpdatedDate"] as? String)!.onlyTimeToString(dateFormat: "yyyy-MM-dd HH:mm:ss")
         
         //        if dictData["Status"] as! String == "failed" {
         //

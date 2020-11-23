@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import SideMenuController
 
 class GiveRatingViewController: UIViewController, FloatRatingViewDelegate {
 
@@ -36,7 +37,8 @@ class GiveRatingViewController: UIViewController, FloatRatingViewDelegate {
         
         viewSubFinalRating.layer.cornerRadius = 5
         viewSubFinalRating.layer.masksToBounds = true
-        
+        SideMenuController.preferences.interaction.panningEnabled = false
+        SideMenuController.preferences.interaction.swipingEnabled = false
 //        btnSubmit.layer.cornerRadius = 5
 //        btnSubmit.layer.masksToBounds = true
     }

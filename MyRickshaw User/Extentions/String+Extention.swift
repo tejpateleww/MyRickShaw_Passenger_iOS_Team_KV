@@ -29,7 +29,7 @@ extension String
         dateFormatter.dateFormat = format
         if let date = dateFormatter.date(from: self)
         {
-            dateFormatter.dateFormat = "dd-MM-yyyy"
+            dateFormatter.dateFormat = "yyyy-MM-dd"
             // again convert your date to string
             let myStringafd = dateFormatter.string(from: date)
             return myStringafd

@@ -32,13 +32,13 @@ extension HomeViewController {
         }
         
         socket.on(clientEvent: .connect) {data, ack in
-            print("socket connected")
+            // print("socket connected")
             
             self.timerForUpdatingPassengerLocation()
             
             if self.socket.status != .connected {
                 
-                print("socket.status != .connected")
+                // print("socket.status != .connected")
             }
             
             if (isSocketConnected == false) {
@@ -64,7 +64,7 @@ extension HomeViewController {
             }
             
             self.socket.on(SocketData.kNearByDriverList, callback: { (data, ack) in
-               print("Driver List is \(data)")
+               // // print("Driver List is \(data)")
                 
                 var lat : Double!
                 var long : Double!
@@ -125,9 +125,9 @@ extension HomeViewController {
     {
         // Socket Accepted
         self.socket.on(SocketData.kAcceptBookingRequestNotification, callback: { (data, ack) in
-            print("AcceptBooking data is \(data)")
+            // // print("AcceptBooking data is \(data)")
             self.txtDestinationLocation.text = ""
-            
+            self.strLocationType = ""
             //            self.socket.off(SocketData.kAcceptBookingRequestNotification)
             
             
@@ -156,7 +156,7 @@ extension HomeViewController {
                         else if let nowBookingID: String = (bookingInfo[0])["Id"] as? String {
                             bookingIdIs = nowBookingID
                         }
-                        print("bookingIdIs: \(bookingIdIs)")
+                        // print("bookingIdIs: \(bookingIdIs)")
                         
                         if let moreInfo = infoData["ModelInfo"] as? [[String:Any]] {
                             if moreInfo.count != 0 {
@@ -196,7 +196,7 @@ extension HomeViewController {
     {
         // Socket Accepted
         self.socket.on(SocketData.kRejectBookingRequestNotification, callback: { (data, ack) in
-            print("socketMethodForGettingBookingRejectNotification() is \(data)")
+            // print("socketMethodForGettingBookingRejectNotification() is \(data)")
             
             self.setHideAndShowTopViewWhenRequestAcceptedAndTripStarted(status: false)
             
@@ -255,7 +255,7 @@ extension HomeViewController {
     func socketMethodForGettingPickUpNotification()
     {
         self.socket.on(SocketData.kPickupPassengerNotification, callback: { (data, ack) in
-            print("socketMethodForGettingPickUpNotification() is \(data)")
+            // print("socketMethodForGettingPickUpNotification() is \(data)")
             //            self.stopTimer()
             /*
              [{
@@ -318,7 +318,7 @@ extension HomeViewController {
     func socketMethodForGettingTripCompletedNotification()
     {
         self.socket.on(SocketData.kBookingCompletedNotification, callback: { (data, ack) in
-            print("socketMethodForGettingTripCompletedNotification() is \(data)")
+            // print("socketMethodForGettingTripCompletedNotification() is \(data)")
 
 
             // Restarting Timer For updating Passenger location which was stopped on STart trip
@@ -352,7 +352,7 @@ extension HomeViewController {
                         else if let nowBookingID: String = (bookingInfo[0])["Id"] as? String {
                             bookingIdIs = nowBookingID
                         }
-                        print("bookingIdIs: \(bookingIdIs)")
+                        // print("bookingIdIs: \(bookingIdIs)")
                         
                         if SingletonClass.sharedInstance.bookingId != "" {
                             if SingletonClass.sharedInstance.bookingId == bookingIdIs {
@@ -402,7 +402,7 @@ extension HomeViewController {
     func onAcceptBookLaterBookingRequestNotification() {
         
         self.socket.on(SocketData.kAcceptAdvancedBookingRequestNotification, callback: { (data, ack) in
-            print("onAcceptBookLaterBookingRequestNotification() is \(data)")
+            // print("onAcceptBookLaterBookingRequestNotification() is \(data)")
             
             //            self.playSound(fileName: "RequestConfirm", extensionType: "mp3")
             
@@ -458,7 +458,7 @@ extension HomeViewController {
     func onRejectBookLaterBookingRequestNotification() {
         
         self.socket.on(SocketData.kRejectAdvancedBookingRequestNotification, callback: { (data, ack) in
-            print("onRejectBookLaterBookingRequestNotification() is \(data)")
+            // print("onRejectBookLaterBookingRequestNotification() is \(data)")
             
             //            self.playSound(fileName: "PickNGo", extensionType: "mp3")
             
@@ -478,7 +478,7 @@ extension HomeViewController {
     func onPickupPassengerByDriverInBookLaterRequestNotification() {
         
         self.socket.on(SocketData.kAdvancedBookingPickupPassengerNotification, callback: { (data, ack) in
-            print("onPickupPassengerByDriverInBookLaterRequestNotification() is \(data)")
+            // print("onPickupPassengerByDriverInBookLaterRequestNotification() is \(data)")
             
             var bookingId = String()
             self.stopUpdatingPassengerLocationTimer()
@@ -527,7 +527,7 @@ extension HomeViewController {
     func onTripHoldingNotificationForPassenger() {
         
         self.socket.on(SocketData.kReceiveHoldingNotificationToPassenger, callback: { (data, ack) in
-            print("onTripHoldingNotificationForPassenger() is \(data)")
+            // print("onTripHoldingNotificationForPassenger() is \(data)")
             
             var message = String()
             message = "Trip on Hold"
@@ -550,7 +550,7 @@ extension HomeViewController {
     func onTripHoldingNotificationForPassengerLater() {
         
         self.socket.on(SocketData.kAdvancedBookingTripHoldNotification, callback: { (data, ack) in
-            print("onTripHoldingNotificationForPassengerLater() is \(data)")
+            // print("onTripHoldingNotificationForPassengerLater() is \(data)")
             
             var message = String()
             message = "Trip on Hold"
@@ -574,7 +574,7 @@ extension HomeViewController {
     func onReceiveDriverLocationToPassenger() {
         
         self.socket.on(SocketData.kReceiveDriverLocationToPassenger, callback: { (data, ack) in
-            print("onReceiveDriverLocationToPassenger() is \(data)")
+             print("onReceiveDriverLocationToPassenger() is \(data)")
             
             SingletonClass.sharedInstance.driverLocation = (data as NSArray).object(at: 0) as! [String : AnyObject]
             
@@ -634,17 +634,151 @@ extension HomeViewController {
             }
             self.moveMent.ARCarMovement(marker: self.driverMarker, oldCoordinate: self.destinationCordinate, newCoordinate: DriverCordinate, mapView: self.mapView, bearing: Float(SingletonClass.sharedInstance.floatBearing))
             self.destinationCordinate = DriverCordinate
+            print("The degree is \(SingletonClass.sharedInstance.floatBearing)")
             self.MarkerCurrntLocation.isHidden = true
             
         })
         
         
     }
+    /*func onReceiveDriverLocationToPassenger() {
+        
+        self.socket.on(SocketData.kReceiveDriverLocationToPassenger, callback: { (data, ack) in
+             print("onReceiveDriverLocationToPassenger() is \(data)")
+
+            if SingletonClass.sharedInstance.bookingId != "" {
+                SingletonClass.sharedInstance.driverLocation = (data as NSArray).object(at: 0) as! [String : AnyObject]
+                
+                var DoubleLat = Double()
+                var DoubleLng = Double()
+                
+                if let lat = SingletonClass.sharedInstance.driverLocation["Location"]! as? [Double] {
+                    DoubleLat = lat[0]
+                    DoubleLng = lat[1]
+                }
+                else if let lat = SingletonClass.sharedInstance.driverLocation["Location"]! as? [String] {
+                    DoubleLat = Double(lat[0])!
+                    DoubleLng = Double(lat[1])!
+                }
+
+                let DriverCordinate = CLLocationCoordinate2D(latitude: DoubleLat , longitude: DoubleLng)
+
+//                DriverCordinate = CLLocationCoordinate2DMake(DriverCordinate.latitude, DriverCordinate.longitude)
+                
+                if(self.destinationCordinate == nil)
+                {
+                    self.destinationCordinate = CLLocationCoordinate2DMake(DriverCordinate.latitude, DriverCordinate.longitude)
+                }
+
+                if self.driverMarker == nil {
+                    self.driverMarker = GMSMarker(position: DriverCordinate) // self.originCoordinate
+                    self.driverMarker.map = self.mapView
+                }
+
+//                let distanceInMeters = self.destinationCordinate.distance(from: DriverCordinate) // result is in meters
+//                // print("the distance in meters is \(distanceInMeters)")
+                let degrees = self.destinationCordinate.bearing(to: DriverCordinate)
+                let clLocation = CLLocation(latitude: DriverCordinate.latitude, longitude: DriverCordinate.longitude)
+
+                var kmh = clLocation.speed / 1000.0 * 60.0 * 60.0
+                if(kmh < 0) {
+                    kmh = 0
+                }
+                 print("\nThe speed of Driver is \(kmh)\n")
+//                if(kmh > 4)
+//                {
+                    self.moveMent.ARCarMovement(marker: self.driverMarker, oldCoordinate: self.destinationCordinate, newCoordinate: DriverCordinate, mapView: self.mapView, bearing: Float(SingletonClass.sharedInstance.floatBearing))
+//                }
+                self.driverMarker.icon = UIImage(named:"dummyCar")
+
+                self.destinationCordinate = DriverCordinate
+                self.MarkerCurrntLocation.isHidden = true
+              
+                
+                let camera = GMSCameraPosition.camera(withLatitude: DriverCordinate.latitude,longitude: DriverCordinate.longitude, zoom: 17)
+                self.mapView.animate(to: camera)
+                self.driverMarker.map = self.mapView
+                // ***********************************************
+                // ***********************************************
+                
+                /*if self.arrivedRoutePath != nil {
+
+                    if GMSGeometryIsLocationOnPathTolerance(self.driverMarker.position, self.arrivedRoutePath!, true, 200) { // GMSGeometryContainsLocation(self.driverMarker.position, self.arrivedRoutePath!, true) {
+//                        // print("GMSGeometryIsLocationOnPathTolerance = true")
+                    } else {
+//                        // print("GMSGeometryIsLocationOnPathTolerance = false")
+                        
+                        if self.aryBookingDropoffInfo.count != 0 {
+                            
+                            let aryFilterData = self.aryBookingDropoffInfo.filter{$0["Status"] as! String == "" }
+                            if aryFilterData.count != 0 {
+                                
+                                self.mapView.clear()
+                                
+//                                if self.driverMarker == nil {
+//                                    self.driverMarker = GMSMarker(position: DriverCordinate) // self.originCoordinate
+//                                    self.driverMarker.map = self.mapView
+//                                }
+                                
+                                if self.driverMarker == nil {
+                                    self.driverMarker = GMSMarker(position: DriverCordinate)
+                                    self.driverMarker.map = self.mapView
+                                    self.driverMarker.icon = UIImage(named: "dummyCar")
+                                }
+//                                else {
+//                                    self.driverMarker.position = DriverCordinate
+//                                }
+                                
+                                //Rahul
+                                if(SingletonClass.sharedInstance.dictDriverProfile.count != 0) {
+                                    
+                                    let PickupLat = self.driverMarker.position.latitude  // Double("\(strLat )")
+                                    let PickupLng = self.driverMarker.position.longitude // Double("\(strLng )")
+                                    
+                                    let DropOffLat = Double("\(aryFilterData.first?["DropOffLat"]! ?? "0")")
+                                    let DropOffLon = Double("\(aryFilterData.first?["DropOffLng"]! ?? "0")")
+                                    
+                                    let tempLat = Double("\(aryFilterData.first?["PickupLat"]! ?? "0")")
+                                    let tempLon = Double("\(aryFilterData.first?["PickupLng"]! ?? "0")")
+                                    
+                                    let originalLoc: String = "\(PickupLat ),\(PickupLng)"
+                                    var destiantionLoc: String = "\(DropOffLat ?? 0),\(DropOffLon ?? 0)"
+                                    
+                                    if !SingletonClass.sharedInstance.isTripContinue {
+                                        destiantionLoc = "\(tempLat ?? 0),\(tempLon ?? 0)"
+                                    }
+                                    
+                                    let bounds = GMSCoordinateBounds(coordinate: CLLocationCoordinate2D(latitude: PickupLat , longitude: PickupLng ), coordinate: CLLocationCoordinate2D(latitude: DropOffLat ?? 0, longitude: DropOffLon ?? 0))
+                                    let update = GMSCameraUpdate.fit(bounds, withPadding: CGFloat(150))
+                                    
+                                    self.mapView.animate(with: update)
+                                    self.mapView.moveCamera(update)
+                                    //                        self.setDirectionLineOnMapForSourceAndDestinationShow(origin: originalLoc, destination: destiantionLoc, waypoints: nil, completionHandler: nil)
+                                    
+                                    
+                                    DispatchQueue.main.async {
+                                        if SingletonClass.sharedInstance.isTripContinue {
+                                            self.setDirectionLineOnMapForSourceAndDestinationShow(origin: originalLoc, destination: destiantionLoc, isFromArrivedReq: false, isFromStartTrip: true, waypoints: nil, completionHandler: nil)
+                                        } else {
+                                            self.setDirectionLineOnMapForSourceAndDestinationShow(origin: originalLoc, destination: destiantionLoc, isFromArrivedReq: true, waypoints: nil, completionHandler: nil)
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }*/
+            
+                // ***********************************************
+                // ***********************************************
+            }
+        })
+    }*/
     
     func onReceiveNotificationWhenDriverAcceptRequest() {
         
         self.socket.on(SocketData.kAcceptAdvancedBookingRequestNotify, callback: { (data, ack) in
-            print("onReceiveNotificationWhenDriverAcceptRequest is \(data)")
+            // print("onReceiveNotificationWhenDriverAcceptRequest is \(data)")
             
             var bookingId = String()
             
@@ -698,7 +832,7 @@ extension HomeViewController {
     func onAdvanceTripInfoBeforeStartTrip() {
         
         self.socket.on(SocketData.kInformPassengerForAdvancedTrip, callback: { (data, ack) in
-            print("onAdvanceTripInfoBeforeStartTrip() is \(data)")
+            // print("onAdvanceTripInfoBeforeStartTrip() is \(data)")
             
             var message = String()
             message = "Trip on Hold"
@@ -722,7 +856,7 @@ extension HomeViewController {
     func onGetEstimateFare() {
         
         self.socket.on(SocketData.kReceiveGetEstimateFare, callback: { (data, ack) in
-            //            print("onGetEstimateFare() is \(data)")
+            //            // print("onGetEstimateFare() is \(data)")
             
             var estimateData = (data as! [[String:AnyObject]])
             estimateData =  estimateData[0]["estimate_fare"] as! [[String:AnyObject]]
@@ -798,7 +932,7 @@ extension HomeViewController {
     func onBookingDetailsAfterCompletedTrip() {
         
         self.socket.on(SocketData.kAdvancedBookingDetails, callback: { (data, ack) in
-            print("onBookingDetailsAfterCompletedTrip() is \(data)")
+            // print("onBookingDetailsAfterCompletedTrip() is \(data)")
             
             SingletonClass.sharedInstance.isTripContinue = false
             
@@ -847,7 +981,7 @@ extension HomeViewController {
     {
         // Socket Accepted
         self.socket.on(SocketData.kCancelTripByDriverNotficication, callback: { (data, ack) in
-            print("socketMethodForGettingBookingRejectNotificatioByDriver() is \(data)")
+            // print("socketMethodForGettingBookingRejectNotificatioByDriver() is \(data)")
             // Restarting Timer For updating Passenger location which was stopped on STart trip
             self.timerForUpdatingPassengerLocation()
             /////
@@ -909,7 +1043,7 @@ extension HomeViewController {
     func onGetChetMessage() {
         
         self.socket.on(SocketData.kReceiveMessage) { (data, ack) in
-            print(#function,": \(data)")
+            // print(#function,": \(data)")
             
             if let aryData = data as? [[String:Any]] {
                 

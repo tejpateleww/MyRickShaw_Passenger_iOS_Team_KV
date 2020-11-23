@@ -102,13 +102,13 @@ class LoginViewController: UIViewController, CLLocationManagerDelegate, alertVie
         
         if UIDevice.current.name == "Bhavesh iPhone" || UIDevice.current.name == "Excellent Web's iPhone 5s" || UIDevice.current.name == "Rahul's iPhone" || UIDevice.current.name == "EWW’s iPhone 6s" || UIDevice.current.name == "Excellent iPhone 7" || UIDevice.current.name == "Excellent’s iPhone One" {
             
-            txtEmail.text = "6655443322"
+            txtEmail.text = "9998359464"
             txtPassword.text = "12345678"
         }
        
         
         #if targetEnvironment(simulator)
-            txtEmail.text = "6655443322"
+            txtEmail.text = "9998359464"
             txtPassword.text = "12345678"
         #endif
         
