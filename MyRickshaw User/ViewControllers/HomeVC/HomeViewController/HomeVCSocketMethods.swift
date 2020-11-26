@@ -595,7 +595,11 @@ extension HomeViewController {
             
             let camera = GMSCameraPosition.camera(withLatitude: DriverCordinate.latitude,longitude: DriverCordinate.longitude, zoom: 17)
             self.mapView.animate(to: camera)
-            self.driverMarker.map = self.mapView
+            
+            if let _ = self.driverMarker.map { // RJ Change
+                self.driverMarker.map = self.mapView
+            }
+//            self.driverMarker.map = self.mapView
             //            var DriverCordinate = CLLocationCoordinate2D(latitude: Double("23.076701577176262")! , longitude: Double("72.51612203357585")!)
             
             DriverCordinate = CLLocationCoordinate2DMake(DriverCordinate.latitude, DriverCordinate.longitude)

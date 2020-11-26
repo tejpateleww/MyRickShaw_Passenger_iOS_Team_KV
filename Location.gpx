@@ -5,8 +5,9 @@
      Provide one or more waypoints containing a latitude/longitude pair. If you provide one
      waypoint, Xcode will simulate that specific location. If you provide multiple waypoints,
      Xcode will simulate a route visiting each waypoint.
+    //51.50999 -0.1337
      -->
-    <wpt lat="21.1997139" lon="72.7984869">
+    <wpt lat="51.50999" lon="-0.1337">
         <name>Surat</name>
         <!--
          Optionally provide a time element for each waypoint. Xcode will interpolate movement

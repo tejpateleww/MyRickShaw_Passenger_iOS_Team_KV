@@ -20,7 +20,7 @@ import FirebaseCore
 import FirebaseMessaging
 
 
-let googleMapAddress = "AIzaSyDfI6F_8lFtv_Cf-QhfwsGzCiS2V-ladSA"//"AIzaSyC-SFqp8tjooejbFiIa-hwq2Gl-og7ZeSQ"
+let googleMapAddress = "AIzaSyC-SFqp8tjooejbFiIa-hwq2Gl-og7ZeSQ"//"AIzaSyDfI6F_8lFtv_Cf-QhfwsGzCiS2V-ladSA"//"AIzaSyC-SFqp8tjooejbFiIa-hwq2Gl-og7ZeSQ"
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate, MessagingDelegate {
 

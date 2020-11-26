@@ -14,7 +14,7 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "2252114FFD587E987800EB39A197284A"
+               BlueprintIdentifier = "55CB6BC1DA27DFDCF0097EB989F303F8"
                BuildableName = "ACFloatingTextfield_Swift.framework"
                BlueprintName = "ACFloatingTextfield-Swift"
                ReferencedContainer = "container:Pods.xcodeproj">
@@ -29,8 +29,6 @@
       shouldUseLaunchSchemeArgsEnv = "YES">
       <Testables>
       </Testables>
-      <AdditionalOptions>
-      </AdditionalOptions>
    </TestAction>
    <LaunchAction
       buildConfiguration = "Debug"
@@ -45,14 +43,12 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "2252114FFD587E987800EB39A197284A"
+            BlueprintIdentifier = "55CB6BC1DA27DFDCF0097EB989F303F8"
             BuildableName = "ACFloatingTextfield_Swift.framework"
             BlueprintName = "ACFloatingTextfield-Swift"
             ReferencedContainer = "container:Pods.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
-      <AdditionalOptions>
-      </AdditionalOptions>
    </LaunchAction>
    <ProfileAction
       buildConfiguration = "Release"
