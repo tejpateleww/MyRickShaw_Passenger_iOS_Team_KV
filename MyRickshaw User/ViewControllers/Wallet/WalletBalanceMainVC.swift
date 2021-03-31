@@ -296,7 +296,7 @@ class WalletBalanceMainVC: ParentViewController, UITableViewDataSource, UITableV
         
         let spentCredit = (Int(creditLimit) ?? 0) - (Int(availableCredit) ?? 0)
         
-        if(spentCredit == 0)
+        if(spentCredit == 0 && isFromCredit == true)
         {
             UtilityClass.showAlert("", message: "You don't have any unpaid transaction", vc: self)
         }
@@ -304,7 +304,7 @@ class WalletBalanceMainVC: ParentViewController, UITableViewDataSource, UITableV
         {
             
             let next = self.storyboard?.instantiateViewController(withIdentifier: "WalletTopUpVC") as! WalletTopUpVC
-            next.isFromCredit = true
+            next.isFromCredit = isFromCredit
             next.delegate = self
             self.navigationController?.pushViewController(next, animated: true)
         }

@@ -16,29 +16,40 @@ class UpdateProfileViewController: UIViewController, UIImagePickerControllerDele
     
     
     func selectedButton(sender: AKRadioButton) {
+        
         print(sender.currentTitle!)
         
-        switch sender.currentTitle! {
-            
-        case "Male":
+        switch sender.titleLabel?.text?.lowercased()
+        {
+        case "male":
             gender = "male"
-        case "Female":
+        case "female":
             gender = "female"
+        case "yes":
+            strTMCardHolder = "1"
+            stackViewForTMCardHolderText.isHidden = false
+        case "no":
+            strTMCardHolder = "0"
+            stackViewForTMCardHolderText.isHidden = true
         default:
             gender = "male"
         }
+        
     }
     
     @IBOutlet weak var constraintOfHeightOfNavaigationView: NSLayoutConstraint! // 64
     
-    
+    @IBOutlet weak var stackViewForTMCardHolderText: UIStackView!
+    @IBOutlet weak var txtTMCardHolderText: UITextField!
+
     var radioButtonsController: AKRadioButtonsController!
     
     var firstName = String()
     var lastName = String()
     var fullName = String()
     var gender = String()
-    
+    var strTMCardHolder = String()
+
 
     //-------------------------------------------------------------
     // MARK: - Base Methods
@@ -74,9 +85,24 @@ class UpdateProfileViewController: UIViewController, UIImagePickerControllerDele
         self.radioButtonsController.delegate = self
         
         if !DeviceType.IS_IPHONE_5 || !DeviceType.IS_IPHONE_4_OR_LESS || !DeviceType.IS_IPAD {
-            stackViewForTextField.spacing = 20
-            constraintHeightOfBottomView.constant = 200
+//            stackViewForTextField.spacing = 20
+//            constraintHeightOfBottomView.constant = 200
         }
+        
+        self.radioButtonsController = AKRadioButtonsController(radioButtons: self.radioButtonsTMCardHolder)
+        self.radioButtonsController.strokeColor = UIColor.init(red: 0, green: 0, blue: 0, alpha: 1)
+        self.radioButtonsController.startGradColorForSelected = UIColor.init(red: 0, green: 0, blue: 0, alpha: 1)
+        self.radioButtonsController.endGradColorForSelected = UIColor.init(red: 0, green: 0, blue: 0, alpha: 1)//UIColor.init(red: 255/255, green: 163/255, blue: 0, alpha: 1)
+        self.radioButtonsController.selectedImage = UIImage(named: "iconRadioButtonSelected")
+        self.radioButtonsController.standartImage = UIImage(named: "iconRadioButtonUnSelected")
+        self.radioButtonsController.selectedIndex = 1
+        self.stackViewForTMCardHolderText.isHidden = true
+        if strTMCardHolder == "1" {
+            self.radioButtonsController.selectedIndex = 0
+            self.stackViewForTMCardHolderText.isHidden = false
+        }
+        self.radioButtonsController.delegate = self //class should implement AKRadioButtonsControllerDelegate
+//        strTMCardHolder = "0"
         
         txtFirstName.delegate = self
         txtLastName.delegate = self
@@ -120,16 +146,18 @@ class UpdateProfileViewController: UIViewController, UIImagePickerControllerDele
     @IBOutlet weak var txtAddress: ACFloatingTextfield!
     @IBOutlet weak var txtDateOfBirth: ACFloatingTextfield!
     
-    @IBOutlet weak var viewMale: M13Checkbox!
-    @IBOutlet weak var viewFemale: M13Checkbox!
+//    @IBOutlet weak var viewMale: M13Checkbox!
+//    @IBOutlet weak var viewFemale: M13Checkbox!
   
     @IBOutlet weak var btnSave: UIButton!
     
-    @IBOutlet var viewChangePassword: UIView!
+//    @IBOutlet var viewChangePassword: UIView!
     @IBOutlet var btnChangePassword: UIButton!
     @IBOutlet var btnProfile: UIButton!
     
     @IBOutlet var radioButtons: [AKRadioButton]!
+    @IBOutlet var radioButtonsTMCardHolder: [AKRadioButton]!
+
     @IBOutlet weak var stackViewForTextField: UIStackView!
     @IBOutlet weak var constraintHeightOfBottomView: NSLayoutConstraint! // 151
     
@@ -143,22 +171,22 @@ class UpdateProfileViewController: UIViewController, UIImagePickerControllerDele
     // MARK: - Actions
     //-------------------------------------------------------------
     
-    @IBAction func btnMale(_ sender: UIButton) {
+//    @IBAction func btnMale(_ sender: UIButton) {
         
 //        viewMale.checkState = .checked
 //        viewMale.tintColor = themeYellowColor
 //        viewFemale.checkState = .unchecked
         
-        gender = "Male"
-    }
-    @IBAction func btnFemale(_ sender: UIButton) {
+//        gender = "Male"
+//    }
+//    @IBAction func btnFemale(_ sender: UIButton) {
         
 //        viewFemale.checkState = .checked
 //        viewFemale.tintColor = themeYellowColor
 //        viewMale.checkState = .unchecked
         
-        gender = "Female"
-    }
+//        gender = "Female"
+//    }
     @IBOutlet weak var btnCall: UIButton!
     @IBAction func btCallClicked(_ sender: UIButton)
     {
@@ -234,7 +262,12 @@ class UpdateProfileViewController: UIViewController, UIImagePickerControllerDele
             }
             return false
         }
-        
+        else if (strTMCardHolder == "1" && txtTMCardHolderText.text?.trimmingCharacters(in: .whitespacesAndNewlines).count == 0)
+        {
+            UtilityClass.setCustomAlert(title: appName, message: "Please choose TM Card Holder Number") { (index, title) in
+            }
+            return false
+        }
         return true
         
     }
@@ -310,51 +343,53 @@ let info = convertFromUIImagePickerControllerInfoKeyDictionary(info)
     
     func setData() {
         
-       
+        let getData = SingletonClass.sharedInstance.dictProfile
         
-        if let getData = SingletonClass.sharedInstance.dictProfile as? NSMutableDictionary {
+        if getData.count != 0 {
             
-            if getData.count != 0 {
-                
-                imgProfile.sd_setShowActivityIndicatorView(true)
-                imgProfile.sd_setIndicatorStyle(.gray)
-                imgProfile.sd_setImage(with: URL(string: getData.object(forKey: "Image") as! String), completed: nil)
-                
-                lblEmailId.text = getData.object(forKey: "Email") as? String
-                lblContactNumber.text = getData.object(forKey: "MobileNo") as? String
-                txtDateOfBirth.text = getData.object(forKey: "DOB") as? String
-                
-                fullName = getData.object(forKey: "Fullname") as! String
-                
-                let fullNameArr = fullName.components(separatedBy: " ")
-                
-                firstName = fullNameArr[0]
-                lastName = fullNameArr[1]
-                
-                txtFirstName.text = fullName
-                //        txtLastName.text = lastName
-                txtAddress.text = getData.object(forKey: "Address") as? String
-                
-                gender = getData.object(forKey: "Gender") as! String
-            }
+            imgProfile.sd_setShowActivityIndicatorView(true)
+            imgProfile.sd_setIndicatorStyle(.gray)
+            imgProfile.sd_setImage(with: URL(string: getData.object(forKey: "Image") as! String), completed: nil)
+            
+            lblEmailId.text = getData.object(forKey: "Email") as? String
+            lblContactNumber.text = getData.object(forKey: "MobileNo") as? String
+            txtDateOfBirth.text = getData.object(forKey: "DOB") as? String
+            
+            fullName = getData.object(forKey: "Fullname") as! String
+            
+            let fullNameArr = fullName.components(separatedBy: " ")
+            
+            firstName = fullNameArr[0]
+            lastName = fullNameArr[1]
+            
+            txtFirstName.text = fullName
+            //        txtLastName.text = lastName
+            txtAddress.text = getData.object(forKey: "Address") as? String
+            
+            gender = getData.object(forKey: "Gender") as! String
+            
+            txtTMCardHolderText.text = getData.object(forKey: "TMCardHolderNumber") as? String ?? ""
+            strTMCardHolder = getData.object(forKey: "TMCardHolder") as? String ?? ""
             
         }
         
         
         
-        if gender == "male" || gender == "Male" {
-//            viewMale.checkState = .checked
-//            viewMale.tintColor = themeYellowColor
-//            viewFemale.checkState = .unchecked
-        }
-        else {
-//            viewMale.checkState = .unchecked
-//            viewFemale.tintColor = themeYellowColor
-//            viewFemale.checkState = .checked
-        }
+        
+        
+        //        if gender == "male" || gender == "Male" {
+        //            viewMale.checkState = .checked
+        //            viewMale.tintColor = themeYellowColor
+        //            viewFemale.checkState = .unchecked
+        //        }
+        //        else {
+        //            viewMale.checkState = .unchecked
+        //            viewFemale.tintColor = themeYellowColor
+        //            viewFemale.checkState = .checked
+        //        }
     }
     
-    @IBAction func viewMale(_ sender: M13Checkbox) {
+//    @IBAction func viewMale(_ sender: M13Checkbox) {
         
 //        viewMale.checkState = .checked
 //        viewMale.tintColor = UIColor.init(red: 255/255, green: 163/255, blue: 0, alpha: 1.0)
@@ -362,24 +397,21 @@ let info = convertFromUIImagePickerControllerInfoKeyDictionary(info)
 //
 //        gender = "Male"
         
-    }
+//    }
     
-    @IBAction func viewFemale(_ sender: M13Checkbox) {
+//    @IBAction func viewFemale(_ sender: M13Checkbox) {
         
 //        viewFemale.checkState = .checked
 //        viewFemale.tintColor = themeYellowColor
 //        viewMale.checkState = .unchecked
         
-        gender = "Female"
+//        gender = "Female"
         
-    }
+//    }
     
     @IBAction func btnBack(_ sender: UIButton) {
          self.navigationController?.popViewController(animated: true)
     }
-    
-    
-    
     
     //-------------------------------------------------------------
     // MARK: - Webservice Methods
@@ -395,7 +427,12 @@ let info = convertFromUIImagePickerControllerInfoKeyDictionary(info)
         dictData["Gender"] = gender as AnyObject
         dictData["Address"] = txtAddress.text as AnyObject
         dictData["DOB"] = txtDateOfBirth.text as AnyObject
-        
+        dictData["TMCardHolder"] = strTMCardHolder as AnyObject
+        if(strTMCardHolder == "0")
+        {
+            txtTMCardHolderText.text = ""
+        }
+        dictData["TMCardHolderNumber"] = txtTMCardHolderText.text?.trimmingCharacters(in: .whitespacesAndNewlines) as AnyObject
         let activityData = ActivityData()
         NVActivityIndicatorPresenter.sharedInstance.startAnimating(activityData)
         

@@ -40,8 +40,8 @@ class WalletCardsVC: UIViewController, UITableViewDataSource, UITableViewDelegat
             case 2436,1792:
                 
                 viewHeaderHeightConstant.constant = 80
-            default:
-                print("Height of device is \(UIScreen.main.nativeBounds.height)")
+            default: break
+//                print("Height of device is \(UIScreen.main.nativeBounds.height)")
             }
         }
     }

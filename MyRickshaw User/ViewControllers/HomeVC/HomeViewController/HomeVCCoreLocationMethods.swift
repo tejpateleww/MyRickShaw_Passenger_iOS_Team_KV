@@ -21,7 +21,6 @@ extension HomeViewController: CLLocationManagerDelegate {
         //        print("Location: \(location)")
         
         defaultLocation = location
-        
         SingletonClass.sharedInstance.currentLatitude = "\(location.coordinate.latitude)"
         SingletonClass.sharedInstance.currentLongitude = "\(location.coordinate.longitude)"
         
@@ -101,21 +100,21 @@ extension HomeViewController: CLLocationManagerDelegate {
             
         }
         
-        let latitude: CLLocationDegrees = (location.coordinate.latitude)
-        let longitude: CLLocationDegrees = (location.coordinate.longitude)
+//        let latitude: CLLocationDegrees = (location.coordinate.latitude)
+//        let longitude: CLLocationDegrees = (location.coordinate.longitude)
         
-        let locations = CLLocation(latitude: latitude, longitude: longitude) //changed!!!
-        CLGeocoder().reverseGeocodeLocation(locations, completionHandler: {(placemarks, error) -> Void in
-            if error != nil {
-                return
-            }else if let _ = placemarks?.first?.country,
-                let city = (placemarks?.first?.addressDictionary as! [String : AnyObject])["City"] {
-                
-                SingletonClass.sharedInstance.strCurrentCity = city as! String
-            }
-            else {
-            }
-        })
+//        let locations = CLLocation(latitude: latitude, longitude: longitude) //changed!!!
+//        CLGeocoder().reverseGeocodeLocation(locations, completionHandler: {(placemarks, error) -> Void in
+//            if error != nil {
+//                return
+//            }else if let _ = placemarks?.first?.country,
+//                let city = (placemarks?.first?.addressDictionary as! [String : AnyObject])["City"] {
+//
+//                SingletonClass.sharedInstance.strCurrentCity = city as! String
+//            }
+//            else {
+//            }
+//        })
         
     }
     

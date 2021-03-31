@@ -91,27 +91,27 @@ extension HomeViewController {
                                     
                                     self.driverMarker = GMSMarker(position: self.originCoordinate) // self.originCoordinate
                                     self.driverMarker.map = self.mapView
-                                    var vehicleID = Int()
-                                    //                                    var vehicleID = Int()
-                                    if let vID = SingletonClass.sharedInstance.dictCarInfo["VehicleModel"] as? Int {
-                                        
-                                        if vID == 0 {
-                                            vehicleID = 7
-                                        }
-                                        else {
-                                            vehicleID = vID
-                                        }
-                                    }
-                                    else if let sID = SingletonClass.sharedInstance.dictCarInfo["VehicleModel"] as? String
-                                    {
-                                        
-                                        if sID == "" {
-                                            vehicleID = 7
-                                        }
-                                        else {
-                                            vehicleID = Int(sID)!
-                                        }
-                                    }
+//                                    var vehicleID = Int()
+//                                    //                                    var vehicleID = Int()
+//                                    if let vID = SingletonClass.sharedInstance.dictCarInfo["VehicleModel"] as? Int {
+//
+//                                        if vID == 0 {
+//                                            vehicleID = 7
+//                                        }
+//                                        else {
+//                                            vehicleID = vID
+//                                        }
+//                                    }
+//                                    else if let sID = SingletonClass.sharedInstance.dictCarInfo["VehicleModel"] as? String
+//                                    {
+//
+//                                        if sID == "" {
+//                                            vehicleID = 7
+//                                        }
+//                                        else {
+//                                            vehicleID = Int(sID)!
+//                                        }
+//                                    }
                                     
                                     // Bhavesh changes 2-1-2019
                                     self.driverMarker.icon = UIImage(named: "dummyCar") //  UIImage(named: self.markerCarIconName(modelId: vehicleID))
@@ -168,7 +168,8 @@ extension HomeViewController {
                                 routePolyline.map = self.mapView
                                 routePolyline.strokeColor = themeYellowColor
                                 routePolyline.strokeWidth = 3.0
-                                
+                                self.arrivedRoutePath = GMSPath(fromEncodedPath: route)!
+
                                 
                                 
                                 UtilityClass.hideACProgressHUD()
@@ -467,7 +468,8 @@ extension HomeViewController {
                                 routePolyline.map = self.mapView
                                 routePolyline.strokeColor = themeYellowColor
                                 routePolyline.strokeWidth = 3.0
-                                
+                                self.arrivedRoutePath = GMSPath(fromEncodedPath: route)!
+
                                 UtilityClass.hideACProgressHUD()
                                 
                                 //                                UtilityClass.showAlert("", message: "Line Drawn", vc: self)
@@ -596,7 +598,8 @@ extension HomeViewController {
                                 self.routePolyline.map = self.mapView
                                 self.routePolyline.strokeColor = themeYellowColor
                                 self.routePolyline.strokeWidth = 3.0
-                                
+                                self.arrivedRoutePath = GMSPath(fromEncodedPath: route)!
+
                                 
                                 UtilityClass.hideACProgressHUD()
                                 

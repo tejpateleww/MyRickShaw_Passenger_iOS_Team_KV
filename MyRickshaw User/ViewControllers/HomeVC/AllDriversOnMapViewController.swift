@@ -47,8 +47,8 @@ class AllDriversOnMapViewController: UIViewController, CLLocationManagerDelegate
             switch UIScreen.main.nativeBounds.height {
             case 2436: break
                 
-            default:
-                print("Height of device is \(UIScreen.main.nativeBounds.height)")
+            default: break
+//                print("Height of device is \(UIScreen.main.nativeBounds.height)")
             }
         }
 

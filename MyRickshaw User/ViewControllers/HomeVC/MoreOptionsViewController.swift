@@ -22,7 +22,7 @@ class MoreOptionsViewController: UIViewController {
     
     var aryCarModelData: [[String:Any]] = [["Type":"TM Card Holder", "value":0, "key": "TMCardHolder"], ["Type":"Baby Seater", "value":0, "key": "BabySeater"], ["Type":"Hoist Van", "value":0, "key": "HoistVan"]]
     var arySelectedCarModelData = [[String:Any]]()
-    var selectedItem = IndexPath()
+    var selectedItem = Int()
     
     var aryCar = SingletonClass.sharedInstance.carList //CarListConstant
     var tempAry = [CarListModel]()
@@ -54,7 +54,7 @@ class MoreOptionsViewController: UIViewController {
                 }
             }
         }
-        
+      
         tableView.tableFooterView = UIView()
         tableView.separatorStyle = .none
     }
@@ -140,6 +140,11 @@ extension MoreOptionsViewController : UITableViewDelegate, UITableViewDataSource
         
         if aryIndex.contains(indexPath.row) {
             cell.imgCarModelSelectedOrNot.image = UIImage(named: "iconCheckMarkSelected")
+        }
+        cell.isUserInteractionEnabled = true
+        if(selectedItem == 0 && cell.lblCarModelName.text == "Hoist Van")
+        {
+            cell.isUserInteractionEnabled = false
         }
         return cell
     }

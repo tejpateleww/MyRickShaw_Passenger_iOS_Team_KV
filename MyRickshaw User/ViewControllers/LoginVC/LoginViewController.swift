@@ -191,7 +191,7 @@ class LoginViewController: UIViewController, CLLocationManagerDelegate, alertVie
                         self.btnLogin.setTitle("Login", for: .normal)
                         
                         SingletonClass.sharedInstance.dictProfile = NSMutableDictionary(dictionary: (result as! NSDictionary).object(forKey: "profile") as! NSDictionary)
-                        SingletonClass.sharedInstance.arrCarLists = NSMutableArray(array: (result as! NSDictionary).object(forKey: "car_class") as! NSArray)
+//                        SingletonClass.sharedInstance.arrCarLists = NSMutableArray(array: (result as! NSDictionary).object(forKey: "car_class") as! NSArray)
                         SingletonClass.sharedInstance.strPassengerID = String(describing: SingletonClass.sharedInstance.dictProfile.object(forKey: "Id")!)//as! String
                         SingletonClass.sharedInstance.isUserLoggedIN = true
                         
@@ -306,7 +306,6 @@ class LoginViewController: UIViewController, CLLocationManagerDelegate, alertVie
                     let alert = UIAlertController(title: appName, message: (result as! NSDictionary).object(forKey: "message") as? String, preferredStyle: .alert)
                     let UPDATE = UIAlertAction(title: "UPDATE", style: .default, handler: { ACTION in
                         
-//                        UIApplication.shared.openURL(NSURL(string: "https://itunes.apple.com/us/app/pick-n-go/id1320783092?mt=8")! as URL)
                     })
                     let Cancel = UIAlertAction(title: "Cancel", style: .default, handler: { ACTION in
                         
@@ -337,9 +336,6 @@ class LoginViewController: UIViewController, CLLocationManagerDelegate, alertVie
 
                         UtilityClass.showAlertWithCompletion("", message: (result as! NSDictionary).object(forKey: "message") as! String, vc: self, completionHandler: { ACTION in
                             
-//                            UIApplication.shared.open((NSURL(string: "https://itunes.apple.com/us/app/pick-n-go/id1320783092?mt=8")! as URL), options: [:], completionHandler: { (status) in
-//
-//                            })//openURL(NSURL(string: "https://itunes.apple.com/us/app/pick-n-go/id1320783092?mt=8")! as URL)
                         })
                     }
                     else {
@@ -347,30 +343,12 @@ class LoginViewController: UIViewController, CLLocationManagerDelegate, alertVie
                          UtilityClass.setCustomAlert(title: appName, message: (result as! NSDictionary).object(forKey: "message") as! String) { (index, title) in
                             if (index == 0)
                             {
-//                                UIApplication.shared.open((NSURL(string: "https://itunes.apple.com/us/app/pick-n-go/id1320783092?mt=8")! as URL), options: [:], completionHandler: { (status) in
-//                                })
                             }
                         }
 
                     }
                     
                 }
-/*
-                if let res = result as? String {
-                     UtilityClass.setCustomAlert(title: appName, message: res) { (index, title) in
-            }
-                }
-                else if let resDict = result as? NSDictionary {
-
-                     UtilityClass.setCustomAlert(title: appName, message: resDict.object(forKey: "message") as! String) { (index, title) in
-            }
-                }
-                else if let resAry = result as? NSArray {
-
-                     UtilityClass.setCustomAlert(title: appName, message: (resAry.object(at: 0) as! NSDictionary).object(forKey: "message") as! String) { (index, title) in
-            }
-                }
- */
             }
         }
     }

@@ -28,11 +28,11 @@ extension HomeViewController {
         }
         
         socket.on(clientEvent: .reconnect) { (data, ack) in
-            print ("socket is reconnected please reconnect")
+            print ("socket is disconnected please reconnect")
         }
         
         socket.on(clientEvent: .connect) {data, ack in
-            // print("socket connected")
+            print("socket connected")
             
             self.timerForUpdatingPassengerLocation()
             
@@ -64,10 +64,9 @@ extension HomeViewController {
             }
             
             self.socket.on(SocketData.kNearByDriverList, callback: { (data, ack) in
-               // // print("Driver List is \(data)")
-                
-                var lat : Double!
-                var long : Double!
+//                print("Driver List is \(data)")
+                //                var lat : Double!
+                //                var long : Double!
                 
                 self.arrNumberOfAvailableCars = NSMutableArray(array: ((data as NSArray).object(at: 0) as! NSDictionary).object(forKey: "driver") as! NSArray)
                 self.setData()
@@ -78,10 +77,10 @@ extension HomeViewController {
                     for i in 0..<(((data as NSArray).object(at: 0) as! NSDictionary).object(forKey: "driver") as! NSArray).count
                     {
                         
-                        let arrayOfCoordinte = ((((data as NSArray).object(at: 0) as! NSDictionary).object(forKey: "driver") as! NSArray).object(at: i) as! NSDictionary).object(forKey: "Location") as! NSArray
-//Timer.scheduledTimer
-                        lat = arrayOfCoordinte.object(at: 0) as! Double
-                        long = arrayOfCoordinte.object(at: 1) as! Double
+                        //                        _ = ((((data as NSArray).object(at: 0) as! NSDictionary).object(forKey: "driver") as! NSArray).object(at: i) as! NSDictionary).object(forKey: "Location") as! NSArray
+                        //Timer.scheduledTimer
+                        //                        lat = arrayOfCoordinte.object(at: 0) as! Double
+                        //                        long = arrayOfCoordinte.object(at: 1) as! Double
                         
                         let DriverId = ((((data as NSArray).object(at: 0) as! NSDictionary).object(forKey: "driver") as! NSArray).object(at: i) as! NSDictionary).object(forKey: "DriverId") as! String
                         
@@ -100,6 +99,8 @@ extension HomeViewController {
                          */
                     }
                 }
+                self.postPickupAndDropLocationForEstimateFare()
+                
             })
             
         }
@@ -107,8 +108,8 @@ extension HomeViewController {
         socket.connect()
     }
     
-
-
+    
+    
     
     func timerForUpdatingPassengerLocation(){
         // Scheduling timer to Call the function "updateCounting" with the interval of 1 seconds
@@ -145,8 +146,8 @@ extension HomeViewController {
             //            }
             if let getInfoFromData = data as? [[String:AnyObject]] {
                 
-                self.aryBookingAcceptedData = getInfoFromData
-                
+                //                self.aryBookingAcceptedData = getInfoFromData
+                self.dictCurrentBookingInfoData = ((getInfoFromData.first)?["BookingInfo"])?.firstObject as? NSDictionary ?? [:]
                 if let infoData = getInfoFromData[0] as? [String:AnyObject] {
                     if let bookingInfo = infoData["BookingInfo"] as? [[String:AnyObject]] {
                         var bookingIdIs = String()
@@ -181,7 +182,7 @@ extension HomeViewController {
                     }
                 }
             }
-           
+            
             self.performSegue(withIdentifier: "segueBookingConfirmed", sender: nil)
             
             
@@ -231,7 +232,7 @@ extension HomeViewController {
             self.setClearTextFieldsOfExtra()
             self.clearDestinationLocation()
             
-//            self.strBookingType = ""
+            //            self.strBookingType = ""
             self.btnDoneForLocationSelected.isHidden = true
             
             //            self.viewActivity.stopAnimating()
@@ -319,17 +320,17 @@ extension HomeViewController {
     {
         self.socket.on(SocketData.kBookingCompletedNotification, callback: { (data, ack) in
             // print("socketMethodForGettingTripCompletedNotification() is \(data)")
-
-
+            self.strLocationType = ""
+            
             // Restarting Timer For updating Passenger location which was stopped on STart trip
             self.timerForUpdatingPassengerLocation()
             /////
-
+            
             SingletonClass.sharedInstance.isTripContinue = false
             self.aryCompleterTripData = data
             
-           
-//            SingletonClass.sharedInstance.creditHistoryData["AvailableCreditLimit"] = "\(Int(data["AvailableCreditLimit"]))"
+            
+            //            SingletonClass.sharedInstance.creditHistoryData["AvailableCreditLimit"] = "\(Int(data["AvailableCreditLimit"]))"
             if let getInfoFromData = data as? [[String:AnyObject]] {
                 
                 if let infoData = getInfoFromData[0] as? [String:AnyObject] {
@@ -465,12 +466,12 @@ extension HomeViewController {
             let alert = UIAlertController(title: nil, message: "Your request has been rejected.", preferredStyle: .alert)
             let OK = UIAlertAction(title: "OK", style: .default, handler: { (ACTION) in
                 //                self.stopSound(fileName: "PickNGo", extensionType: "mp3")
-//                self.strBookingType = ""
+                //                self.strBookingType = ""
                 SingletonClass.sharedInstance.bookingId = ""
                 self.btnDoneForLocationSelected.isHidden = false
             })
             alert.addAction(OK)
-//            (UIApplication.shared.delegate as! AppDelegate).window?.rootViewController?.present(alert, animated: true, completion: nil)
+            //            (UIApplication.shared.delegate as! AppDelegate).window?.rootViewController?.present(alert, animated: true, completion: nil)
             UtilityClass.presentOverAlert(vc: alert)
         })
     }
@@ -482,7 +483,7 @@ extension HomeViewController {
             
             var bookingId = String()
             self.stopUpdatingPassengerLocationTimer()
-
+            
             if let bookingInfoData = (data as! [[String:AnyObject]])[0]["BookingInfo"] as? [[String:AnyObject]] {
                 if let bookingInfo = bookingInfoData[0]["Id"] as? Int {
                     bookingId = "\(bookingInfo)"
@@ -498,7 +499,7 @@ extension HomeViewController {
                         let alert = UIAlertController(title: nil, message: "Your trip has now started.", preferredStyle: .alert)
                         let OK = UIAlertAction(title: "OK", style: .default, handler: nil)
                         alert.addAction(OK)
-//                        (UIApplication.shared.delegate as! AppDelegate).window?.rootViewController?.present(alert, animated: true, completion: nil)
+                        //                        (UIApplication.shared.delegate as! AppDelegate).window?.rootViewController?.present(alert, animated: true, completion: nil)
                         UtilityClass.presentOverAlert(vc: alert)
                         self.btnRequest.isHidden = true
                         self.btnCancelStartedTrip.isHidden = true
@@ -512,7 +513,7 @@ extension HomeViewController {
                     let alert = UIAlertController(title: nil, message: "Your trip has now started.", preferredStyle: .alert)
                     let OK = UIAlertAction(title: "OK", style: .default, handler: nil)
                     alert.addAction(OK)
-//                    (UIApplication.shared.delegate as! AppDelegate).window?.rootViewController?.present(alert, animated: true, completion: nil)
+                    //                    (UIApplication.shared.delegate as! AppDelegate).window?.rootViewController?.present(alert, animated: true, completion: nil)
                     UtilityClass.presentOverAlert(vc: alert)
                     self.btnRequest.isHidden = true
                     self.btnCancelStartedTrip.isHidden = true
@@ -542,7 +543,7 @@ extension HomeViewController {
             
             alert.addAction(OK)
             
-//            (UIApplication.shared.delegate as! AppDelegate).window?.rootViewController?.present(alert, animated: true, completion: nil)
+            //            (UIApplication.shared.delegate as! AppDelegate).window?.rootViewController?.present(alert, animated: true, completion: nil)
             UtilityClass.presentOverAlert(vc: alert)
         })
     }
@@ -565,7 +566,7 @@ extension HomeViewController {
             
             alert.addAction(OK)
             
-//            (UIApplication.shared.delegate as! AppDelegate).window?.rootViewController?.present(alert, animated: true, completion: nil)
+            //            (UIApplication.shared.delegate as! AppDelegate).window?.rootViewController?.present(alert, animated: true, completion: nil)
             
             UtilityClass.presentOverAlert(vc: alert)
         })
@@ -574,13 +575,12 @@ extension HomeViewController {
     func onReceiveDriverLocationToPassenger() {
         
         self.socket.on(SocketData.kReceiveDriverLocationToPassenger, callback: { (data, ack) in
-             print("onReceiveDriverLocationToPassenger() is \(data)")
+            print("onReceiveDriverLocationToPassenger() is \(data)")
             
             SingletonClass.sharedInstance.driverLocation = (data as NSArray).object(at: 0) as! [String : AnyObject]
             
             var lati = Double()
             var lng = Double()
-//            CLLocation(latitude: 23.0733308, longitude: 72.5145669)
             
             if let doubleAry = SingletonClass.sharedInstance.driverLocation["Location"]! as? [Double] {
                 lati = doubleAry.first ?? 23.0733308
@@ -596,11 +596,9 @@ extension HomeViewController {
             let camera = GMSCameraPosition.camera(withLatitude: DriverCordinate.latitude,longitude: DriverCordinate.longitude, zoom: 17)
             self.mapView.animate(to: camera)
             
-            if let _ = self.driverMarker.map { // RJ Change
+            if let _ = self.driverMarker?.map { // RJ Change
                 self.driverMarker.map = self.mapView
             }
-//            self.driverMarker.map = self.mapView
-            //            var DriverCordinate = CLLocationCoordinate2D(latitude: Double("23.076701577176262")! , longitude: Double("72.51612203357585")!)
             
             DriverCordinate = CLLocationCoordinate2DMake(DriverCordinate.latitude, DriverCordinate.longitude)
             
@@ -614,26 +612,6 @@ extension HomeViewController {
                 self.driverMarker = GMSMarker(position: DriverCordinate) // self.originCoordinate
                 
                 self.driverMarker.map = self.mapView
-                var vehicleID = Int()
-                if let vID = SingletonClass.sharedInstance.dictCarInfo["VehicleModel"] as? Int {
-                    
-                    if vID == 0 {
-                        vehicleID = 7
-                    }
-                    else {
-                        vehicleID = vID
-                    }
-                }
-                else if let sID = SingletonClass.sharedInstance.dictCarInfo["VehicleModel"] as? String
-                {
-                    
-                    if sID == "" {
-                        vehicleID = 7
-                    }
-                    else {
-                        vehicleID = Int(sID)!
-                    }
-                }
                 
                 // Bhavesh changes 2-1-2019
                 self.driverMarker.icon = UIImage(named: "dummyCar") //  UIImage(named: self.markerCarIconName(modelId: vehicleID))
@@ -647,145 +625,200 @@ extension HomeViewController {
             print("The degree is \(SingletonClass.sharedInstance.floatBearing)")
             self.MarkerCurrntLocation.isHidden = true
             
+            self.checkRouteOnMap(DriverCordinate: DriverCordinate)
             
-    
         })
         
         
     }
-    /*func onReceiveDriverLocationToPassenger() {
-        
-        self.socket.on(SocketData.kReceiveDriverLocationToPassenger, callback: { (data, ack) in
-             print("onReceiveDriverLocationToPassenger() is \(data)")
-
-            if SingletonClass.sharedInstance.bookingId != "" {
-                SingletonClass.sharedInstance.driverLocation = (data as NSArray).object(at: 0) as! [String : AnyObject]
-                
-                var DoubleLat = Double()
-                var DoubleLng = Double()
-                
-                if let lat = SingletonClass.sharedInstance.driverLocation["Location"]! as? [Double] {
-                    DoubleLat = lat[0]
-                    DoubleLng = lat[1]
-                }
-                else if let lat = SingletonClass.sharedInstance.driverLocation["Location"]! as? [String] {
-                    DoubleLat = Double(lat[0])!
-                    DoubleLng = Double(lat[1])!
-                }
-
-                let DriverCordinate = CLLocationCoordinate2D(latitude: DoubleLat , longitude: DoubleLng)
-
-//                DriverCordinate = CLLocationCoordinate2DMake(DriverCordinate.latitude, DriverCordinate.longitude)
-                
-                if(self.destinationCordinate == nil)
-                {
-                    self.destinationCordinate = CLLocationCoordinate2DMake(DriverCordinate.latitude, DriverCordinate.longitude)
-                }
-
-                if self.driverMarker == nil {
-                    self.driverMarker = GMSMarker(position: DriverCordinate) // self.originCoordinate
-                    self.driverMarker.map = self.mapView
-                }
-
-//                let distanceInMeters = self.destinationCordinate.distance(from: DriverCordinate) // result is in meters
-//                // print("the distance in meters is \(distanceInMeters)")
-                let degrees = self.destinationCordinate.bearing(to: DriverCordinate)
-                let clLocation = CLLocation(latitude: DriverCordinate.latitude, longitude: DriverCordinate.longitude)
-
-                var kmh = clLocation.speed / 1000.0 * 60.0 * 60.0
-                if(kmh < 0) {
-                    kmh = 0
-                }
-                 print("\nThe speed of Driver is \(kmh)\n")
-//                if(kmh > 4)
-//                {
-                    self.moveMent.ARCarMovement(marker: self.driverMarker, oldCoordinate: self.destinationCordinate, newCoordinate: DriverCordinate, mapView: self.mapView, bearing: Float(SingletonClass.sharedInstance.floatBearing))
-//                }
-                self.driverMarker.icon = UIImage(named:"dummyCar")
-
-                self.destinationCordinate = DriverCordinate
-                self.MarkerCurrntLocation.isHidden = true
-              
-                
-                let camera = GMSCameraPosition.camera(withLatitude: DriverCordinate.latitude,longitude: DriverCordinate.longitude, zoom: 17)
-                self.mapView.animate(to: camera)
-                self.driverMarker.map = self.mapView
-                // ***********************************************
-                // ***********************************************
-                
-                /*if self.arrivedRoutePath != nil {
-
-                    if GMSGeometryIsLocationOnPathTolerance(self.driverMarker.position, self.arrivedRoutePath!, true, 200) { // GMSGeometryContainsLocation(self.driverMarker.position, self.arrivedRoutePath!, true) {
-//                        // print("GMSGeometryIsLocationOnPathTolerance = true")
-                    } else {
-//                        // print("GMSGeometryIsLocationOnPathTolerance = false")
-                        
-                        if self.aryBookingDropoffInfo.count != 0 {
+    
+    
+    func checkRouteOnMap(DriverCordinate : CLLocationCoordinate2D)
+    {
+        if self.arrivedRoutePath != nil {
+            
+            if (GMSGeometryIsLocationOnPathTolerance(self.driverMarker.position, self.arrivedRoutePath!, true, 200) == false)
+            {
+                if self.dictCurrentBookingInfoData.count != 0 {
+                    
+                    if let dictBookingData = self.dictCurrentBookingInfoData as? [String:Any]
+                    {
+                        if dictBookingData.count != 0 {
                             
-                            let aryFilterData = self.aryBookingDropoffInfo.filter{$0["Status"] as! String == "" }
-                            if aryFilterData.count != 0 {
+                            self.mapView.clear()
+                            
+                            if self.driverMarker == nil {
+                                self.driverMarker = GMSMarker(position: DriverCordinate)
+                                self.driverMarker.map = self.mapView
+                                self.driverMarker.icon = UIImage(named: "dummyCar")
+                            }
+                            
+                            //Rahul
+                            if(SingletonClass.sharedInstance.dictDriverProfile.count != 0) {
                                 
-                                self.mapView.clear()
+                                let PickupLat = self.driverMarker.position.latitude  // Double("\(strLat )")
+                                let PickupLng = self.driverMarker.position.longitude // Double("\(strLng )")
                                 
-//                                if self.driverMarker == nil {
-//                                    self.driverMarker = GMSMarker(position: DriverCordinate) // self.originCoordinate
-//                                    self.driverMarker.map = self.mapView
-//                                }
+                                let DropOffLat = Double("\(dictBookingData["DropOffLat"] ?? "0" )")
+                                let DropOffLon = Double("\(dictBookingData["DropOffLon"] ?? "0" )")
                                 
-                                if self.driverMarker == nil {
-                                    self.driverMarker = GMSMarker(position: DriverCordinate)
-                                    self.driverMarker.map = self.mapView
-                                    self.driverMarker.icon = UIImage(named: "dummyCar")
+                                let tempLat = Double("\(dictBookingData["PickupLat"] ?? "0" )")
+                                let tempLon = Double("\(dictBookingData["PickupLng"] ?? "0" )")
+                                
+                                let originalLoc: String = "\(PickupLat ),\(PickupLng)"
+                                var destiantionLoc: String = "\(DropOffLat ?? 0),\(DropOffLon ?? 0)"
+                                
+                                if !SingletonClass.sharedInstance.isTripContinue {
+                                    destiantionLoc = "\(tempLat ?? 0),\(tempLon ?? 0)"
                                 }
-//                                else {
-//                                    self.driverMarker.position = DriverCordinate
-//                                }
                                 
-                                //Rahul
-                                if(SingletonClass.sharedInstance.dictDriverProfile.count != 0) {
+                                
+                                DispatchQueue.main.async {
                                     
-                                    let PickupLat = self.driverMarker.position.latitude  // Double("\(strLat )")
-                                    let PickupLng = self.driverMarker.position.longitude // Double("\(strLng )")
+                                    self.setDirectionLineOnMapForSourceAndDestinationShow(origin: originalLoc, destination: destiantionLoc, completionHandler: nil)
                                     
-                                    let DropOffLat = Double("\(aryFilterData.first?["DropOffLat"]! ?? "0")")
-                                    let DropOffLon = Double("\(aryFilterData.first?["DropOffLng"]! ?? "0")")
-                                    
-                                    let tempLat = Double("\(aryFilterData.first?["PickupLat"]! ?? "0")")
-                                    let tempLon = Double("\(aryFilterData.first?["PickupLng"]! ?? "0")")
-                                    
-                                    let originalLoc: String = "\(PickupLat ),\(PickupLng)"
-                                    var destiantionLoc: String = "\(DropOffLat ?? 0),\(DropOffLon ?? 0)"
-                                    
-                                    if !SingletonClass.sharedInstance.isTripContinue {
-                                        destiantionLoc = "\(tempLat ?? 0),\(tempLon ?? 0)"
-                                    }
-                                    
-                                    let bounds = GMSCoordinateBounds(coordinate: CLLocationCoordinate2D(latitude: PickupLat , longitude: PickupLng ), coordinate: CLLocationCoordinate2D(latitude: DropOffLat ?? 0, longitude: DropOffLon ?? 0))
-                                    let update = GMSCameraUpdate.fit(bounds, withPadding: CGFloat(150))
-                                    
-                                    self.mapView.animate(with: update)
-                                    self.mapView.moveCamera(update)
-                                    //                        self.setDirectionLineOnMapForSourceAndDestinationShow(origin: originalLoc, destination: destiantionLoc, waypoints: nil, completionHandler: nil)
-                                    
-                                    
-                                    DispatchQueue.main.async {
-                                        if SingletonClass.sharedInstance.isTripContinue {
-                                            self.setDirectionLineOnMapForSourceAndDestinationShow(origin: originalLoc, destination: destiantionLoc, isFromArrivedReq: false, isFromStartTrip: true, waypoints: nil, completionHandler: nil)
-                                        } else {
-                                            self.setDirectionLineOnMapForSourceAndDestinationShow(origin: originalLoc, destination: destiantionLoc, isFromArrivedReq: true, waypoints: nil, completionHandler: nil)
-                                        }
-                                    }
                                 }
                             }
                         }
                     }
-                }*/
-            
-                // ***********************************************
-                // ***********************************************
+                }
             }
-        })
-    }*/
+        }
+    }
+    
+    /*func onReceiveDriverLocationToPassenger() {
+     
+     self.socket.on(SocketData.kReceiveDriverLocationToPassenger, callback: { (data, ack) in
+     print("onReceiveDriverLocationToPassenger() is \(data)")
+     
+     if SingletonClass.sharedInstance.bookingId != "" {
+     SingletonClass.sharedInstance.driverLocation = (data as NSArray).object(at: 0) as! [String : AnyObject]
+     
+     var DoubleLat = Double()
+     var DoubleLng = Double()
+     
+     if let lat = SingletonClass.sharedInstance.driverLocation["Location"]! as? [Double] {
+     DoubleLat = lat[0]
+     DoubleLng = lat[1]
+     }
+     else if let lat = SingletonClass.sharedInstance.driverLocation["Location"]! as? [String] {
+     DoubleLat = Double(lat[0])!
+     DoubleLng = Double(lat[1])!
+     }
+     
+     let DriverCordinate = CLLocationCoordinate2D(latitude: DoubleLat , longitude: DoubleLng)
+     
+     //                DriverCordinate = CLLocationCoordinate2DMake(DriverCordinate.latitude, DriverCordinate.longitude)
+     
+     if(self.destinationCordinate == nil)
+     {
+     self.destinationCordinate = CLLocationCoordinate2DMake(DriverCordinate.latitude, DriverCordinate.longitude)
+     }
+     
+     if self.driverMarker == nil {
+     self.driverMarker = GMSMarker(position: DriverCordinate) // self.originCoordinate
+     self.driverMarker.map = self.mapView
+     }
+     
+     //                let distanceInMeters = self.destinationCordinate.distance(from: DriverCordinate) // result is in meters
+     //                // print("the distance in meters is \(distanceInMeters)")
+     let degrees = self.destinationCordinate.bearing(to: DriverCordinate)
+     let clLocation = CLLocation(latitude: DriverCordinate.latitude, longitude: DriverCordinate.longitude)
+     
+     var kmh = clLocation.speed / 1000.0 * 60.0 * 60.0
+     if(kmh < 0) {
+     kmh = 0
+     }
+     print("\nThe speed of Driver is \(kmh)\n")
+     //                if(kmh > 4)
+     //                {
+     self.moveMent.ARCarMovement(marker: self.driverMarker, oldCoordinate: self.destinationCordinate, newCoordinate: DriverCordinate, mapView: self.mapView, bearing: Float(SingletonClass.sharedInstance.floatBearing))
+     //                }
+     self.driverMarker.icon = UIImage(named:"dummyCar")
+     
+     self.destinationCordinate = DriverCordinate
+     self.MarkerCurrntLocation.isHidden = true
+     
+     
+     let camera = GMSCameraPosition.camera(withLatitude: DriverCordinate.latitude,longitude: DriverCordinate.longitude, zoom: 17)
+     self.mapView.animate(to: camera)
+     self.driverMarker.map = self.mapView
+     // ***********************************************
+     // ***********************************************
+     
+     /*if self.arrivedRoutePath != nil {
+     
+     if GMSGeometryIsLocationOnPathTolerance(self.driverMarker.position, self.arrivedRoutePath!, true, 200) { // GMSGeometryContainsLocation(self.driverMarker.position, self.arrivedRoutePath!, true) {
+     //                        // print("GMSGeometryIsLocationOnPathTolerance = true")
+     } else {
+     //                        // print("GMSGeometryIsLocationOnPathTolerance = false")
+     
+     if self.aryBookingDropoffInfo.count != 0 {
+     
+     let aryFilterData = self.aryBookingDropoffInfo.filter{$0["Status"] as! String == "" }
+     if aryFilterData.count != 0 {
+     
+     self.mapView.clear()
+     
+     //                                if self.driverMarker == nil {
+     //                                    self.driverMarker = GMSMarker(position: DriverCordinate) // self.originCoordinate
+     //                                    self.driverMarker.map = self.mapView
+     //                                }
+     
+     if self.driverMarker == nil {
+     self.driverMarker = GMSMarker(position: DriverCordinate)
+     self.driverMarker.map = self.mapView
+     self.driverMarker.icon = UIImage(named: "dummyCar")
+     }
+     //                                else {
+     //                                    self.driverMarker.position = DriverCordinate
+     //                                }
+     
+     //Rahul
+     if(SingletonClass.sharedInstance.dictDriverProfile.count != 0) {
+     
+     let PickupLat = self.driverMarker.position.latitude  // Double("\(strLat )")
+     let PickupLng = self.driverMarker.position.longitude // Double("\(strLng )")
+     
+     let DropOffLat = Double("\(aryFilterData.first?["DropOffLat"]! ?? "0")")
+     let DropOffLon = Double("\(aryFilterData.first?["DropOffLng"]! ?? "0")")
+     
+     let tempLat = Double("\(aryFilterData.first?["PickupLat"]! ?? "0")")
+     let tempLon = Double("\(aryFilterData.first?["PickupLng"]! ?? "0")")
+     
+     let originalLoc: String = "\(PickupLat ),\(PickupLng)"
+     var destiantionLoc: String = "\(DropOffLat ?? 0),\(DropOffLon ?? 0)"
+     
+     if !SingletonClass.sharedInstance.isTripContinue {
+     destiantionLoc = "\(tempLat ?? 0),\(tempLon ?? 0)"
+     }
+     
+     let bounds = GMSCoordinateBounds(coordinate: CLLocationCoordinate2D(latitude: PickupLat , longitude: PickupLng ), coordinate: CLLocationCoordinate2D(latitude: DropOffLat ?? 0, longitude: DropOffLon ?? 0))
+     let update = GMSCameraUpdate.fit(bounds, withPadding: CGFloat(150))
+     
+     self.mapView.animate(with: update)
+     self.mapView.moveCamera(update)
+     //                        self.setDirectionLineOnMapForSourceAndDestinationShow(origin: originalLoc, destination: destiantionLoc, waypoints: nil, completionHandler: nil)
+     
+     
+     DispatchQueue.main.async {
+     if SingletonClass.sharedInstance.isTripContinue {
+     self.setDirectionLineOnMapForSourceAndDestinationShow(origin: originalLoc, destination: destiantionLoc, isFromArrivedReq: false, isFromStartTrip: true, waypoints: nil, completionHandler: nil)
+     } else {
+     self.setDirectionLineOnMapForSourceAndDestinationShow(origin: originalLoc, destination: destiantionLoc, isFromArrivedReq: true, waypoints: nil, completionHandler: nil)
+     }
+     }
+     }
+     }
+     }
+     }
+     }*/
+     
+     // ***********************************************
+     // ***********************************************
+     }
+     })
+     }*/
     
     func onReceiveNotificationWhenDriverAcceptRequest() {
         
@@ -815,8 +848,8 @@ extension HomeViewController {
                         let alert = UIAlertController(title: nil, message: message, preferredStyle: .alert)
                         let OK = UIAlertAction(title: "OK", style: .default, handler: nil)
                         alert.addAction(OK)
-//                        (UIApplication.shared.delegate as! AppDelegate).window?.rootViewController?.present(alert, animated: true, completion: nil)
-                         UtilityClass.presentOverAlert(vc: alert)
+                        //                        (UIApplication.shared.delegate as! AppDelegate).window?.rootViewController?.present(alert, animated: true, completion: nil)
+                        UtilityClass.presentOverAlert(vc: alert)
                     }
                 }
                 else {
@@ -830,7 +863,7 @@ extension HomeViewController {
                     let alert = UIAlertController(title: nil, message: message, preferredStyle: .alert)
                     let OK = UIAlertAction(title: "OK", style: .default, handler: nil)
                     alert.addAction(OK)
-//                    (UIApplication.shared.delegate as! AppDelegate).window?.rootViewController?.present(alert, animated: true, completion: nil)
+                    //                    (UIApplication.shared.delegate as! AppDelegate).window?.rootViewController?.present(alert, animated: true, completion: nil)
                     
                     UtilityClass.presentOverAlert(vc: alert)
                     
@@ -859,7 +892,7 @@ extension HomeViewController {
             
             alert.addAction(OK)
             
-//            (UIApplication.shared.delegate as! AppDelegate).window?.rootViewController?.present(alert, animated: true, completion: nil)
+            //            (UIApplication.shared.delegate as! AppDelegate).window?.rootViewController?.present(alert, animated: true, completion: nil)
             UtilityClass.presentOverAlert(vc: alert)
         })
         
@@ -868,12 +901,47 @@ extension HomeViewController {
     func onGetEstimateFare() {
         
         self.socket.on(SocketData.kReceiveGetEstimateFare, callback: { (data, ack) in
-            //            // print("onGetEstimateFare() is \(data)")
+            print("onGetEstimateFare() is \(data)")
             
             var estimateData = (data as! [[String:AnyObject]])
             estimateData =  estimateData[0]["estimate_fare"] as! [[String:AnyObject]]
             
             let sortedArray = estimateData.sorted {($0["sort"] as! Int) < ($1["sort"] as! Int)}
+            var newArray = [[String:Any]]()
+            self.arrNumberOfOnlineCars = NSMutableArray(array: sortedArray)
+            self.arrTotalNumberOfCars = NSMutableArray(array: sortedArray).mutableCopy() as! NSMutableArray
+            
+            //            self.setData()
+            if(self.valueTMCardHolde == 1)
+            {
+                //                let arraySlice = sortedArray.suffix(2)
+                //                let newArray = Array(arraySlice)
+                newArray = sortedArray.filter({ (dictionary) -> Bool in
+                    if let value = dictionary["ReferenceId"] as? Int{
+                        return value != 0
+                    }
+                    return false
+                })
+                self.arrTotalNumberOfCars.removeAllObjects()
+                self.arrTotalNumberOfCars = NSMutableArray(array: newArray).mutableCopy() as! NSMutableArray
+                self.arrNumberOfOnlineCars = self.arrTotalNumberOfCars.mutableCopy() as! NSMutableArray
+//                self.setData()
+            }
+            else
+            {
+                newArray = sortedArray.filter({ (dictionary) -> Bool in
+                    if let value = dictionary["ReferenceId"] as? Int{
+                        return value == 0
+                    }
+                    return false
+                })
+                self.arrTotalNumberOfCars.removeAllObjects()
+                self.arrTotalNumberOfCars = NSMutableArray(array: newArray).mutableCopy() as! NSMutableArray
+                self.arrNumberOfOnlineCars = self.arrTotalNumberOfCars.mutableCopy() as! NSMutableArray
+//                self.setData()
+            }
+            
+           
             
             if self.aryEstimateFareData == self.aryEstimateFareData {
                 
@@ -887,23 +955,28 @@ extension HomeViewController {
                     
                     if dict1 != dict2 {
                         
-                        UIView.performWithoutAnimation {
-                            self.collectionViewCars.reloadData()
-                        }
+//                        UIView.performWithoutAnimation {
+//                            self.collectionViewCars.reloadData()
+//                        }
                     }
                     
                 }
                 
                 
             }
-            
-            self.aryEstimateFareData = NSMutableArray(array: sortedArray as NSArray)
-            
+            self.aryEstimateFareData.removeAllObjects()
+            self.aryEstimateFareData = NSMutableArray(array: newArray).mutableCopy() as! NSMutableArray
+            self.setData()
+//            self.aryEstimateFareData = NSMutableArray(array: sortedArray as NSArray)
+//            if(self.valueTMCardHolde == 1)
+//            {
+          
+//            }
             var count = Int()
             for i in 0..<self.arrNumberOfOnlineCars.count
             {
                 let dictOnlineCarData = (self.arrNumberOfOnlineCars.object(at: i) as! NSDictionary)
-                count = count + (dictOnlineCarData["carCount"] as! Int)
+                count = count + (dictOnlineCarData["carCount"] as? Int ?? 0)
                 if (count == 0)
                 {
                     
@@ -924,7 +997,7 @@ extension HomeViewController {
                         }))
                         
                         
-//                        (UIApplication.shared.delegate as! AppDelegate).window?.rootViewController?.present(alert, animated: true, completion: nil)
+                        //                        (UIApplication.shared.delegate as! AppDelegate).window?.rootViewController?.present(alert, animated: true, completion: nil)
                         UtilityClass.presentOverAlert(vc: alert)
                     }
                     
@@ -933,10 +1006,10 @@ extension HomeViewController {
             
             
             
-                        UIView.performWithoutAnimation {
-                            self.collectionViewCars.reloadData()
-                        }
-
+            UIView.performWithoutAnimation {
+                self.collectionViewCars.reloadData()
+            }
+            
             
         })
     }
@@ -1025,7 +1098,7 @@ extension HomeViewController {
                         SingletonClass.sharedInstance.bookingId = ""
                         self.setHideAndShowTopViewWhenRequestAcceptedAndTripStarted(status: false)
                         UtilityClass.setCustomAlert(title: "\(appName)", message: (data as! [[String:AnyObject]])[0]["message"]! as! String, completionHandler: { (index, title) in
-//                            self.strBookingType = ""
+                            //                            self.strBookingType = ""
                             self.btnDoneForLocationSelected.isHidden = false
                         })
                     }
@@ -1042,7 +1115,7 @@ extension HomeViewController {
                     SingletonClass.sharedInstance.passengerTypeOther = false
                     self.setHideAndShowTopViewWhenRequestAcceptedAndTripStarted(status: false)
                     UtilityClass.setCustomAlert(title: "\(appName)", message: (data as! [[String:AnyObject]])[0]["message"]! as! String, completionHandler: { (index, title) in
-//                        self.strBookingType = ""
+                        //                        self.strBookingType = ""
                         self.btnDoneForLocationSelected.isHidden = false
                     })
                 }
@@ -1093,8 +1166,8 @@ extension HomeViewController {
                     view.configureDropShadow()
                     view.button?.isHidden = false
                     view.button?.setTitle("GO", for: .normal)
-//                    view.button?.backgroundColor = UIColor.clear
-//                    view.button?.tintColor = UIColor.clear
+                    //                    view.button?.backgroundColor = UIColor.clear
+                    //                    view.button?.tintColor = UIColor.clear
                     
                     view.iconImageView?.image = UIImage(named: "iconLogoWithText")
                     //                        let iconText = ["🤔", "😳", "🙄", "😶"].sm_random()!
@@ -1113,8 +1186,8 @@ extension HomeViewController {
             }
         }
     }
-
-
+    
+    
     func stopUpdatingPassengerLocationTimer()
     {
         if(timerToUpdatePassengerLocation != nil)
@@ -1129,7 +1202,7 @@ extension HomeViewController {
         let next = self.storyboard?.instantiateViewController(withIdentifier: "ChatViewController") as! ChatViewController
         next.strBookingId = bookingId
         next.strBookingType = bookingType
-//        self.present(next, animated: true, completion: nil)
+        //        self.present(next, animated: true, completion: nil)
         UtilityClass.presentOverAlert(vc: next)
     }
 }

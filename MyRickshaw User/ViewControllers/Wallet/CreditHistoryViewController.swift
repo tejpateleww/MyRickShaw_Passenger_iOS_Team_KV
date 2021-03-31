@@ -50,8 +50,8 @@ class CreditHistoryViewController: ParentViewController {
             case 2436,1792:
                 
                 constraintTop.constant = 80
-            default:
-                print("Height of device is \(UIScreen.main.nativeBounds.height)")
+            default: break
+//                print("Height of device is \(UIScreen.main.nativeBounds.height)")
             }
         }
         

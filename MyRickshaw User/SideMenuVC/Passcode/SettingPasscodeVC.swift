@@ -213,8 +213,8 @@ class SettingPasscodeVC: ParentViewController, checkSwitchIsOnOrOff {
                     frame = CGRect(x: CGFloat(0), y: CGFloat(0), width: screenWidth, height: CGFloat(heightWithLabelForX))
                     hView.lblHeaderTitle.text = strHeaderTitle
                 }
-            default:
-                print("Height of device is \(UIScreen.main.nativeBounds.height)")
+            default: break
+//                print("Height of device is \(UIScreen.main.nativeBounds.height)")
                 
             }
         }
@@ -228,8 +228,8 @@ class SettingPasscodeVC: ParentViewController, checkSwitchIsOnOrOff {
                     frame = CGRect(x: CGFloat(0), y: CGFloat(0), width: screenWidth, height: CGFloat(heightWithLabelForX))
                     hView.lblHeaderTitle.text = strHeaderTitle
                 }
-            default:
-                print("Height of device is \(UIScreen.main.nativeBounds.height)")
+            default: break
+//                print("Height of device is \(UIScreen.main.nativeBounds.height)")
                 
             }
         }

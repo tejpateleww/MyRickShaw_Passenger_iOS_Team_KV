@@ -195,8 +195,8 @@ class ParentViewController: UIViewController, HeaderViewDelegate {
                     hView.lblHeaderTitle.text = strHeaderTitle
                 }
                 
-            default:
-                print("Height of device is \(UIScreen.main.nativeBounds.height)")
+            default: break
+//                print("Height of device is \(UIScreen.main.nativeBounds.height)")
             }
         }
         

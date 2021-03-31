@@ -610,10 +610,18 @@ class BookLaterViewController: UIViewController, GMSAutocompleteViewControllerDe
         
         selecorTime.optionIdentifier = "Time" as AnyObject
         
-        let dateCurrent = Date()
+        
+        let isoDate = convertDateToString
+
+        let dateFormatter = DateFormatter()
+        dateFormatter.locale = Locale(identifier: "en_US_POSIX") // set locale to reliable US_POSIX
+        dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
+        let date = dateFormatter.date(from:isoDate)
+        
+        let dateCurrent = date//Date()
         
         
-        selecorTime.optionCurrentDate = dateCurrent.addingTimeInterval(30 * 60)
+        selecorTime.optionCurrentDate = dateCurrent?.addingTimeInterval(30 * 60) ?? Date().addingTimeInterval(30*60)
         
         // 3. Then you simply present it from your view controller when necessary!
         self.present(selecorTime, animated: true, completion: nil)

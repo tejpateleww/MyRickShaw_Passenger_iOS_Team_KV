@@ -111,6 +111,7 @@ class HomeViewController: UIViewController, UICollectionViewDelegate, UICollecti
             }
         }        
         updateCounting()
+        postPickupAndDropLocationForEstimateFare()
         //print("indexes: \(arySelectedCarOptions)")
     }
     
@@ -168,7 +169,7 @@ class HomeViewController: UIViewController, UICollectionViewDelegate, UICollecti
     
     let baseURLDirections = "https://maps.googleapis.com/maps/api/directions/json?"
     let baseUrlForGetAddress = "https://maps.googleapis.com/maps/api/geocode/json?"
-    let apikey = googleMapAddress //"AIzaSyCKEP5WGD7n5QWtCopu0QXOzM9Qec4vAfE"
+    //    let apikey = googleMapAddress //"AIzaSyCKEP5WGD7n5QWtCopu0QXOzM9Qec4vAfE"
     
     let socket = SocketIOClient(socketURL: URL(string: SocketData.kBaseURL)!, config: [.log(false), .compress])
     
@@ -182,7 +183,7 @@ class HomeViewController: UIViewController, UICollectionViewDelegate, UICollecti
     var timerToGetDriverLocation : Timer!
     var aryCards = [[String:AnyObject]]()
     var aryCompleterTripData = [Any]()
-    
+    var arrivedRoutePath: GMSPath?
     var locationManager = CLLocationManager()
     var currentLocation: CLLocation?
     var mapView = GMSMapView()
@@ -203,7 +204,7 @@ class HomeViewController: UIViewController, UICollectionViewDelegate, UICollecti
     var strCarModelIDIfZero = String()
     var strNavigateCarModel = String()
     
-    var aryEstimateFareData = NSArray()
+    var aryEstimateFareData = NSMutableArray()
     
     var strSelectedCarMarkerIcon = String()
     var ratingToDriver = Float()
@@ -212,7 +213,7 @@ class HomeViewController: UIViewController, UICollectionViewDelegate, UICollecti
     var currentLocationMarkerText = String()
     var destinationLocationMarkerText = String()
     
-    var aryBookingAcceptedData = [[String:AnyObject]]()
+    //    var aryBookingAcceptedData = [[String:AnyObject]]()
     
     var carListModelDataList = SingletonClass.sharedInstance.carList
     
@@ -745,8 +746,8 @@ class HomeViewController: UIViewController, UICollectionViewDelegate, UICollecti
             case 2436,1792:
                 
                 viewHeaderHeightConstant.constant = 80
-            default:
-                print("Height of device is \(UIScreen.main.nativeBounds.height)")
+            default: break
+//                print("Height of device is \(UIScreen.main.nativeBounds.height)")
             }
         }
         
@@ -806,10 +807,10 @@ class HomeViewController: UIViewController, UICollectionViewDelegate, UICollecti
         viewSelectPaymentOptionParent.layer.masksToBounds = true
         
         
-//        if(locationManager != nil)
-//        {
+        //        if(locationManager != nil)
+        //        {
         locationManager.startUpdatingLocation()
-//        }
+        //        }
         
     }
     
@@ -1007,6 +1008,8 @@ class HomeViewController: UIViewController, UICollectionViewDelegate, UICollecti
             btnDoneForLocationSelected.isHidden = true
             self.viewCarLists.isHidden = false
             self.ConstantViewCarListsHeight.constant = 200 // 150
+            postPickupAndDropLocationForEstimateFare() //Added by Rahul on January 4 2021
+            
         }
         else {
             self.ConstantViewCarListsHeight.constant = 0
@@ -1051,12 +1054,15 @@ class HomeViewController: UIViewController, UICollectionViewDelegate, UICollecti
             self.txtDestinationLocation.text = ""
             self.strDropoffLocation = ""
         }
-
+        
         doubleDropOffLat = 0
         doubleDropOffLng = 0
         self.destinationLocationMarker.map = nil
         self.currentLocationMarker.map = nil
-        self.strLocationType = self.currentLocationMarkerText
+        if(self.arrDataAfterCompletetionOfTrip.count == 0)
+        {
+            self.strLocationType = self.currentLocationMarkerText
+        }
         self.routePolyline.map = nil
         
         stackViewNumberOfPassenger.isHidden = true
@@ -1084,7 +1090,10 @@ class HomeViewController: UIViewController, UICollectionViewDelegate, UICollecti
         doubleDropOffLng = 0
         self.destinationLocationMarker.map = nil
         self.currentLocationMarker.map = nil
-        self.strLocationType = self.currentLocationMarkerText
+        if(self.arrDataAfterCompletetionOfTrip.count == 0)
+        {
+            self.strLocationType = self.currentLocationMarkerText
+        }
         self.btnDoneForLocationSelected.isHidden = false
         self.ConstantViewCarListsHeight.constant = 0
         self.viewCarLists.isHidden = true
@@ -1618,7 +1627,7 @@ class HomeViewController: UIViewController, UICollectionViewDelegate, UICollecti
         
         
         switch row {
-            
+        
         case 0:
             rowString = data["CardNum2"] as! String
             myImageView.image = UIImage(named: setCardIcon(str: data["Type"] as! String))
@@ -1917,7 +1926,7 @@ class HomeViewController: UIViewController, UICollectionViewDelegate, UICollecti
         locationManager.delegate = self
         
         if( CLLocationManager.authorizationStatus() == CLAuthorizationStatus.authorizedWhenInUse ||
-            CLLocationManager.authorizationStatus() == CLAuthorizationStatus.authorizedAlways){
+                CLLocationManager.authorizationStatus() == CLAuthorizationStatus.authorizedAlways){
             
             if (locationManager.responds(to: #selector(CLLocationManager.requestWhenInUseAuthorization)) || locationManager.responds(to: #selector(CLLocationManager.requestAlwaysAuthorization)))
             {
@@ -2173,7 +2182,7 @@ class HomeViewController: UIViewController, UICollectionViewDelegate, UICollecti
         else if type == "cash" {
             paymentType = "cash"
         }
-            
+        
         else if type == "credit" {
             paymentType = "credit"
         }
@@ -2301,7 +2310,7 @@ class HomeViewController: UIViewController, UICollectionViewDelegate, UICollecti
             UtilityClass.setCustomAlert(title: appName, message: "Please enter both address.") { (index, title) in
             }
         }
-            
+        
         else {
             
             self.postPickupAndDropLocationForEstimateFare()
@@ -2562,7 +2571,7 @@ class HomeViewController: UIViewController, UICollectionViewDelegate, UICollecti
     // MARK: - Delegate Change Last Car Methods
     //-------------------------------------------------------------
     
-    var selectedCarIndex = Int(1)
+    var selectedCarIndex = Int(0)
     
     func didChangedCar(index: Int) {
         selectedCarIndex = index
@@ -2580,9 +2589,9 @@ class HomeViewController: UIViewController, UICollectionViewDelegate, UICollecti
         
         let currentRow = sender.tag
         arySelectedCarOptions.removeAll()
-        valueTMCardHolde = 0
-        valueBabySeater = 0
-        valueHoistVan = 0
+//        valueTMCardHolde = 0
+//        valueBabySeater = 0
+//        valueHoistVan = 0
         intNumberOfPassenger = 01
         if sender.tag == 0 {
             intNoOfPassengersLimites = 4
@@ -2593,7 +2602,7 @@ class HomeViewController: UIViewController, UICollectionViewDelegate, UICollecti
         
         lblNumberOfPassengers.text = "0\(intNumberOfPassenger)"
         
-        updateCounting()
+//        updateCounting() Rahul Patel on 11 Jan 2020
         
         selectedCarIndex = currentRow
         
@@ -2611,13 +2620,48 @@ class HomeViewController: UIViewController, UICollectionViewDelegate, UICollecti
             var dictOnlineCarData = NSDictionary()
             
             if carIndex == 2 {
-                dictOnlineCarData = (arrNumberOfOnlineCars as! [[String:Any]]).filter({$0["Name"] as! String == lblBudgetTaxiName.text}).first! as NSDictionary //(arrNumberOfOnlineCars.object(at: currentRow) as! NSDictionary)
+                dictOnlineCarData = (arrNumberOfOnlineCars as! [[String:Any]]).filter({$0["name"] as? String == lblBudgetTaxiName.text}).first! as NSDictionary //(arrNumberOfOnlineCars.object(at: currentRow) as! NSDictionary)
             }
             else {
                 dictOnlineCarData = (arrNumberOfOnlineCars.object(at: carIndex) as! NSDictionary)
             }
             
             strSpecialRequestFareCharge = dictOnlineCarData.object(forKey: "SpecialExtraCharge") as? String ?? ""
+            
+            
+            if ((self.aryEstimateFareData.object(at: carIndex) as! NSDictionary).object(forKey: "total") as? NSNull) != nil {
+                
+                lblApproxCost.text = "\(currencySign)\(0)"
+            }
+            else if let price = (self.aryEstimateFareData.object(at: carIndex) as! NSDictionary).object(forKey: "total") as? Double {
+                
+                lblApproxCost.text = "\(currencySign)\(price)"
+                
+                if strServiceType == ServiceType.FlatRate.rawValue {
+                    
+                    strFareId = (self.aryEstimateFareData.object(at: carIndex) as! NSDictionary).object(forKey: "fare_id") as! String
+                    
+                    lblFairAndTimeForMaxVan.text = lblApproxCost.text
+                    
+                    lblFairAndTimeForWaihekeExpress.text = lblApproxCost.text
+                    
+                    lblFairAndTimeForBudgetTaxi.text = lblApproxCost.text
+                    
+                }
+                else {
+                    if carIndex == 0 {
+                        lblFairAndTimeForMaxVan.text = "\(currencySign)\(price)"
+                    }
+                    else if carIndex == 1 {
+                        lblFairAndTimeForWaihekeExpress.text = "\(currencySign)\(price)"
+                    }
+                    else {
+                        lblFairAndTimeForBudgetTaxi.text = "\(currencySign)\(price)"
+                    }
+                }
+            }
+            
+            
             if dictOnlineCarData.object(forKey: "carCount") as! Int != 0 {
                 //                self.clearMap()
                 //       //print("dictOnlineCarData: \(dictOnlineCarData)")
@@ -2665,37 +2709,37 @@ class HomeViewController: UIViewController, UICollectionViewDelegate, UICollecti
                                 //                            }
                             }
                             
-                            if ((self.aryEstimateFareData.object(at: carIndex) as! NSDictionary).object(forKey: "total") as? NSNull) != nil {
-                                
-                                lblApproxCost.text = "\(currencySign)\(0)"
-                            }
-                            else if let price = (self.aryEstimateFareData.object(at: carIndex) as! NSDictionary).object(forKey: "total") as? Double {
-                                
-                                lblApproxCost.text = "\(currencySign)\(price)"
-                                
-                                if strServiceType == ServiceType.FlatRate.rawValue {
-                                    
-                                    strFareId = (self.aryEstimateFareData.object(at: carIndex) as! NSDictionary).object(forKey: "fare_id") as! String
-                                    
-                                    lblFairAndTimeForMaxVan.text = lblApproxCost.text
-                                    
-                                    lblFairAndTimeForWaihekeExpress.text = lblApproxCost.text
-                                    
-                                    lblFairAndTimeForBudgetTaxi.text = lblApproxCost.text
-                                    
-                                }
-                                else {
-                                    if carIndex == 0 {
-                                        lblFairAndTimeForMaxVan.text = "\(currencySign)\(price)"
-                                    }
-                                    else if carIndex == 1 {
-                                        lblFairAndTimeForWaihekeExpress.text = "\(currencySign)\(price)"
-                                    }
-                                    else {
-                                        lblFairAndTimeForBudgetTaxi.text = "\(currencySign)\(price)"
-                                    }
-                                }
-                            }
+//                            if ((self.aryEstimateFareData.object(at: carIndex) as! NSDictionary).object(forKey: "total") as? NSNull) != nil {
+//
+//                                lblApproxCost.text = "\(currencySign)\(0)"
+//                            }
+//                            else if let price = (self.aryEstimateFareData.object(at: carIndex) as! NSDictionary).object(forKey: "total") as? Double {
+//
+//                                lblApproxCost.text = "\(currencySign)\(price)"
+//
+//                                if strServiceType == ServiceType.FlatRate.rawValue {
+//
+//                                    strFareId = (self.aryEstimateFareData.object(at: carIndex) as! NSDictionary).object(forKey: "fare_id") as! String
+//
+//                                    lblFairAndTimeForMaxVan.text = lblApproxCost.text
+//
+//                                    lblFairAndTimeForWaihekeExpress.text = lblApproxCost.text
+//
+//                                    lblFairAndTimeForBudgetTaxi.text = lblApproxCost.text
+//
+//                                }
+//                                else {
+//                                    if carIndex == 0 {
+//                                        lblFairAndTimeForMaxVan.text = "\(currencySign)\(price)"
+//                                    }
+//                                    else if carIndex == 1 {
+//                                        lblFairAndTimeForWaihekeExpress.text = "\(currencySign)\(price)"
+//                                    }
+//                                    else {
+//                                        lblFairAndTimeForBudgetTaxi.text = "\(currencySign)\(price)"
+//                                    }
+//                                }
+//                            }
                         }
                     }
                 }
@@ -2711,7 +2755,7 @@ class HomeViewController: UIViewController, UICollectionViewDelegate, UICollecti
                     
                     self.aryMarkerOnlineCars.removeAll()
                     
-                    let available = dictOnlineCarData.object(forKey: "carCount") as! Int
+                    let available = dictOnlineCarData.object(forKey: "available_driver") as? Int ?? 0
                     let checkAvailabla = String(available)
                     
                     
@@ -2724,9 +2768,20 @@ class HomeViewController: UIViewController, UICollectionViewDelegate, UICollecti
                     
                     let locationsArray = (dictOnlineCarData.object(forKey: "locations") as! [[String:AnyObject]])
                     
+                    var carModelID = String()
+                    
+                    if let carID = dictOnlineCarData.object(forKey: "Id") as? String
+                    {
+                        carModelID = carID
+                    }
+                    else if let carIDInt =  dictOnlineCarData.object(forKey: "Id") as? Int
+                    {
+                        carModelID = "\(carIDInt)"
+                    }
+                    
                     for i in 0..<locationsArray.count
                     {
-                        if( (locationsArray[i]["CarType"] as! String) == (dictOnlineCarData.object(forKey: "Id") as! String))
+                        if( (locationsArray[i]["CarType"] as! String) == carModelID)
                         {
                             lati = (locationsArray[i]["Location"] as! [AnyObject])[0] as! Double
                             longi = (locationsArray[i]["Location"] as! [AnyObject])[1] as! Double
@@ -2734,7 +2789,20 @@ class HomeViewController: UIViewController, UICollectionViewDelegate, UICollecti
                             self.markerOnlineCars = GMSMarker(position: position)
                             //                        self.markerOnlineCars.tracksViewChanges = false
                             //                        self.strSelectedCarMarkerIcon = self.markertIcon(index: indexPath.row)
-                            self.strSelectedCarMarkerIcon = self.setCarImage(modelId: dictOnlineCarData.object(forKey: "Id") as! String)
+                            
+                            
+                            var carModelID = String()
+                            
+                            if let carID = dictOnlineCarData.object(forKey: "Id") as? String
+                            {
+                                carModelID = carID
+                            }
+                            else if let carIDInt =  dictOnlineCarData.object(forKey: "Id") as? Int
+                            {
+                                carModelID = "\(carIDInt)"
+                            }
+                            
+                            self.strSelectedCarMarkerIcon = self.setCarImage(modelId: carModelID)
                             //                        self.markerOnlineCars.icon = UIImage(named: self.markertIcon(index: indexPath.row)) // iconCurrentLocation
                             
                             self.aryMarkerOnlineCars.append(self.markerOnlineCars)
@@ -2748,28 +2816,38 @@ class HomeViewController: UIViewController, UICollectionViewDelegate, UICollecti
                     for i in 0..<self.aryMarkerOnlineCars.count {
                         
                         self.aryMarkerOnlineCars[i].position = self.aryMarkerOnlineCars[i].position
-                        self.aryMarkerOnlineCars[i].icon = UIImage(named: self.setCarImage(modelId: dictOnlineCarData.object(forKey: "Id") as! String))
+                        let carModelID2 = "\(dictOnlineCarData.object(forKey: "Id") as? Int ?? 0)"
+                        self.aryMarkerOnlineCars[i].icon = UIImage(named: "\(carModelID2)")
                         self.aryMarkerOnlineCars[i].map = self.mapView
                     }
                     
-                    let carModelID = dictOnlineCarData.object(forKey: "Id") as? String
-                    let carModelIDConverString: String = carModelID!
                     
-                    let strCarName: String = dictOnlineCarData.object(forKey: "Name") as! String
+                    if let carID = dictOnlineCarData.object(forKey: "Id") as? String
+                    {
+                        strCarModelID = carID
+                    }
+                    else if let carIDInt =  dictOnlineCarData.object(forKey: "Id") as? Int
+                    {
+                        strCarModelID = "\(carIDInt)"
+                    }
+                    
+                    let strCarName: String = dictOnlineCarData.object(forKey: "name") as! String
                     
                     strCarModelClass = strCarName
-                    strCarModelID = carModelIDConverString
                     
                     //                selectedIndexPath = indexPath
                     //
                     //                let cell = collectionView.cellForItem(at: indexPath) as! CarsCollectionViewCell
                     //                cell.viewOfImage.layer.borderColor = themeYellowColor.cgColor
                     
-                    let imageURL = dictOnlineCarData.object(forKey: "Image") as! String
+                    let imageURL = dictOnlineCarData.object(forKey: "Image") as? String ?? ""
                     strNavigateCarModel = imageURL
                     strCarModelIDIfZero = ""
+                    
+                    
+                    
                     if checkAvailabla != "0" {
-                        strModelId = dictOnlineCarData.object(forKey: "Id") as! String
+                        strModelId = carModelID
                         
                         if aryEstimateFareData.count != 0 {
                             
@@ -2792,8 +2870,8 @@ class HomeViewController: UIViewController, UICollectionViewDelegate, UICollecti
             }
             else {
                 
-                lblApproxCost.text = "\(currencySign)00.00"
-                
+//                lblApproxCost.text = "\(currencySign)00.00"
+                strModelId = ""
                 
                 for i in 0..<self.aryMarkerOnlineCars.count {
                     
@@ -2802,13 +2880,22 @@ class HomeViewController: UIViewController, UICollectionViewDelegate, UICollecti
                 
                 self.aryMarkerOnlineCars.removeAll()
                 
-                let available = dictOnlineCarData.object(forKey: "carCount") as! Int
+                let available = dictOnlineCarData.object(forKey: "available_driver") as? Int ?? 0
                 let checkAvailabla = String(available)
+                var carModelID = String()
                 
-                let carModelID = dictOnlineCarData.object(forKey: "Id") as? String
-                let carModelIDConverString: String = carModelID!
+                if let carID = dictOnlineCarData.object(forKey: "Id") as? String
+                {
+                    carModelID = carID
+                }
+                else if let carIDInt =  dictOnlineCarData.object(forKey: "Id") as? Int
+                {
+                    carModelID = "\(carIDInt)"
+                }
                 
-                let strCarName: String = dictOnlineCarData.object(forKey: "Name") as! String
+                //                let carModelIDConverString: String = carModelID!
+                
+                let strCarName: String = dictOnlineCarData.object(forKey: "Name") as? String ?? dictOnlineCarData.object(forKey: "name") as! String
                 
                 strCarModelClass = strCarName
                 
@@ -2817,21 +2904,39 @@ class HomeViewController: UIViewController, UICollectionViewDelegate, UICollecti
                 //
                 //                selectedIndexPath = indexPath
                 
-                let imageURL = dictOnlineCarData.object(forKey: "Image") as! String
-                
-                strNavigateCarModel = imageURL
+                if  let imageURL = dictOnlineCarData.object(forKey: "Image") as? String
+                {
+                    strNavigateCarModel = imageURL
+                }
                 //                strCarModelID = ""
-                strCarModelIDIfZero = carModelIDConverString
+                strCarModelIDIfZero = carModelID
                 
                 if checkAvailabla != "0" {
-                    strModelId = dictOnlineCarData.object(forKey: "Id") as! String
+                    
+                    if let carID = dictOnlineCarData.object(forKey: "Id") as? String
+                    {
+                        strModelId = carID
+                    }
+                    else if let carIDInt =  dictOnlineCarData.object(forKey: "Id") as? Int
+                    {
+                        strModelId = "\(carIDInt)"
+                    }
                     strFareId = (self.aryEstimateFareData.object(at: carIndex) as! NSDictionary).object(forKey: "fare_id") as! String
                 }
-                else {
-                    strModelId = ""
-                    strCarModelIDIfZero = dictOnlineCarData.object(forKey: "Id") as! String
-                    strCarModelID = dictOnlineCarData.object(forKey: "Id") as! String
-                }
+                //                else {
+                //                    strModelId = ""
+                //                    if let carID = dictOnlineCarData.object(forKey: "Id") as? String
+                //                    {
+                //                        strCarModelIDIfZero = carID
+                //                        strModelId = carID
+                //                    }
+                //                    else if let carIDInt =  dictOnlineCarData.object(forKey: "Id") as? Int
+                //                    {
+                //                        strCarModelIDIfZero = "\(carIDInt)"
+                //
+                //                        strModelId = "\(carIDInt)"
+                //                    }
+                //                }
                 
                 // check Flat Rate is Available or not
                 if dictFlatRate != nil {
@@ -2998,7 +3103,7 @@ class HomeViewController: UIViewController, UICollectionViewDelegate, UICollecti
             }
             
             
-            let imageURL = dictOnlineCarData["Image"] as! String
+            let imageURL = dictOnlineCarData["Image"] as? String ?? ""
             
             cell.imgCars.sd_setIndicatorStyle(.gray)
             cell.imgCars.sd_setShowActivityIndicatorView(true)
@@ -3025,9 +3130,15 @@ class HomeViewController: UIViewController, UICollectionViewDelegate, UICollecti
                 lblFairAndTimeForMaxVan.text = "No Taxi"
             }
             
+            if indexPath.row == 2 {
+                lblFairAndTimeForBudgetTaxi.text = "No Taxi"
+            } else if indexPath.row == 1 {
+                lblFairAndTimeForWaihekeExpress.text = "No Taxi"
+            } else if indexPath.row == 0 {
+                lblFairAndTimeForMaxVan.text = "No Taxi"
+            }
             
-            
-            if dictOnlineCarData["carCount"] as! Int != 0 {
+//            if (dictOnlineCarData["carCount"] as? Int ?? 0) != 0 {
                 
                 if self.aryEstimateFareData.count != 0 {
                     
@@ -3079,28 +3190,21 @@ class HomeViewController: UIViewController, UICollectionViewDelegate, UICollecti
                         lblFairAndTimeForMaxVan.text = "\(cell.lblPrices.text ?? "\(currencySign)00")-\(cell.lblMinutes.text ?? "00min")"
                     }
                 }
-                setCarSelection(carIndex: indexPath.row, collectionViewReload: false)
-            }
-            else {
-                if indexPath.row == 2 {
-                    lblFairAndTimeForBudgetTaxi.text = "No Taxi"
-                } else if indexPath.row == 1 {
-                    lblFairAndTimeForWaihekeExpress.text = "No Taxi"
-                } else if indexPath.row == 0 {
-                    lblFairAndTimeForMaxVan.text = "No Taxi"
-                }
-            }
-            
-        }
-        else
-        {
-            cell.imgCars.image = UIImage(named: "iconPackage")
-            cell.lblMinutes.text = "Packages"
-            cell.lblPrices.text = ""
+                //                setCarSelection(carIndex: indexPath.row, collectionViewReload: false)
+//            }
+//            else {
+//                if indexPath.row == 2 {
+//                    lblFairAndTimeForBudgetTaxi.text = "No Taxi"
+//                } else if indexPath.row == 1 {
+//                    lblFairAndTimeForWaihekeExpress.text = "No Taxi"
+//                } else if indexPath.row == 0 {
+//                    lblFairAndTimeForMaxVan.text = "No Taxi"
+//                }
+//            }
             
         }
         
-        //        setCarSelection(carIndex: indexPath.row, collectionViewReload: false)
+        setCarSelection(carIndex: selectedCarIndex, collectionViewReload: false)
         
         return cell
         
@@ -3139,7 +3243,7 @@ class HomeViewController: UIViewController, UICollectionViewDelegate, UICollecti
                     
                     self.aryMarkerOnlineCars.removeAll()
                     
-                    let available = dictOnlineCarData.object(forKey: "carCount") as! Int
+                    let available = dictOnlineCarData.object(forKey: "available_driver") as? Int ?? 0
                     let checkAvailabla = String(available)
                     
                     
@@ -3301,48 +3405,90 @@ class HomeViewController: UIViewController, UICollectionViewDelegate, UICollecti
             //            if (j <= 5)
             //            {
             
-            if ((self.arrTotalNumberOfCars[j] as! [String:AnyObject])["Status"] as! String) == "1" {
-                
-                k = 0
-                let tempAryLocationOfDriver = NSMutableArray()
-                
-                let totalCarsAvailableCarTypeID = (self.arrTotalNumberOfCars.object(at: j) as! NSDictionary).object(forKey: "Id") as! String
-                for i in 0..<self.arrNumberOfAvailableCars.count
+            //            if ((self.arrTotalNumberOfCars[j] as! [String:AnyObject])["Status"] as! String) == "1" {
+            
+            k = 0
+            let tempAryLocationOfDriver = NSMutableArray()
+            var totalCarsAvailableCarTypeID = String()
+            
+            
+            if(self.valueTMCardHolde == 1)
+            {
+                if let totalCarsAvailableCarTypeIDString = (self.arrTotalNumberOfCars.object(at: j) as! NSDictionary).object(forKey: "ReferenceId") as? String
                 {
-                    let dictLocation = NSMutableDictionary()
-                    
-                    let carType = (self.arrNumberOfAvailableCars.object(at: i) as! NSDictionary).object(forKey: "CarType") as! String
-                    
-                    if (totalCarsAvailableCarTypeID == carType)
-                    {
-                        k = k+1
-                    }
-                    
-                    carLocationsLat = ((self.arrNumberOfAvailableCars.object(at: i) as! NSDictionary).object(forKey: "Location") as! NSArray).object(at: 0) as! Double
-                    carLocationsLng = ((self.arrNumberOfAvailableCars.object(at: i) as! NSDictionary).object(forKey: "Location") as! NSArray).object(at: 1) as! Double
-                    dictLocation.setDictionary(((self.arrNumberOfAvailableCars.object(at: i) as! NSDictionary) as! [AnyHashable : Any]))
-                    tempAryLocationOfDriver.add(dictLocation)
-                    //                    carLocations = (self.arrNumberOfAvailableCars.object(at: j) as! NSDictionary)
-                    
+                    totalCarsAvailableCarTypeID = totalCarsAvailableCarTypeIDString
                 }
-                //                //print("The number of cars available is \(String(describing: (self.arrTotalNumberOfCars.object(at: j) as! NSDictionary).object(forKey: "Name")!)) and the count is \(k)")
-                
-                
-                //            dictCars.setObject((self.arrTotalNumberOfCars.object(at: j) as! NSDictionary).object(forKey: "Sort")!, forKey: "SordId" as NSCopying)
-                //            dictCars.setObject((self.arrTotalNumberOfCars.object(at: j) as! NSDictionary).object(forKey: "Name")!, forKey: "carName" as NSCopying)
-                //            dictCars.setObject(k, forKey: "carCount" as NSCopying)
-                //            dictCars.setObject((self.arrTotalNumberOfCars.object(at: j) as! NSDictionary).object(forKey: "Id")!, forKey: "Id" as NSCopying)
-                //            dictCars.setObject(tempAryLocationOfDriver, forKey: "locations" as NSCopying)
-                
-                let tempDict =  NSMutableDictionary(dictionary: (self.arrTotalNumberOfCars.object(at: j) as! NSDictionary))
-                tempDict.setObject(k, forKey: "carCount" as NSCopying)
-                tempDict.setObject(carLocationsLat, forKey: "Lat" as NSCopying)
-                tempDict.setObject(carLocationsLng, forKey: "Lng" as NSCopying)
-                tempDict.setObject(tempAryLocationOfDriver, forKey: "locations" as NSCopying)
-                
-                
-                aryTempOnlineCars.add(tempDict)
+                else if let totalCarsAvailableCarTypeIDInt = (self.arrTotalNumberOfCars.object(at: j) as! NSDictionary).object(forKey: "ReferenceId") as? Int
+                {
+                    totalCarsAvailableCarTypeID = "\(totalCarsAvailableCarTypeIDInt)"
+                }
+                else  if let totalCarsAvailableCarTypeidInt = (self.arrTotalNumberOfCars.object(at: j) as! NSDictionary).object(forKey: "ReferenceId") as? Int
+                {
+                    totalCarsAvailableCarTypeID = "\(totalCarsAvailableCarTypeidInt)"
+                }
+                else  if let totalCarsAvailableCarTypeidString = (self.arrTotalNumberOfCars.object(at: j) as! NSDictionary).object(forKey: "ReferenceId") as? String
+                {
+                    totalCarsAvailableCarTypeID = totalCarsAvailableCarTypeidString
+                }
             }
+            else
+            {
+                if let totalCarsAvailableCarTypeIDString = (self.arrTotalNumberOfCars.object(at: j) as! NSDictionary).object(forKey: "Id") as? String
+                {
+                    totalCarsAvailableCarTypeID = totalCarsAvailableCarTypeIDString
+                }
+                else if let totalCarsAvailableCarTypeIDInt = (self.arrTotalNumberOfCars.object(at: j) as! NSDictionary).object(forKey: "Id") as? Int
+                {
+                    totalCarsAvailableCarTypeID = "\(totalCarsAvailableCarTypeIDInt)"
+                }
+                else  if let totalCarsAvailableCarTypeidInt = (self.arrTotalNumberOfCars.object(at: j) as! NSDictionary).object(forKey: "id") as? Int
+                {
+                    totalCarsAvailableCarTypeID = "\(totalCarsAvailableCarTypeidInt)"
+                }
+                else  if let totalCarsAvailableCarTypeidString = (self.arrTotalNumberOfCars.object(at: j) as! NSDictionary).object(forKey: "id") as? String
+                {
+                    totalCarsAvailableCarTypeID = totalCarsAvailableCarTypeidString
+                }
+            }
+            
+      
+            
+            for i in 0..<self.arrNumberOfAvailableCars.count
+            {
+                let dictLocation = NSMutableDictionary()
+                
+                let carType = (self.arrNumberOfAvailableCars.object(at: i) as! NSDictionary).object(forKey: "CarType") as! String
+                
+                if (totalCarsAvailableCarTypeID == carType)
+                {
+                    k = k+1
+                }
+                
+                carLocationsLat = ((self.arrNumberOfAvailableCars.object(at: i) as! NSDictionary).object(forKey: "Location") as! NSArray).object(at: 0) as! Double
+                carLocationsLng = ((self.arrNumberOfAvailableCars.object(at: i) as! NSDictionary).object(forKey: "Location") as! NSArray).object(at: 1) as! Double
+                dictLocation.setDictionary(((self.arrNumberOfAvailableCars.object(at: i) as! NSDictionary) as! [AnyHashable : Any]))
+                tempAryLocationOfDriver.add(dictLocation)
+                //                    carLocations = (self.arrNumberOfAvailableCars.object(at: j) as! NSDictionary)
+                
+            }
+            //                //print("The number of cars available is \(String(describing: (self.arrTotalNumberOfCars.object(at: j) as! NSDictionary).object(forKey: "Name")!)) and the count is \(k)")
+            
+            
+            //            dictCars.setObject((self.arrTotalNumberOfCars.object(at: j) as! NSDictionary).object(forKey: "Sort")!, forKey: "SordId" as NSCopying)
+            //            dictCars.setObject((self.arrTotalNumberOfCars.object(at: j) as! NSDictionary).object(forKey: "Name")!, forKey: "carName" as NSCopying)
+            //            dictCars.setObject(k, forKey: "carCount" as NSCopying)
+            //            dictCars.setObject((self.arrTotalNumberOfCars.object(at: j) as! NSDictionary).object(forKey: "Id")!, forKey: "Id" as NSCopying)
+            //            dictCars.setObject(tempAryLocationOfDriver, forKey: "locations" as NSCopying)
+            
+            let tempDict =  NSMutableDictionary(dictionary: (self.arrTotalNumberOfCars.object(at: j) as! NSDictionary))
+            tempDict.setObject(k, forKey: "carCount" as NSCopying)
+            tempDict.setObject(carLocationsLat, forKey: "Lat" as NSCopying)
+            tempDict.setObject(carLocationsLng, forKey: "Lng" as NSCopying)
+            tempDict.setObject(tempAryLocationOfDriver, forKey: "locations" as NSCopying)
+            
+            
+            aryTempOnlineCars.add(tempDict)
+            //            }
             
             //            }
         }
@@ -3362,56 +3508,56 @@ class HomeViewController: UIViewController, UICollectionViewDelegate, UICollecti
         
         //        DispatchQueue.main.async {
         
-        DispatchQueue.main.asyncAfter(deadline: .now(), execute: {
+        //        DispatchQueue.main.asyncAfter(deadline: .now(), execute: {
+        
+        let sortedArray = (self.aryTempOnlineCars as NSArray).sortedArray(using: [NSSortDescriptor(key: "Sort", ascending: true)]) as! [[String:AnyObject]]
+        
+        self.arrNumberOfOnlineCars = NSMutableArray(array: sortedArray)
+        
+        //        //print(arrNumberOfOnlineCars)
+        
+        
+        if self.checkTempData.count == 0 {
             
-            let sortedArray = (self.aryTempOnlineCars as NSArray).sortedArray(using: [NSSortDescriptor(key: "Sort", ascending: true)]) as! [[String:AnyObject]]
+            SingletonClass.sharedInstance.isFirstTimeReloadCarList = true
+            self.checkTempData = self.aryTempOnlineCars as NSArray
             
-            self.arrNumberOfOnlineCars = NSMutableArray(array: sortedArray)
+            self.collectionViewCars.reloadData()
+        }
+        else {
             
-            //        //print(arrNumberOfOnlineCars)
-            
-            
-            if self.checkTempData.count == 0 {
+            for i in 0..<self.aryTempOnlineCars.count {
                 
-                SingletonClass.sharedInstance.isFirstTimeReloadCarList = true
-                self.checkTempData = self.aryTempOnlineCars as NSArray
+                let arySwif = self.aryTempOnlineCars.object(at: i) as! NSDictionary
                 
-                self.collectionViewCars.reloadData()
-            }
-            else {
-                
-                for i in 0..<self.aryTempOnlineCars.count {
+                if (self.checkTempData.object(at: i) as! NSDictionary) == arySwif {
                     
-                    let arySwif = self.aryTempOnlineCars.object(at: i) as! NSDictionary
-                    
-                    if (self.checkTempData.object(at: i) as! NSDictionary) == arySwif {
+                    //                    self.aryOfOnlineCarsIds.append(String((checkTempData.object(at: i) as! NSDictionary).object(forKey: "carCount") as! Int))
+                    if SingletonClass.sharedInstance.isFirstTimeReloadCarList == true {
+                        SingletonClass.sharedInstance.isFirstTimeReloadCarList = false
                         
-                        //                    self.aryOfOnlineCarsIds.append(String((checkTempData.object(at: i) as! NSDictionary).object(forKey: "carCount") as! Int))
-                        if SingletonClass.sharedInstance.isFirstTimeReloadCarList == true {
-                            SingletonClass.sharedInstance.isFirstTimeReloadCarList = false
-                            
-                            if self.txtCurrentLocation.text!.count != 0 && self.txtDestinationLocation.text!.count != 0 && self.aryOfOnlineCarsIds.count != 0 {
-                                self.postPickupAndDropLocationForEstimateFare()
-                            }
-                            self.collectionViewCars.reloadData()
-                            
+                        if self.txtCurrentLocation.text!.count != 0 && self.txtDestinationLocation.text!.count != 0 && self.aryOfOnlineCarsIds.count != 0 {
+                            self.postPickupAndDropLocationForEstimateFare()
                         }
+                        self.collectionViewCars.reloadData()
+                        
                     }
-                    else {
+                }
+                else {
+                    
+                    if (self.checkTempData.object(at: i) as! NSDictionary).object(forKey: "carCount") as? Int != arySwif.object(forKey: "carCount") as? Int {
+                        self.checkTempData = self.aryTempOnlineCars as NSArray
                         
-                        if (self.checkTempData.object(at: i) as! NSDictionary).object(forKey: "carCount") as? Int != arySwif.object(forKey: "carCount") as? Int {
-                            self.checkTempData = self.aryTempOnlineCars as NSArray
+                        if self.txtCurrentLocation.text!.count != 0 && self.txtDestinationLocation.text!.count != 0 && self.aryOfOnlineCarsIds.count != 0 {
                             
-                            if self.txtCurrentLocation.text!.count != 0 && self.txtDestinationLocation.text!.count != 0 && self.aryOfOnlineCarsIds.count != 0 {
-                                
-                                self.postPickupAndDropLocationForEstimateFare()
-                            }
-                            self.collectionViewCars.reloadData()
+                            self.postPickupAndDropLocationForEstimateFare()
                         }
+                        self.collectionViewCars.reloadData()
                     }
                 }
             }
-        })
+        }
+        //        })
         
     }
     
@@ -3560,8 +3706,10 @@ class HomeViewController: UIViewController, UICollectionViewDelegate, UICollecti
             
             self.strLocationType = ""
             self.txtDestinationLocation.text = ""
-            
-            self.strLocationType = currentLocationMarkerText
+            if(self.arrDataAfterCompletetionOfTrip.count == 0)
+            {
+                self.strLocationType = currentLocationMarkerText
+            }
             
         }
         
@@ -3583,6 +3731,8 @@ class HomeViewController: UIViewController, UICollectionViewDelegate, UICollecti
         
         if (segue.identifier == "segueShowMoreOptions") {
             let bookingInfo = segue.destination as! MoreOptionsViewController
+            bookingInfo.aryCarModelData = [["Type":"TM Card Holder", "value":valueTMCardHolde, "key": "TMCardHolder"], ["Type":"Baby Seater", "value":valueHoistVan, "key": "BabySeater"], ["Type":"Hoist Van", "value": valueBabySeater, "key": "HoistVan"]]
+            bookingInfo.selectedItem = selectedCarIndex
             bookingInfo.delegate = self
             bookingInfo.arySelectedCarModelData = arySelectedCarOptions
         }
@@ -3621,6 +3771,8 @@ class HomeViewController: UIViewController, UICollectionViewDelegate, UICollecti
     
     @objc func updateCounting(){
         let myJSON = ["PassengerId" : SingletonClass.sharedInstance.strPassengerID, "Lat": doublePickupLat, "Long": doublePickupLng, "Token" : SingletonClass.sharedInstance.deviceToken, "TMCardHolder": valueTMCardHolde, "BabySeater": valueBabySeater, "HoistVan": valueHoistVan, "NoOfPassenger": Int(lblNumberOfPassengers.text!) ?? 1] as [String : Any]
+        
+//        print("\(SocketData.kUpdatePassengerLatLong) \([myJSON])")
         socket.emit(SocketData.kUpdatePassengerLatLong , with: [myJSON])
         
     }
@@ -3738,8 +3890,8 @@ class HomeViewController: UIViewController, UICollectionViewDelegate, UICollecti
         let dummyLatitude = Double(PickupLat)! - Double(DropOffLat)!
         let dummyLongitude = Double(PickupLng)! - Double(DropOffLon)!
         
-//        let waypointLatitude = Double(PickupLat)! - dummyLatitude
-//        let waypointSetLongitude = Double(PickupLng)! - dummyLongitude
+        //        let waypointLatitude = Double(PickupLat)! - dummyLatitude
+        //        let waypointSetLongitude = Double(PickupLng)! - dummyLongitude
         
         let originalLoc: String = "\(PickupLat),\(PickupLng)"
         let destiantionLoc: String = "\(DropOffLat),\(DropOffLon)"
@@ -3840,11 +3992,11 @@ class HomeViewController: UIViewController, UICollectionViewDelegate, UICollecti
         //        let PickupLng = Double(picklng)
         
         
-//        let dummyLatitude = Double(PickupLat) - Double(DropOffLat)!
-//        let dummyLongitude = Double(PickupLng) - Double(DropOffLon)!
+        //        let dummyLatitude = Double(PickupLat) - Double(DropOffLat)!
+        //        let dummyLongitude = Double(PickupLng) - Double(DropOffLon)!
         
-//        let waypointLatitude = self.defaultLocation.coordinate.latitude - dummyLatitude
-//        let waypointSetLongitude = self.defaultLocation.coordinate.longitude - dummyLongitude
+        //        let waypointLatitude = self.defaultLocation.coordinate.latitude - dummyLatitude
+        //        let waypointSetLongitude = self.defaultLocation.coordinate.longitude - dummyLongitude
         
         
         let originalLoc: String = "\(PickupLat),\(PickupLng)"
@@ -4050,14 +4202,17 @@ class HomeViewController: UIViewController, UICollectionViewDelegate, UICollecti
     func postPickupAndDropLocationForEstimateFare()
     {
         let driverID = aryOfOnlineCarsIds.compactMap{ $0 }.joined(separator: ",")
-        
-        var myJSON = ["PassengerId" : SingletonClass.sharedInstance.strPassengerID,  "PickupLocation" : strPickupLocation ,"PickupLat" :  self.doublePickupLat , "PickupLong" :  self.doublePickupLng, "DropoffLocation" : strDropoffLocation,"DropoffLat" : self.doubleDropOffLat, "DropoffLon" : self.doubleDropOffLng,"Ids" : driverID ] as [String : Any]
-        
-        if(strDropoffLocation.count == 0)
-        {
-            myJSON = ["PassengerId" : SingletonClass.sharedInstance.strPassengerID,  "PickupLocation" : strPickupLocation ,"PickupLat" :  self.doublePickupLat , "PickupLong" :  self.doublePickupLng, "DropoffLocation" : strPickupLocation,"DropoffLat" : self.doubleDropOffLng, "DropoffLon" : self.doubleDropOffLng,"Ids" : driverID ] as [String : Any]
-        }
-        socket.emit(SocketData.kSendRequestForGetEstimateFare , with: [myJSON])
+//        if(driverID != "")
+//        {
+            var myJSON = ["PassengerId" : SingletonClass.sharedInstance.strPassengerID,  "PickupLocation" : strPickupLocation ,"PickupLat" :  self.doublePickupLat , "PickupLong" :  self.doublePickupLng, "DropoffLocation" : strDropoffLocation,"DropoffLat" : self.doubleDropOffLat, "DropoffLon" : self.doubleDropOffLng,"Ids" : driverID,"IsTmCard": valueTMCardHolde, "IsBabySeater": valueBabySeater, "IsHoistVan": valueHoistVan ] as [String : Any]
+            
+            if(strDropoffLocation.count == 0)
+            {
+                myJSON = ["PassengerId" : SingletonClass.sharedInstance.strPassengerID,  "PickupLocation" : strPickupLocation ,"PickupLat" :  self.doublePickupLat , "PickupLong" :  self.doublePickupLng, "DropoffLocation" : strPickupLocation,"DropoffLat" : self.doubleDropOffLng, "DropoffLon" : self.doubleDropOffLng,"Ids" : driverID,"IsTmCard": valueTMCardHolde, "IsBabySeater": valueBabySeater, "IsHoistVan": valueHoistVan ] as [String : Any]
+            }
+            print("\(SocketData.kSendRequestForGetEstimateFare) \(myJSON)")
+            socket.emit(SocketData.kSendRequestForGetEstimateFare , with: [myJSON])
+//        }
     }
     
     func CancelBookLaterTripAfterDriverAcceptRequest() {
@@ -4255,7 +4410,7 @@ class HomeViewController: UIViewController, UICollectionViewDelegate, UICollecti
     }
     
     @IBAction func btnClearDropOffLocation(_ sender: UIButton) {
-
+        
         clearMap()
         clearDestinationLocation()
         
@@ -4290,18 +4445,21 @@ class HomeViewController: UIViewController, UICollectionViewDelegate, UICollecti
             self.txtDestinationLocation.text = ""
             self.strDropoffLocation = ""
         }
-       
+        
         doubleDropOffLat = 0
         doubleDropOffLng = 0
         self.destinationLocationMarker.map = nil
         self.currentLocationMarker.map = nil
-        self.strLocationType = self.destinationLocationMarkerText
+        if(self.arrDataAfterCompletetionOfTrip.count == 0)
+        {
+            self.strLocationType = self.destinationLocationMarkerText
+        }
         self.routePolyline.map = nil
         
         stackViewNumberOfPassenger.isHidden = true
         viewNotesOnBooking.isHidden = true
         
-        imgTopViewOfTripPickupAndDropoffLocation.image = UIImage(named: "iconHomeScreenTopView2")
+//        imgTopViewOfTripPickupAndDropoffLocation.image = UIImage(named: "iconHomeScreenTopView2")
         
         self.btnDoneForLocationSelected.isHidden = false
         self.ConstantViewCarListsHeight.constant = 0
@@ -4423,7 +4581,7 @@ class HomeViewController: UIViewController, UICollectionViewDelegate, UICollecti
                 dict3["CardNum2"] = "credit" as AnyObject
                 dict3["Type"] = "iconWalletBlack" as AnyObject
                 
-           
+                
                 
                 if(UtilityClass.returnValueForCredit(key: "IsRequestCreditAccount") == "2")
                 {
@@ -4544,7 +4702,7 @@ class HomeViewController: UIViewController, UICollectionViewDelegate, UICollecti
                 dict3["CardNum2"] = "credit" as AnyObject
                 dict3["Type"] = "iconWalletBlack" as AnyObject
                 
-
+                
                 
                 if(UtilityClass.returnValueForCredit(key: "IsRequestCreditAccount") == "2")
                 {

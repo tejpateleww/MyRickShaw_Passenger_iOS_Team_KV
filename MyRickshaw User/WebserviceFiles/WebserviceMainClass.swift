@@ -22,7 +22,8 @@ func postData(_ dictParams: AnyObject, nsURL: String, completion: @escaping (_ r
     let url = WebserviceURLs.kBaseURL + nsURL
 
     UtilityClass.showACProgressHUD()
-    
+    print("the url is \(url) and the parameters are \n \(dictParams)")
+
     Alamofire.request(url, method: .post, parameters: dictParams as? [String : AnyObject], encoding: URLEncoding.default, headers: header)
         .validate()
         .responseJSON
@@ -53,7 +54,8 @@ func postDataWithoutLoader(_ dictParams: AnyObject, nsURL: String, completion: @
     let url = WebserviceURLs.kBaseURL + nsURL
     
 //    UtilityClass.showACProgressHUD()
-    
+    print("the url is \(url) and the parameters are \n \(dictParams)")
+
     Alamofire.request(url, method: .post, parameters: dictParams as? [String : AnyObject], encoding: URLEncoding.default, headers: header)
         .validate()
         .responseJSON
@@ -87,7 +89,8 @@ func getData(_ dictParams: AnyObject, nsURL: String,  completion: @escaping (_ r
     let url = WebserviceURLs.kBaseURL + nsURL
 
     UtilityClass.showACProgressHUD()
-    
+    print("the url is \(url) and the parameters are \n \(dictParams)")
+
     Alamofire.request(url, method: .get, parameters: dictParams as? [String : AnyObject], encoding: URLEncoding.default, headers: header)
         .validate()
         .responseJSON
@@ -126,7 +129,8 @@ func sendImage(_ dictParams: [String:AnyObject], image1: UIImage, nsURL: String,
     let url = WebserviceURLs.kBaseURL + nsURL
     
     UtilityClass.showACProgressHUD()
-    
+    print("the url is \(url) and the parameters are \n \(dictParams)")
+
     Alamofire.upload(multipartFormData: { (multipartFormData) in
         
         if let imageData1 = image1.jpegData(compressionQuality: 0.6) {
@@ -191,7 +195,8 @@ func getDataWithOrWithoutLoading(_ dictParams: AnyObject, nsURL: String, isLoadi
     if isLoading {
          UtilityClass.showACProgressHUD()
     }
-    
+    print("the url is \(url) and the parameters are \n \(dictParams)")
+
     Alamofire.request(url, method: .get, parameters: dictParams as? [String : AnyObject], encoding: URLEncoding.default, headers: header)
         .validate()
         .responseJSON
@@ -227,7 +232,8 @@ func postTwoImageMethod(_ dictParams: [String:AnyObject], image1: UIImage, image
     let url = WebserviceURLs.kBaseURL + nsURL
     
     UtilityClass.showACProgressHUD()
-    
+    print("the url is \(url) and the parameters are \n \(dictParams)")
+
     Alamofire.upload(multipartFormData: { (multipartFormData) in
         
         if let imageData1 = image1.jpegData(compressionQuality: 0.6) {
@@ -289,7 +295,8 @@ func postDataWithData(_ dictParams: AnyObject, nsURL: String, completion: @escap
     let url = WebserviceURLs.kBaseURL + nsURL
     
     UtilityClass.showACProgressHUD()
-    
+    print("the url is \(url) and the parameters are \n \(dictParams)")
+
     Alamofire.request(url, method: .post, parameters: dictParams as? [String : AnyObject], encoding: URLEncoding.default, headers: header)
         .validate()
         .responseJSON

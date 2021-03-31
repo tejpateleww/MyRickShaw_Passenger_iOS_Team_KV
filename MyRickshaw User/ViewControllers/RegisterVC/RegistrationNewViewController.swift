@@ -11,17 +11,18 @@ import ACFloatingTextfield_Swift
 import TransitionButton
 
 class RegistrationNewViewController: UIViewController, AKRadioButtonsControllerDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate, UITextFieldDelegate {
- 
+    
     
     
     var strDateOfBirth = String()
-
+    
     //-------------------------------------------------------------
     // MARK: - Outlets
     //-------------------------------------------------------------
     
     var radioButtonsController: AKRadioButtonsController!
     @IBOutlet var radioButtons: [AKRadioButton]!
+    @IBOutlet var radioButtonsTMCardHolder: [AKRadioButton]!
     @IBOutlet weak var txtFirstName: ACFloatingTextfield!
     @IBOutlet weak var txtLastName: ACFloatingTextfield!
     @IBOutlet weak var btnSignUp: TransitionButton!
@@ -36,18 +37,20 @@ class RegistrationNewViewController: UIViewController, AKRadioButtonsControllerD
     @IBOutlet weak var constaraintTopOfGender: NSLayoutConstraint!
     @IBOutlet weak var constraintTopOfReferralCode: NSLayoutConstraint!
     @IBOutlet weak var stackViewForFirstAndLastName: UIStackView!
+    @IBOutlet weak var stackViewForTMCardHolderText: UIStackView!
+    @IBOutlet weak var txtTMCardHolderText: UITextField!
     
     
     //-------------------------------------------------------------
     // MARK: - Global Declaration
     //-------------------------------------------------------------
     
-
+    
     var strPhoneNumber = String()
     var strEmail = String()
     var strPassword = String()
     var gender = String()
-    
+    var strTMCardHolder = String()
     //-------------------------------------------------------------
     // MARK: - Base Methods
     //-------------------------------------------------------------
@@ -67,7 +70,7 @@ class RegistrationNewViewController: UIViewController, AKRadioButtonsControllerD
             
         }
         
-
+        
         // Do any additional setup after loading the view.
         
         self.radioButtonsController = AKRadioButtonsController(radioButtons: self.radioButtons)
@@ -79,8 +82,21 @@ class RegistrationNewViewController: UIViewController, AKRadioButtonsControllerD
         self.radioButtonsController.selectedIndex = 1
         self.radioButtonsController.delegate = self //class should implement AKRadioButtonsControllerDelegate
         gender = "male"
-//        txtFirstName.text = "rahul"
-//        txtLastName.text = "patel"
+        
+        
+        self.radioButtonsController = AKRadioButtonsController(radioButtons: self.radioButtonsTMCardHolder)
+        self.radioButtonsController.strokeColor = UIColor.init(red: 0, green: 0, blue: 0, alpha: 1)
+        self.radioButtonsController.startGradColorForSelected = UIColor.init(red: 0, green: 0, blue: 0, alpha: 1)
+        self.radioButtonsController.endGradColorForSelected = UIColor.init(red: 0, green: 0, blue: 0, alpha: 1)//UIColor.init(red: 255/255, green: 163/255, blue: 0, alpha: 1)
+        self.radioButtonsController.selectedImage = UIImage(named: "iconRadioButtonSelected")
+        self.radioButtonsController.standartImage = UIImage(named: "iconRadioButtonUnSelected")
+        self.radioButtonsController.selectedIndex = 1
+        self.radioButtonsController.delegate = self //class should implement AKRadioButtonsControllerDelegate
+        self.stackViewForTMCardHolderText.isHidden = true
+        strTMCardHolder = "0"
+
+        //        txtFirstName.text = "rahul"
+        //        txtLastName.text = "patel"
     }
     override func viewWillLayoutSubviews() {
         super.viewWillLayoutSubviews()
@@ -98,15 +114,21 @@ class RegistrationNewViewController: UIViewController, AKRadioButtonsControllerD
     }
     
     func selectedButton(sender: AKRadioButton) {
-
+        
         print(sender.currentTitle!)
         
-        switch sender.currentTitle! {
-            
-        case "Male":
+        switch sender.titleLabel?.text?.lowercased()
+        {
+        case "male":
             gender = "male"
-        case "Female":
+        case "female":
             gender = "female"
+        case "yes":
+            strTMCardHolder = "1"
+            stackViewForTMCardHolderText.isHidden = false
+        case "no":
+            strTMCardHolder = "0"
+            stackViewForTMCardHolderText.isHidden = true
         default:
             gender = "male"
         }
@@ -114,7 +136,7 @@ class RegistrationNewViewController: UIViewController, AKRadioButtonsControllerD
     }
     
     // MARK: - Pick Image
-     func TapToProfilePicture() {
+    func TapToProfilePicture() {
         
         let alert = UIAlertController(title: "Choose Options", message: nil, preferredStyle: .actionSheet)
         
@@ -157,12 +179,12 @@ class RegistrationNewViewController: UIViewController, AKRadioButtonsControllerD
     }
     
     // MARK: - Image Delegate and DataSource Methods
-
+    
     
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
-// Local variable inserted by Swift 4.2 migrator.
-let info = convertFromUIImagePickerControllerInfoKeyDictionary(info)
-
+        // Local variable inserted by Swift 4.2 migrator.
+        let info = convertFromUIImagePickerControllerInfoKeyDictionary(info)
+        
         
         if let pickedImage = info[convertFromUIImagePickerControllerInfoKey(UIImagePickerController.InfoKey.originalImage)] as? UIImage {
             imgProfile.contentMode = .scaleToFill
@@ -193,7 +215,7 @@ let info = convertFromUIImagePickerControllerInfoKeyDictionary(info)
         strDateOfBirth = txtDateOfBirth.text!
         
     }
-
+    
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
         
         if textField == txtFirstName {
@@ -205,7 +227,7 @@ let info = convertFromUIImagePickerControllerInfoKeyDictionary(info)
         
         return true
     }
-   
+    
     
     //MARK: - Validation
     
@@ -213,7 +235,7 @@ let info = convertFromUIImagePickerControllerInfoKeyDictionary(info)
     {
         if (txtFirstName.text?.count == 0)
         {
-
+            
             UtilityClass.setCustomAlert(title: appName, message: "Please enter first name") { (index, title) in
             }
             return false
@@ -225,15 +247,15 @@ let info = convertFromUIImagePickerControllerInfoKeyDictionary(info)
             }
             return false
         }
-//        else if imgProfile.image == UIImage(named: "iconProfileLocation")
-//        {
-//
-//            UtilityClass.setCustomAlert(title: appName, message: "Please choose profile picture") { (index, title) in
-//            }
-//            return false
-//        }
+        //        else if imgProfile.image == UIImage(named: "iconProfileLocation")
+        //        {
+        //
+        //            UtilityClass.setCustomAlert(title: appName, message: "Please choose profile picture") { (index, title) in
+        //            }
+        //            return false
+        //        }
         else if strDateOfBirth == "" {
-           
+            
             UtilityClass.setCustomAlert(title: appName, message: "Please choose date of birth") { (index, title) in
             }
             return false
@@ -241,6 +263,12 @@ let info = convertFromUIImagePickerControllerInfoKeyDictionary(info)
         else if gender == "" {
             
             UtilityClass.setCustomAlert(title: appName, message: "Please choose gender") { (index, title) in
+            }
+            return false
+        }
+        else if (strTMCardHolder == "1" && txtTMCardHolderText.text?.trimmingCharacters(in: .whitespacesAndNewlines).count == 0)
+        {
+            UtilityClass.setCustomAlert(title: appName, message: "Please choose TM Card Holder Number") { (index, title) in
             }
             return false
         }
@@ -263,11 +291,11 @@ let info = convertFromUIImagePickerControllerInfoKeyDictionary(info)
             if (checkValidation())
             {
                 let registerVC = (self.navigationController?.viewControllers.last as! RegistrationContainerViewController).children[0] as! RegisterViewController
-
+                
                 strPhoneNumber = (registerVC.txtPhoneNumber.text)!
                 strEmail = (registerVC.txtEmail.text)!
                 strPassword = (registerVC.txtPassword.text)!
-
+                
                 self.btnSignUp.startAnimation()
                 
                 webServiceCallForRegister()
@@ -286,7 +314,7 @@ let info = convertFromUIImagePickerControllerInfoKeyDictionary(info)
     
     func webServiceCallForRegister()
     {
-//Email,MobileNo,Password,Gender,Firstname,Lastname,DOB,DeviceType,Token,Lat,Lng,ReferralCode,Image
+        //Email,MobileNo,Password,Gender,Firstname,Lastname,DOB,DeviceType,Token,Lat,Lng,ReferralCode,Image
         let dictParams = NSMutableDictionary()
         dictParams.setObject(txtFirstName.text!, forKey: "Firstname" as NSCopying)
         dictParams.setObject(txtLastName.text!, forKey: "Lastname" as NSCopying)
@@ -294,7 +322,9 @@ let info = convertFromUIImagePickerControllerInfoKeyDictionary(info)
         dictParams.setObject(strPhoneNumber, forKey: "MobileNo" as NSCopying)
         dictParams.setObject(strEmail, forKey: "Email" as NSCopying)
         dictParams.setObject(strPassword, forKey: "Password" as NSCopying)
-        
+        dictParams.setObject(strTMCardHolder, forKey: "TMCardHolder" as NSCopying)
+        dictParams.setObject(txtTMCardHolderText.text?.trimmingCharacters(in: .whitespacesAndNewlines) ?? "", forKey: "TMCardHolderNumber" as NSCopying)
+
         if SingletonClass.sharedInstance.deviceToken == "" {
             dictParams.setObject("123456789", forKey: "Token" as NSCopying)
         }
@@ -326,7 +356,7 @@ let info = convertFromUIImagePickerControllerInfoKeyDictionary(info)
                         SingletonClass.sharedInstance.strPassengerID = String(describing: SingletonClass.sharedInstance.dictProfile.object(forKey: "Id")!)
                         SingletonClass.sharedInstance.arrCarLists = NSMutableArray(array: (result as! NSDictionary).object(forKey: "car_class") as! NSArray)
                         UserDefaults.standard.set(SingletonClass.sharedInstance.arrCarLists, forKey: "carLists")
-
+                        
                         UserDefaults.standard.set(SingletonClass.sharedInstance.dictProfile, forKey: "profileData")
                         self.performSegue(withIdentifier: "segueToHomeVC", sender: nil)
                     })
@@ -336,7 +366,7 @@ let info = convertFromUIImagePickerControllerInfoKeyDictionary(info)
             else
             {
                 self.btnSignUp.stopAnimation(animationStyle: .shake, revertAfterDelay: 0, completion: {
-                  
+                    
                     UtilityClass.setCustomAlert(title: appName, message: (result as! NSDictionary).object(forKey: "message") as! String) { (index, title) in
                     }
                     
@@ -349,25 +379,25 @@ let info = convertFromUIImagePickerControllerInfoKeyDictionary(info)
         // Dispose of any resources that can be recreated.
     }
     
-
+    
     /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
-    }
-    */
-
+     // MARK: - Navigation
+     
+     // In a storyboard-based application, you will often want to do a little preparation before navigation
+     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+     // Get the new view controller using segue.destinationViewController.
+     // Pass the selected object to the new view controller.
+     }
+     */
+    
 }
 
 // Helper function inserted by Swift 4.2 migrator.
 fileprivate func convertFromUIImagePickerControllerInfoKeyDictionary(_ input: [UIImagePickerController.InfoKey: Any]) -> [String: Any] {
-	return Dictionary(uniqueKeysWithValues: input.map {key, value in (key.rawValue, value)})
+    return Dictionary(uniqueKeysWithValues: input.map {key, value in (key.rawValue, value)})
 }
 
 // Helper function inserted by Swift 4.2 migrator.
 fileprivate func convertFromUIImagePickerControllerInfoKey(_ input: UIImagePickerController.InfoKey) -> String {
-	return input.rawValue
+    return input.rawValue
 }

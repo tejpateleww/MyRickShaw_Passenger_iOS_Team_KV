@@ -66,6 +66,7 @@ extension HomeViewController {
                         
                         self.doublePickupLat = cameraPosition.target.latitude
                         self.doublePickupLng = cameraPosition.target.longitude
+                        self.updateCounting()
                         
                         getAddressForLatLng(latitude: "\(cameraPosition.target.latitude)", longitude: "\(cameraPosition.target.longitude)", markerType: strLocationType)
                         

@@ -244,22 +244,28 @@ class FirstScreenViewController: UIViewController {
                     
                     if (update) {
                         
-                        UtilityClass.showAlertWithCompletion("", message: (result as! NSDictionary).object(forKey: "message") as! String, vc: self, completionHandler: { ACTION in
-                            
-                            //                            UIApplication.shared.open((NSURL(string: "https://itunes.apple.com/us/app/pick-n-go/id1320783092?mt=8")! as URL), options: [:], completionHandler: { (status) in
-                            //
-                            //                            })//openURL(NSURL(string: "https://itunes.apple.com/us/app/pick-n-go/id1320783092?mt=8")! as URL)
-                        })
+                        let alert = UIAlertController(title: "",
+                                                      message: (result as! NSDictionary).object(forKey: "message") as? String,
+                                                      preferredStyle: UIAlertController.Style.alert)
+                        
+                        
+                        alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { (action) in
+                            (UIApplication.shared.delegate as! AppDelegate).window?.rootViewController?.present(alert, animated: true, completion: nil)
+
+                         }))
+                        
+                        
+                        (UIApplication.shared.delegate as! AppDelegate).window?.rootViewController?.present(alert, animated: true, completion: nil)
+                        
+                        
+                        
                     }
                     else {
+                        let alert = UIAlertController(title: "",
+                                                      message: (result as! NSDictionary).object(forKey: "message") as? String,
+                                                      preferredStyle: UIAlertController.Style.alert)
+                        (UIApplication.shared.delegate as! AppDelegate).window?.rootViewController?.present(alert, animated: true, completion: nil)
                         
-                        UtilityClass.setCustomAlert(title: appName, message: (result as! NSDictionary).object(forKey: "message") as! String) { (index, title) in
-                            if (index == 0)
-                            {
-                                //                                UIApplication.shared.open((NSURL(string: "https://itunes.apple.com/us/app/pick-n-go/id1320783092?mt=8")! as URL), options: [:], completionHandler: { (status) in
-                                //                                })
-                            }
-                        }
                         
                     }
                     

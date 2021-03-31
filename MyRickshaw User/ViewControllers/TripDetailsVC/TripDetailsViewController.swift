@@ -62,6 +62,7 @@ class TripDetailsViewController: ParentViewController {
     @IBOutlet weak var lblBaseFare: UILabel!
     @IBOutlet weak var lblDistanceFare: UILabel!
     @IBOutlet weak var lblNightFare: UILabel!
+    @IBOutlet weak var lblTripDuration: UILabel!
     @IBOutlet weak var lblWaitingCost: UILabel!
     @IBOutlet weak var lblTollFee: UILabel!
     @IBOutlet weak var lblSubTotal: UILabel!
@@ -72,7 +73,10 @@ class TripDetailsViewController: ParentViewController {
     
     @IBOutlet weak var lblGrandTotal: UILabel!
     @IBOutlet weak var lblLoadingCharge: UILabel!
-    
+    @IBOutlet weak var lblSoilageCharge: UILabel!
+    @IBOutlet weak var lblSoilageChargeReason: UILabel!
+    @IBOutlet weak var stackViewSoilageChargeReason : UIStackView!
+
     //-------------------------------------------------------------
     // MARK: - Custom Methods
     //-------------------------------------------------------------
@@ -88,7 +92,7 @@ class TripDetailsViewController: ParentViewController {
             
             lblBaseFare.text = currencySign + (data.object(forKey: "TripFare") as? String ?? "0.00")
             lblDistanceFare.text = distanceFare
-            lblNightFare.text = currencySign + (data.object(forKey: "NightFare") as? String ?? "0.00")
+            lblTripDuration.text = (data.object(forKey: "TripDuration") as? String ?? "0.00")
             lblWaitingCost.text = currencySign + (data.object(forKey: "WaitingTimeCost") as? String ?? "0.00")
             lblTollFee.text = currencySign + (data.object(forKey: "TollFee") as? String ?? "0.00")
             lblSubTotal.text = currencySign + (data.object(forKey: "SubTotal") as? String ?? "0.00")
@@ -101,6 +105,21 @@ class TripDetailsViewController: ParentViewController {
             
             lblLoadingCharge.text = currencySign + (data.object(forKey: "LoadingUnloadingCharge") as? String ?? "0.00")
         
+            var strSoilageCharge = String()
+            if let soilageCharge = data.object(forKey: "SoilageCharge") as? String {
+                strSoilageCharge = soilageCharge
+            } else if let soilageCharge = data.object(forKey: "SoilageCharge") as? Int {
+                strSoilageCharge = "\(soilageCharge)"
+            } else if let soilageCharge = data.object(forKey: "SoilageCharge") as? Double {
+                strSoilageCharge = "\(soilageCharge)"
+            }
+            lblSoilageCharge.text = "\(currencySign)\(strSoilageCharge)"
+            stackViewSoilageChargeReason.isHidden = true
+            if(strSoilageCharge != "0")
+            {
+                stackViewSoilageChargeReason.isHidden = false
+                lblSoilageChargeReason.text =  data.object(forKey: "SoilageChargeInfo") as? String
+            }
         }
     }
     

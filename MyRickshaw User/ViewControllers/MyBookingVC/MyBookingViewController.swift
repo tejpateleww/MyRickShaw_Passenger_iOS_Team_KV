@@ -84,8 +84,8 @@ class MyBookingViewController: UIViewController, UIScrollViewDelegate {
             case 2436,1792:
                 
                 constraintHeight.constant = 40
-            default:
-                print("Height of device is \(UIScreen.main.nativeBounds.height)")
+            default: break
+//                print("Height of device is \(UIScreen.main.nativeBounds.height)")
             }
         }
         
