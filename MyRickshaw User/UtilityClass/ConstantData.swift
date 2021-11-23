@@ -25,8 +25,8 @@ var aboutUs = String()
 struct WebserviceURLs {
     
     
-    static let kBaseURL                                 = "http://18.189.177.63/web/Passenger_Api/"//"http://rickshaw.co.nz/web/Passenger_Api/" // "http://52.14.34.50/web/Passenger_Api/"
-    static let kInit                                    = "Init/"   // 1.0.1/AndroidPassenger
+    static let kBaseURL                                 = "https://www.rickshaw.co.nz/web/Passenger_Api/"
+    static let kInit                                    = "Init/"
     static let kOtpForRegister                          = "OtpForRegister"
     static let kDriverRegister                          = "Register"
     static let kDriverLogin                             = "Login"
@@ -34,24 +34,13 @@ struct WebserviceURLs {
     static let kUpdateProfile                           = "UpdateProfile"
     static let kForgotPassword                          = "ForgotPassword" 
     static let kDriver                                  = "Driver"
-    static let kImageBaseURL                            = "http://18.189.177.63/web/"//"http://rickshaw.co.nz/web/" // "http://52.14.34.50/web/"
-    
-    
- 
-
-//    static let kBaseURL                                 = "http://54.169.67.226/web/Passenger_Api/"// "https://pickngolk.info/web/Passenger_Api/" // "http://54.255.222.125/web/Passenger_Api/" // "https://pickngolk.info/web/Passenger_Api/"
-//    static let kDriverRegister                          = "Register"
-//    static let kDriverLogin                             = "Login"
-//    static let kChangePassword                          = "ChangePassword"
-//    static let kUpdateProfile                           = "UpdateProfile"
-//    static let kForgotPassword                          = "ForgotPassword"
+    static let kImageBaseURL                            = "https://www.rickshaw.co.nz/web/"
     static let kGetCarList                              = "GetCarClass"
     static let kMakeBookingRequest                      = "SubmitBookingRequest"
     static let kAdvancedBooking                         = "AdvancedBooking"
 //    static let kDriver                                  = "Driver"
     static let kBookingHistory                          = "BookingHistory/"
     static let kGetEstimateFare                         = "GetEstimateFare"
-//    static let kImageBaseURL                            = "http://54.169.67.226/web/" // "https://pickngolk.info/web/" // "http://54.255.222.125/web/" // "https://pickngolk.info/web/"
     
     static let kCardsList                               = "Cards/"
     static let kPackageBookingHistory                   = "PackageBookingHistory"
@@ -98,7 +87,7 @@ struct WebserviceURLs {
 
 struct SocketData {
     
-    static let kBaseURL                                     = "http://18.189.177.63:8080"//"http://52.14.34.50:8080" // "https://pickngolk.info:8081" // "http://54.255.222.125:8080/" // "https://pickngolk.info:8081"
+    static let kBaseURL                                     = "https://www.rickshaw.co.nz:8080"
     static let kNearByDriverList                            = "NearByDriverListIOS"
     static let kUpdatePassengerLatLong                      = "UpdatePassengerLatLong"
     static let kAcceptBookingRequestNotification            = "AcceptBookingRequestNotification"

@@ -50,6 +50,15 @@ class PastBooingTableViewCell: UITableViewCell {
     @IBOutlet weak var stackViewVehicleType: UIStackView!
     @IBOutlet weak var lblVehicleType: UILabel!
     
+    @IBOutlet var lblNoOfPassenger: UILabel!
+    @IBOutlet var lblNoOfLuggage: UILabel!
+    @IBOutlet var lblDistanceFare: UILabel!
+    @IBOutlet var lblSoilageCharge: UILabel!
+    @IBOutlet var lblLoadingCharge: UILabel!
+    @IBOutlet var lblFlagFallFee: UILabel!
+    @IBOutlet var lblTripStatus: UILabel!
+    
+    
     @IBOutlet weak var stackViewDistanceTravelled: UIStackView!
     @IBOutlet weak var lblDistanceTravelled: UILabel!
     

@@ -988,6 +988,9 @@ class BookLaterViewController: UIViewController, GMSAutocompleteViewControllerDe
         else if type == "cash" {
             paymentType = "cash"
         }
+        else if type == "credit" {
+            paymentType = "credit"
+        }
         else {
             paymentType = "card"
         }
@@ -1333,13 +1336,29 @@ class BookLaterViewController: UIViewController, GMSAutocompleteViewControllerDe
                 self.aryCards.append(dict)
                 self.aryCards.append(dict2)
                 
-                if self.aryCards.count == 2 {
-                    var dict3 = [String:AnyObject]()
-                    dict3["Id"] = "000" as AnyObject
-                    dict3["CardNum"] = "Add a Card" as AnyObject
-                    dict3["CardNum2"] = "Add a Card" as AnyObject
-                    dict3["Type"] = "iconPlusBlack" as AnyObject
+                
+                
+                var dict3 = [String:AnyObject]()
+                dict3["CardNum"] = "credit" as AnyObject
+                dict3["CardNum2"] = "credit" as AnyObject
+                dict3["Type"] = "iconWalletBlack" as AnyObject
+                
+                
+                if(UtilityClass.returnValueForCredit(key: "IsRequestCreditAccount") == "2")
+                {
                     self.aryCards.append(dict3)
+                    
+                }
+                
+
+                
+                if self.aryCards.count == 2 {
+                    var dict4 = [String:AnyObject]()
+                    dict4["Id"] = "000" as AnyObject
+                    dict4["CardNum"] = "Add a Card" as AnyObject
+                    dict4["CardNum2"] = "Add a Card" as AnyObject
+                    dict4["Type"] = "iconPlusBlack" as AnyObject
+                    self.aryCards.append(dict4)
                     
                 }
                 

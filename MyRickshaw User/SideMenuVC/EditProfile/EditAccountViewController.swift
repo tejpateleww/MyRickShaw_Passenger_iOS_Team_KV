@@ -143,7 +143,7 @@ class EditAccountViewController: UIViewController, UITextFieldDelegate {
             return false
         }
         else if (txtBSB.text!.count == 0) {
-            UtilityClass.setCustomAlert(title: appName, message: "Please enter BSB number") { (index, title) in
+            UtilityClass.setCustomAlert(title: appName, message: "Please enter Swift number") { (index, title) in
             }
             return false
         }

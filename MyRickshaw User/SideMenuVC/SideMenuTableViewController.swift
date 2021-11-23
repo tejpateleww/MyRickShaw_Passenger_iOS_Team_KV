@@ -345,13 +345,25 @@ class SideMenuTableViewController: UIViewController,UITableViewDataSource,UITabl
 //                UserDefaults.standard.removePersistentDomain(forName: Bundle.main.bundleIdentifier!)
                 
                 
-                UtilityClass.showAlertWithButtons("Logout", message: "Are you sure you want to logout?", cancelTitle: "Cancel", otherButtonTitle: "OK", vc: UIApplication.topViewController() ?? self) { (index, title) in
-                    if(index == 1)
-                    {
-                        self.logout()
-                    }
+//                UtilityClass.showAlertWithButtons("Logout", message: "Are you sure you want to logout?", cancelTitle: "Cancel", otherButtonTitle: "OK", vc: UIApplication.topViewController() ?? self) { (index, title) in
+//                    if(index == 1)
+//                    {
+//                        self.logout()
+//                    }
+//                }
+//
+                let alert = UIAlertController(title: appName, message: "Are you sure you want to logout?", preferredStyle: .alert)
+                
+                let ok = UIAlertAction(title: "OK", style: .default) { (action) in
+                    self.logout()
                 }
                 
+                let cancel = UIAlertAction(title: "Cancel", style: .default, handler: nil)
+                
+                alert.addAction(ok)
+                alert.addAction(cancel)
+                
+                self.present(alert, animated: true, completion: nil)
               
                 
             }

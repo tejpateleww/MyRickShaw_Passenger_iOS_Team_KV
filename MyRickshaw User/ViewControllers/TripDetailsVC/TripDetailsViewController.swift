@@ -76,6 +76,8 @@ class TripDetailsViewController: ParentViewController {
     @IBOutlet weak var lblSoilageCharge: UILabel!
     @IBOutlet weak var lblSoilageChargeReason: UILabel!
     @IBOutlet weak var stackViewSoilageChargeReason : UIStackView!
+    @IBOutlet weak var lblWaitingTime: UILabel!
+    @IBOutlet weak var lblFlagFallFare: UILabel!
 
     //-------------------------------------------------------------
     // MARK: - Custom Methods
@@ -92,9 +94,39 @@ class TripDetailsViewController: ParentViewController {
             
             lblBaseFare.text = currencySign + (data.object(forKey: "TripFare") as? String ?? "0.00")
             lblDistanceFare.text = distanceFare
-            lblTripDuration.text = (data.object(forKey: "TripDuration") as? String ?? "0.00")
+            let tripDuration =  Int(data.object(forKey: "TripDuration") as? String ?? "0.00") ?? 0
+
+            
+            hmsFrom(seconds: tripDuration) { hours, minutes, seconds in
+
+                let hours = self.getStringFrom(seconds: hours)
+                let minutes = self.getStringFrom(seconds: minutes)
+                let seconds = self.getStringFrom(seconds: seconds)
+
+                print("\(hours):\(minutes):\(seconds)")
+                
+                self.lblTripDuration.text = ("\(hours):\(minutes):\(seconds)")
+
+            }
+
             lblWaitingCost.text = currencySign + (data.object(forKey: "WaitingTimeCost") as? String ?? "0.00")
+            let waitingTime = Int(data.object(forKey: "WaitingTime") as? String ?? "0.00") ?? 0
+            
+            hmsFrom(seconds: waitingTime) { hours, minutes, seconds in
+
+                let hours = self.getStringFrom(seconds: hours)
+                let minutes = self.getStringFrom(seconds: minutes)
+                let seconds = self.getStringFrom(seconds: seconds)
+
+                print("\(hours):\(minutes):\(seconds)")
+                
+                self.lblWaitingTime.text = ("\(hours):\(minutes):\(seconds)")
+
+            }
+
             lblTollFee.text = currencySign + (data.object(forKey: "TollFee") as? String ?? "0.00")
+            lblFlagFallFare.text = currencySign + (data.object(forKey: "FlagFallAmount") as? String ?? "0.00")
+
             lblSubTotal.text = currencySign + (data.object(forKey: "SubTotal") as? String ?? "0.00")
             
             lblBookingCharge.text = currencySign + (data.object(forKey: "BookingCharge") as? String ?? "0.00")
@@ -121,6 +153,17 @@ class TripDetailsViewController: ParentViewController {
                 lblSoilageChargeReason.text =  data.object(forKey: "SoilageChargeInfo") as? String
             }
         }
+    }
+    
+    func hmsFrom(seconds: Int, completion: @escaping (_ hours: Int, _ minutes: Int, _ seconds: Int)->()) {
+
+            completion(seconds / 3600, (seconds % 3600) / 60, (seconds % 3600) % 60)
+
+    }
+
+    func getStringFrom(seconds: Int) -> String {
+
+        return seconds < 10 ? "0\(seconds)" : "\(seconds)"
     }
     
     @IBAction func btnBackAction(sender: UIButton) {

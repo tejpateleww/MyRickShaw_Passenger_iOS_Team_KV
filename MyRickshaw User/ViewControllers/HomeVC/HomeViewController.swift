@@ -1974,11 +1974,11 @@ class HomeViewController: UIViewController, UICollectionViewDelegate, UICollecti
     func getPlaceFromLatLong()
     {
         placesClient.currentPlace(callback: { (placeLikelihoodList, error) -> Void in
-            if let error = error {
+            if error != nil {
                 //print("Pick Place error: \(error.localizedDescription)")
                 return
             }
-            
+             
             //            self.txtCurrentLocation.text = "No current place"
             self.txtCurrentLocation.text = ""
             
@@ -2634,12 +2634,18 @@ class HomeViewController: UIViewController, UICollectionViewDelegate, UICollecti
                 lblApproxCost.text = "\(currencySign)\(0)"
             }
             else if let price = (self.aryEstimateFareData.object(at: carIndex) as! NSDictionary).object(forKey: "total") as? Double {
-                
+                if dictFlatRate == nil {
                 lblApproxCost.text = "\(currencySign)\(price)"
-                
+                }
                 if strServiceType == ServiceType.FlatRate.rawValue {
-                    
-                    strFareId = (self.aryEstimateFareData.object(at: carIndex) as! NSDictionary).object(forKey: "fare_id") as! String
+                    if let strFare = (self.aryEstimateFareData.object(at: carIndex) as? NSDictionary)?.object(forKey: "fare_id") as? String
+                    {
+                        strFareId = strFare
+                    }
+                    else if let intFareID = (self.aryEstimateFareData.object(at: carIndex) as? NSDictionary)?.object(forKey: "fare_id") as? Int
+                    {
+                        strFareId = "\(intFareID)"
+                    }
                     
                     lblFairAndTimeForMaxVan.text = lblApproxCost.text
                     
@@ -2684,7 +2690,7 @@ class HomeViewController: UIViewController, UICollectionViewDelegate, UICollecti
                         }
                         else {
                             
-                            if ((self.aryEstimateFareData.object(at: carIndex) as! NSDictionary).object(forKey: "duration") as? NSNull) != nil {
+                     /*       if ((self.aryEstimateFareData.object(at: carIndex) as! NSDictionary).object(forKey: "duration") as? NSNull) != nil {
                                 
                                 //                            if currentRow == 0 {
                                 //                                lblFairAndTimeForMaxVan.text = "\(0.00)min"
@@ -2708,7 +2714,7 @@ class HomeViewController: UIViewController, UICollectionViewDelegate, UICollecti
                                 //                                lblFairAndTimeForBudgetTaxi.text = "\(minute)min"
                                 //                            }
                             }
-                            
+                      */
 //                            if ((self.aryEstimateFareData.object(at: carIndex) as! NSDictionary).object(forKey: "total") as? NSNull) != nil {
 //
 //                                lblApproxCost.text = "\(currencySign)\(0)"
@@ -2847,8 +2853,37 @@ class HomeViewController: UIViewController, UICollectionViewDelegate, UICollecti
                     
                     
                     if checkAvailabla != "0" {
-                        strModelId = carModelID
+                        var totalCarsAvailableCarTypeID = String()
+
+                        if(self.valueTMCardHolde == 1)
+                        {
+                            if let totalCarsAvailableCarTypeIDString = dictOnlineCarData["ReferenceId"] as? String
+                            {
+                                totalCarsAvailableCarTypeID = totalCarsAvailableCarTypeIDString
+                            }
+                            else if let totalCarsAvailableCarTypeIDInt = dictOnlineCarData["ReferenceId"] as? Int
+                            {
+                                totalCarsAvailableCarTypeID = "\(totalCarsAvailableCarTypeIDInt)"
+                            }
+                            else  if let totalCarsAvailableCarTypeidInt = dictOnlineCarData["ReferenceId"] as? Int
+                            {
+                                totalCarsAvailableCarTypeID = "\(totalCarsAvailableCarTypeidInt)"
+                            }
+                            else  if let totalCarsAvailableCarTypeidString = dictOnlineCarData["ReferenceId"] as? String
+                            {
+                                totalCarsAvailableCarTypeID = totalCarsAvailableCarTypeidString
+                            }
+                        }
                         
+                        if totalCarsAvailableCarTypeID != "0" && totalCarsAvailableCarTypeID != ""
+                        {
+                            strCarModelIDIfZero = totalCarsAvailableCarTypeID
+                            strModelId = strCarModelIDIfZero
+                        }
+                        else
+                        {
+                            strModelId = carModelID
+                        }
                         if aryEstimateFareData.count != 0 {
                             
                             strFareId = "\((self.aryEstimateFareData.object(at: carIndex) as! NSDictionary).object(forKey: "fare_id")!)"
@@ -2910,6 +2945,32 @@ class HomeViewController: UIViewController, UICollectionViewDelegate, UICollecti
                 }
                 //                strCarModelID = ""
                 strCarModelIDIfZero = carModelID
+                var totalCarsAvailableCarTypeID = String()
+
+                if(self.valueTMCardHolde == 1)
+                {
+                    if let totalCarsAvailableCarTypeIDString = dictOnlineCarData.object(forKey: "ReferenceId") as? String
+                    {
+                        totalCarsAvailableCarTypeID = totalCarsAvailableCarTypeIDString
+                    }
+                    else if let totalCarsAvailableCarTypeIDInt = dictOnlineCarData.object(forKey: "ReferenceId") as? Int
+                    {
+                        totalCarsAvailableCarTypeID = "\(totalCarsAvailableCarTypeIDInt)"
+                    }
+                    else  if let totalCarsAvailableCarTypeidInt = dictOnlineCarData.object(forKey: "ReferenceId") as? Int
+                    {
+                        totalCarsAvailableCarTypeID = "\(totalCarsAvailableCarTypeidInt)"
+                    }
+                    else  if let totalCarsAvailableCarTypeidString = dictOnlineCarData.object(forKey: "ReferenceId") as? String
+                    {
+                        totalCarsAvailableCarTypeID = totalCarsAvailableCarTypeidString
+                    }
+                }
+                
+                if totalCarsAvailableCarTypeID != "0"
+                {
+                    strCarModelIDIfZero = totalCarsAvailableCarTypeID
+                }
                 
                 if checkAvailabla != "0" {
                     
@@ -2921,23 +2982,17 @@ class HomeViewController: UIViewController, UICollectionViewDelegate, UICollecti
                     {
                         strModelId = "\(carIDInt)"
                     }
-                    strFareId = (self.aryEstimateFareData.object(at: carIndex) as! NSDictionary).object(forKey: "fare_id") as! String
+                    if let strFare = (self.aryEstimateFareData.object(at: carIndex) as? NSDictionary)?.object(forKey: "fare_id") as? String
+                    {
+                        strFareId = strFare
+                    }
+                    else if let intFareID = (self.aryEstimateFareData.object(at: carIndex) as? NSDictionary)?.object(forKey: "fare_id") as? Int
+                    {
+                        strFareId = "\(intFareID)"
+                    }
+                    
                 }
-                //                else {
-                //                    strModelId = ""
-                //                    if let carID = dictOnlineCarData.object(forKey: "Id") as? String
-                //                    {
-                //                        strCarModelIDIfZero = carID
-                //                        strModelId = carID
-                //                    }
-                //                    else if let carIDInt =  dictOnlineCarData.object(forKey: "Id") as? Int
-                //                    {
-                //                        strCarModelIDIfZero = "\(carIDInt)"
-                //
-                //                        strModelId = "\(carIDInt)"
-                //                    }
-                //                }
-                
+      
                 // check Flat Rate is Available or not
                 if dictFlatRate != nil {
                     self.lblApproxCost.text = "\(currencySign)\(dictFlatRate?["Price"] as? String ?? "00.00")"
@@ -3036,7 +3091,7 @@ class HomeViewController: UIViewController, UICollectionViewDelegate, UICollecti
             audioPlayer.play()
             
         }
-        catch let error {
+        catch _ {
             //print(error.localizedDescription)
         }
     }
@@ -3053,7 +3108,7 @@ class HomeViewController: UIViewController, UICollectionViewDelegate, UICollecti
             audioPlayer.stop()
             audioPlayer = nil
         }
-        catch let error {
+        catch _ {
             //print(error.localizedDescription)
         }
     }
@@ -3335,6 +3390,32 @@ class HomeViewController: UIViewController, UICollectionViewDelegate, UICollecti
                     strNavigateCarModel = imageURL
                     strCarModelID = ""
                     strCarModelIDIfZero = carModelIDConverString
+                    var totalCarsAvailableCarTypeID = String()
+
+                    if(self.valueTMCardHolde == 1)
+                    {
+                        if let totalCarsAvailableCarTypeIDString = dictOnlineCarData.object(forKey: "ReferenceId") as? String
+                        {
+                            totalCarsAvailableCarTypeID = totalCarsAvailableCarTypeIDString
+                        }
+                        else if let totalCarsAvailableCarTypeIDInt = dictOnlineCarData.object(forKey: "ReferenceId") as? Int
+                        {
+                            totalCarsAvailableCarTypeID = "\(totalCarsAvailableCarTypeIDInt)"
+                        }
+                        else  if let totalCarsAvailableCarTypeidInt = dictOnlineCarData.object(forKey: "ReferenceId") as? Int
+                        {
+                            totalCarsAvailableCarTypeID = "\(totalCarsAvailableCarTypeidInt)"
+                        }
+                        else  if let totalCarsAvailableCarTypeidString = dictOnlineCarData.object(forKey: "ReferenceId") as? String
+                        {
+                            totalCarsAvailableCarTypeID = totalCarsAvailableCarTypeidString
+                        }
+                    }
+                    
+                    if totalCarsAvailableCarTypeID != "0"
+                    {
+                        strCarModelIDIfZero = totalCarsAvailableCarTypeID
+                    }
                     
                 }
                 collectionViewCars.reloadData()
@@ -3371,7 +3452,32 @@ class HomeViewController: UIViewController, UICollectionViewDelegate, UICollecti
             let imageURL = dictOnlineCarData["Image"] as! String
             strNavigateCarModel = imageURL
             strCarModelIDIfZero = carModelIDConverString
+            var totalCarsAvailableCarTypeID = String()
+
+            if(self.valueTMCardHolde == 1)
+            {
+                if let totalCarsAvailableCarTypeIDString = dictOnlineCarData["ReferenceId"] as? String
+                {
+                    totalCarsAvailableCarTypeID = totalCarsAvailableCarTypeIDString
+                }
+                else if let totalCarsAvailableCarTypeIDInt = dictOnlineCarData["ReferenceId"] as? Int
+                {
+                    totalCarsAvailableCarTypeID = "\(totalCarsAvailableCarTypeIDInt)"
+                }
+                else  if let totalCarsAvailableCarTypeidInt = dictOnlineCarData["ReferenceId"] as? Int
+                {
+                    totalCarsAvailableCarTypeID = "\(totalCarsAvailableCarTypeidInt)"
+                }
+                else  if let totalCarsAvailableCarTypeidString = dictOnlineCarData["ReferenceId"] as? String
+                {
+                    totalCarsAvailableCarTypeID = totalCarsAvailableCarTypeidString
+                }
+            }
             
+            if totalCarsAvailableCarTypeID != "0"
+            {
+                strCarModelIDIfZero = totalCarsAvailableCarTypeID
+            }
             selectedIndexPath = indexPath
             collectionViewCars.reloadData()
         }
@@ -3810,7 +3916,7 @@ class HomeViewController: UIViewController, UICollectionViewDelegate, UICollecti
         if((((self.aryRequestAcceptedData as NSArray).object(at: 0) as! NSDictionary).object(forKey: "DriverInfo") as? NSDictionary) == nil)
         {
             // //print ("Yes its  array ")
-            DriverInfo = (((self.aryRequestAcceptedData as NSArray).object(at: 0) as! NSDictionary).object(forKey: "DriverInfo") as! NSArray).object(at: 0) as! NSDictionary
+            DriverInfo = (((self.aryRequestAcceptedData as NSArray).object(at: 0) as! NSDictionary).object(forKey: "DriverInfo") as! NSArray).object(at: 0) as? NSDictionary
         }
         else {
             // //print ("Yes its dictionary")
@@ -3820,7 +3926,7 @@ class HomeViewController: UIViewController, UICollectionViewDelegate, UICollecti
         if((((self.aryRequestAcceptedData as NSArray).object(at: 0) as! NSDictionary).object(forKey: "BookingInfo") as? NSDictionary) == nil)
         {
             // //print ("Yes its  array ")
-            bookingInfo = (((self.aryRequestAcceptedData as NSArray).object(at: 0) as! NSDictionary).object(forKey: "BookingInfo") as! NSArray).object(at: 0) as! NSDictionary
+            bookingInfo = (((self.aryRequestAcceptedData as NSArray).object(at: 0) as! NSDictionary).object(forKey: "BookingInfo") as! NSArray).object(at: 0) as? NSDictionary
         }
         else
         {
@@ -3857,7 +3963,7 @@ class HomeViewController: UIViewController, UICollectionViewDelegate, UICollecti
         
         self.BookingConfirmed(dictData: (driverData[0] as! NSDictionary) )
         
-        let driverInfo = (((self.aryRequestAcceptedData as NSArray).object(at: 0) as! NSDictionary).object(forKey: "BookingInfo") as! NSArray).object(at: 0) as! NSDictionary
+   //     let driverInfo = (((self.aryRequestAcceptedData as NSArray).object(at: 0) as! NSDictionary).object(forKey: "BookingInfo") as! NSArray).object(at: 0) as! NSDictionary
         //        let details = (((self.aryRequestAcceptedData as NSArray).object(at: 0) as! NSDictionary).object(forKey: "Details") as! NSArray).object(at: 0) as! NSDictionary
         
         if let bookID =  bookingInfo.object(forKey: SocketDataKeys.kBookingIdNow) as? String {
@@ -3887,8 +3993,8 @@ class HomeViewController: UIViewController, UICollectionViewDelegate, UICollecti
         let DropOffLon = DriverInfo.object(forKey: "Lng") as! String
         
         
-        let dummyLatitude = Double(PickupLat)! - Double(DropOffLat)!
-        let dummyLongitude = Double(PickupLng)! - Double(DropOffLon)!
+        //let dummyLatitude = Double(PickupLat)! - Double(DropOffLat)!
+        //let dummyLongitude = Double(PickupLng)! - Double(DropOffLon)!
         
         //        let waypointLatitude = Double(PickupLat)! - dummyLatitude
         //        let waypointSetLongitude = Double(PickupLng)! - dummyLongitude
@@ -3939,7 +4045,7 @@ class HomeViewController: UIViewController, UICollectionViewDelegate, UICollecti
         if((((self.aryRequestAcceptedData as NSArray).object(at: 0) as! NSDictionary).object(forKey: "DriverInfo") as? NSDictionary) == nil)
         {
             // //print ("Yes its  array ")
-            DriverInfo = (((self.aryRequestAcceptedData as NSArray).object(at: 0) as! NSDictionary).object(forKey: "DriverInfo") as! NSArray).object(at: 0) as! NSDictionary
+            DriverInfo = (((self.aryRequestAcceptedData as NSArray).object(at: 0) as! NSDictionary).object(forKey: "DriverInfo") as! NSArray).object(at: 0) as? NSDictionary
         }
         else {
             // //print ("Yes its dictionary")
@@ -3949,7 +4055,7 @@ class HomeViewController: UIViewController, UICollectionViewDelegate, UICollecti
         if((((self.aryRequestAcceptedData as NSArray).object(at: 0) as! NSDictionary).object(forKey: "BookingInfo") as? NSDictionary) == nil)
         {
             // //print ("Yes its  array ")
-            bookingInfo = (((self.aryRequestAcceptedData as NSArray).object(at: 0) as! NSDictionary).object(forKey: "BookingInfo") as! NSArray).object(at: 0) as! NSDictionary
+            bookingInfo = (((self.aryRequestAcceptedData as NSArray).object(at: 0) as! NSDictionary).object(forKey: "BookingInfo") as! NSArray).object(at: 0) as? NSDictionary
         }
         else
         {
@@ -3960,7 +4066,7 @@ class HomeViewController: UIViewController, UICollectionViewDelegate, UICollecti
         if((((self.aryRequestAcceptedData as NSArray).object(at: 0) as! NSDictionary).object(forKey: "CarInfo") as? NSDictionary) == nil)
         {
             // //print ("Yes its  array ")
-            carInfo = (((self.aryRequestAcceptedData as NSArray).object(at: 0) as! NSDictionary).object(forKey: "CarInfo") as! NSArray).object(at: 0) as! NSDictionary
+            carInfo = (((self.aryRequestAcceptedData as NSArray).object(at: 0) as! NSDictionary).object(forKey: "CarInfo") as! NSArray).object(at: 0) as? NSDictionary
         }
         else
         {
@@ -4204,11 +4310,11 @@ class HomeViewController: UIViewController, UICollectionViewDelegate, UICollecti
         let driverID = aryOfOnlineCarsIds.compactMap{ $0 }.joined(separator: ",")
 //        if(driverID != "")
 //        {
-            var myJSON = ["PassengerId" : SingletonClass.sharedInstance.strPassengerID,  "PickupLocation" : strPickupLocation ,"PickupLat" :  self.doublePickupLat , "PickupLong" :  self.doublePickupLng, "DropoffLocation" : strDropoffLocation,"DropoffLat" : self.doubleDropOffLat, "DropoffLon" : self.doubleDropOffLng,"Ids" : driverID,"IsTmCard": valueTMCardHolde, "IsBabySeater": valueBabySeater, "IsHoistVan": valueHoistVan ] as [String : Any]
+        var myJSON = ["PassengerId" : SingletonClass.sharedInstance.strPassengerID,  "PickupLocation" : strPickupLocation ,"PickupLat" :  self.doublePickupLat , "PickupLong" :  self.doublePickupLng, "DropoffLocation" : strDropoffLocation,"DropoffLat" : self.doubleDropOffLat, "DropoffLon" : self.doubleDropOffLng,"Ids" : driverID,"IsTmCard": valueTMCardHolde, "IsBabySeater": valueBabySeater, "IsHoistVan": valueHoistVan , "DeviceType" : "ios"] as [String : Any]
             
             if(strDropoffLocation.count == 0)
             {
-                myJSON = ["PassengerId" : SingletonClass.sharedInstance.strPassengerID,  "PickupLocation" : strPickupLocation ,"PickupLat" :  self.doublePickupLat , "PickupLong" :  self.doublePickupLng, "DropoffLocation" : strPickupLocation,"DropoffLat" : self.doubleDropOffLng, "DropoffLon" : self.doubleDropOffLng,"Ids" : driverID,"IsTmCard": valueTMCardHolde, "IsBabySeater": valueBabySeater, "IsHoistVan": valueHoistVan ] as [String : Any]
+                myJSON = ["PassengerId" : SingletonClass.sharedInstance.strPassengerID,  "PickupLocation" : strPickupLocation ,"PickupLat" :  self.doublePickupLat , "PickupLong" :  self.doublePickupLng, "DropoffLocation" : strPickupLocation,"DropoffLat" : self.doubleDropOffLng, "DropoffLon" : self.doubleDropOffLng,"Ids" : driverID,"IsTmCard": valueTMCardHolde, "IsBabySeater": valueBabySeater, "IsHoistVan": valueHoistVan , "DeviceType" : "ios"] as [String : Any]
             }
             print("\(SocketData.kSendRequestForGetEstimateFare) \(myJSON)")
             socket.emit(SocketData.kSendRequestForGetEstimateFare , with: [myJSON])
@@ -4362,11 +4468,11 @@ class HomeViewController: UIViewController, UICollectionViewDelegate, UICollecti
             let DropOffLat = doubleDropOffLat
             let DropOffLon = doubleDropOffLng
             
-            let dummyLatitude = Double(PickupLat) - Double(DropOffLat)
-            let dummyLongitude = Double(PickupLng) - Double(DropOffLon)
+            //let dummyLatitude = Double(PickupLat) - Double(DropOffLat)
+            //let dummyLongitude = Double(PickupLng) - Double(DropOffLon)
             
-            let waypointLatitude = Double(PickupLat) - dummyLatitude
-            let waypointSetLongitude = Double(PickupLng) - dummyLongitude
+           // let waypointLatitude = Double(PickupLat) - dummyLatitude
+            //let waypointSetLongitude = Double(PickupLng) - dummyLongitude
             
             let originalLoc: String = "\(PickupLat),\(PickupLng)"
             let destiantionLoc: String = "\(DropOffLat),\(DropOffLon)"
@@ -4477,7 +4583,7 @@ class HomeViewController: UIViewController, UICollectionViewDelegate, UICollecti
         self.lblNotes.text = ""
         self.txtNote.text = ""
         self.txtHavePromocode.text = ""
-        
+        self.dictFlatRate = nil
     }
     
     
@@ -4509,11 +4615,11 @@ class HomeViewController: UIViewController, UICollectionViewDelegate, UICollecti
         let PickupLat = singletonData.object(forKey: "PickupLat") as! Double
         let PickupLng = singletonData.object(forKey: "PickupLng")as! Double
         
-        let dummyLatitude: Double = Double(PickupLat) - Double(DropOffLat)
-        let dummyLongitude: Double = Double(PickupLng) - Double(DropOffLon)
+        //let dummyLatitude: Double = Double(PickupLat) - Double(DropOffLat)
+        //let dummyLongitude: Double = Double(PickupLng) - Double(DropOffLon)
         
-        let waypointLatitude = PickupLat - dummyLatitude
-        let waypointSetLongitude = PickupLng - dummyLongitude
+       // let waypointLatitude = PickupLat - dummyLatitude
+        //let waypointSetLongitude = PickupLng - dummyLongitude
         
         let originalLoc: String = "\(PickupLat),\(PickupLng)"
         let destiantionLoc: String = "\(DropOffLat),\(DropOffLon)"
@@ -4528,7 +4634,7 @@ class HomeViewController: UIViewController, UICollectionViewDelegate, UICollecti
         self.mapView.clear()
         self.driverMarker = nil
         self.mapView.delegate = self
-        
+        self.valueTMCardHolde = 0
         self.destinationLocationMarker.map = nil
         
         //        self.mapView.stopRendering()
@@ -4555,7 +4661,7 @@ class HomeViewController: UIViewController, UICollectionViewDelegate, UICollecti
         
         if let Token = UserDefaults.standard.object(forKey: "Token") as? String {
             SingletonClass.sharedInstance.deviceToken = Token
-            //print("SingletonClass.sharedInstance.deviceToken : \(SingletonClass.sharedInstance.deviceToken)")
+            //print("SingletonClass .sharedInstance.deviceToken : \(SingletonClass.sharedInstance.deviceToken)")
         }
         
         let param = SingletonClass.sharedInstance.strPassengerID + "/" + SingletonClass.sharedInstance.deviceToken

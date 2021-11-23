@@ -201,8 +201,6 @@ class PastBookingVC: UIViewController, UITableViewDataSource, UITableViewDelegat
                 }
             }
             
-//            cell.lblPickupTime.text = setTimeStampToDate(timeStamp: ((aryData.object(at: indexPath.row) as! NSDictionary).object(forKey: "PickupTime") as? String)!)
-//            cell.lblDropoffTime.text = (aryData.object(at: indexPath.row) as! NSDictionary).object(forKey: "DropTime") as? String
             
             if let strModel = (aryData.object(at: indexPath.row) as! NSDictionary).object(forKey: "Model") as? String {
                 if strModel == "" {
@@ -238,7 +236,17 @@ class PastBookingVC: UIViewController, UITableViewDataSource, UITableViewDelegat
             cell.lblPaymentType.text =  checkDictionaryHaveValue(dictData: currenRow, didHaveValue: "PaymentType", isNotHave: notAvailable)  // (aryData.object(at: indexPath.row) as! NSDictionary).object(forKey: "PaymentType") as? String
             cell.lblTotalCost.text = currencySign + checkDictionaryHaveValue(dictData: currenRow, didHaveValue: "GrandTotal", isNotHave: notAvailable)  //  (aryData.object(at: indexPath.row) as! NSDictionary).object(forKey: "GrandTotal") as? String
 
-
+            cell.lblNoOfPassenger.text = checkDictionaryHaveValue(dictData: currenRow, didHaveValue: "NoOfPassenger", isNotHave: notAvailable)
+            cell.lblNoOfLuggage.text = checkDictionaryHaveValue(dictData: currenRow, didHaveValue: "NoOfLuggage", isNotHave: notAvailable)
+            cell.lblDistanceFare.text = currencySign + checkDictionaryHaveValue(dictData: currenRow, didHaveValue: "DistanceFare", isNotHave: notAvailable)
+            cell.lblSoilageCharge.text = currencySign + checkDictionaryHaveValue(dictData: currenRow, didHaveValue: "SoilageCharge", isNotHave: notAvailable)
+            cell.lblLoadingCharge.text = currencySign + checkDictionaryHaveValue(dictData: currenRow, didHaveValue: "LoadingUnloadingCharge", isNotHave: notAvailable)
+            cell.lblFlagFallFee.text = currencySign + checkDictionaryHaveValue(dictData: currenRow, didHaveValue: "FlagFallAmount", isNotHave: notAvailable)
+            cell.lblTripStatus.text = checkDictionaryHaveValue(dictData: currenRow, didHaveValue: "Status", isNotHave: notAvailable)
+            
+            
+            
+            
             cell.viewDetails.isHidden = !expandedCellPaths.contains(indexPath)
             
         }
